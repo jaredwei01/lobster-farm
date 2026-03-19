@@ -926,15 +926,6 @@ function bindInteractions() {
     _appendLocalChatMsg('lobster', cleanText);
   });
 
-  const muteBtn = document.getElementById('btn-mute');
-  if (muteBtn) {
-    muteBtn.textContent = SFX.isMuted() ? '🔇' : '🔊';
-    muteBtn.addEventListener('click', () => {
-      SFX.setMuted(!SFX.isMuted());
-      muteBtn.textContent = SFX.isMuted() ? '🔇' : '🔊';
-    });
-  }
-
   document.getElementById('btn-suggest-cancel').addEventListener('click', () => closeModal('suggest-modal'));
   document.getElementById('btn-feed-cancel').addEventListener('click', () => closeModal('feed-modal'));
   document.getElementById('btn-plant-cancel').addEventListener('click', () => closeModal('plant-modal'));

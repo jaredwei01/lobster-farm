@@ -1,5 +1,5 @@
 let ctx = null;
-let muted = localStorage.getItem('lobster_sfx_muted') === '1';
+let muted = false;
 let initialized = false;
 
 function ensureCtx() {
