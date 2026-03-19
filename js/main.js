@@ -895,6 +895,24 @@ function bindInteractions() {
   window.addEventListener('sea:golden-click', () => { Analytics.trackInteraction('sea_golden'); openGoldenModal(); });
   window.addEventListener('mud:trigger', () => { Analytics.trackInteraction('mud_trigger'); triggerMudScene(); });
   window.addEventListener('sea:creature-interact', _onSeaCreatureInteract);
+  window.addEventListener('sea:deco-interact', (e) => {
+    const { text, sfx, reward } = e.detail || {};
+    if (sfx) SFX.play(sfx);
+    if (text) UIRenderer.showNotification(text, 2000);
+    if (reward && Math.random() < 0.25) {
+      const shells = 1 + Math.floor(Math.random() * 3);
+      WorldState.addShells(shells);
+      UIRenderer.showNotification(`发现了 ${shells} 枚贝壳！`, 2000);
+      SaveSystem.save(WorldState.getRawState());
+    }
+  });
+  window.addEventListener('sea:treasure-found', (e) => {
+    const shells = e.detail?.shells || 5;
+    WorldState.addShells(shells);
+    SFX.play('harvest');
+    UIRenderer.showNotification(`🧰 打开宝箱获得 ${shells} 贝壳！`);
+    SaveSystem.save(WorldState.getRawState());
+  });
   window.addEventListener('inv:sell', (e) => {
     const id = e.detail?.id;
     if (!id) return;

@@ -52,10 +52,10 @@ export const UIRenderer = {
   },
 
   destroy() {
-    [this._seaBubbleTimer, this._seaCreatureTimer, _seaCloudTimer, _seaShipTimer, _seaSnowTimer, this._microActionTimer].forEach(id => {
+    [this._seaBubbleTimer, this._seaCreatureTimer, _seaCloudTimer, _seaShipTimer, _seaSnowTimer, this._microActionTimer, this._rareEventTimer, this._emotionTimer].forEach(id => {
       if (id) clearInterval(id);
     });
-    this._seaBubbleTimer = this._seaCreatureTimer = this._microActionTimer = null;
+    this._seaBubbleTimer = this._seaCreatureTimer = this._microActionTimer = this._rareEventTimer = this._emotionTimer = null;
     _seaCloudTimer = _seaShipTimer = _seaSnowTimer = null;
     this._seaBubblesInited = false;
   },
@@ -77,6 +77,7 @@ export const UIRenderer = {
     document.body.dataset.time = world.timeOfDay;
     document.body.dataset.weather = world.weather;
     document.body.dataset.season = world.season;
+    document.body.dataset.personality = lobster.personality || '';
 
     const moodClass = lobster.mood >= 70 ? 'mood-great' : lobster.mood >= 40 ? 'mood-ok' : 'mood-low';
     const lobsterCard = document.getElementById('lobster-card');
@@ -132,6 +133,7 @@ export const UIRenderer = {
     }
 
     this._renderDecorations(state.farm.decorations || []);
+    this._updateLobsterEmotion(lobster);
 
     if (!this._seaBubblesInited) {
       this._seaBubblesInited = true;
@@ -141,6 +143,7 @@ export const UIRenderer = {
       this._startSkyShips();
       this._startSnowflakes();
       this._startMicroActions(state.lobster.personality);
+      this._startRareEvents();
     }
   },
 
@@ -163,6 +166,15 @@ export const UIRenderer = {
       shell_necklace: { emoji: '📿', bottom: '32px', left: '60%' },
     };
 
+    const DECO_INTERACT = {
+      lantern: { sfx: 'click', text: '灯笼摇曳着温暖的光~' },
+      rock_garden: { sfx: 'click', text: '石头下面好像有东西...', reward: true },
+      wind_chime: { sfx: 'harvest', text: '叮铃~ 风铃发出清脆的声响' },
+      mini_lighthouse: { sfx: 'click', text: '灯塔的光束旋转着照亮海底' },
+      coral_flower: { sfx: 'click', text: '珊瑚花轻轻摇摆' },
+      shell_necklace: { sfx: 'click', text: '贝壳项链闪闪发光' },
+    };
+
     for (const deco of decorations) {
       const vis = DECO_VISUALS[deco.id];
       if (!vis) continue;
@@ -171,6 +183,21 @@ export const UIRenderer = {
       el.textContent = vis.emoji;
       el.style.bottom = vis.bottom;
       el.style.left = vis.left;
+      el.style.cursor = 'pointer';
+
+      const interact = DECO_INTERACT[deco.id];
+      if (interact) {
+        el.addEventListener('click', () => {
+          if (el.classList.contains('deco-click-anim')) return;
+          el.classList.add('deco-click-anim');
+          setTimeout(() => el.classList.remove('deco-click-anim'), 500);
+
+          window.dispatchEvent(new CustomEvent('sea:deco-interact', {
+            detail: { id: deco.id, text: interact.text, sfx: interact.sfx, reward: interact.reward },
+          }));
+        });
+      }
+
       container.appendChild(el);
     }
   },
@@ -354,10 +381,109 @@ export const UIRenderer = {
       container.appendChild(el);
       el.addEventListener('animationend', () => el.remove());
       setTimeout(() => { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+
+      this._lobsterReactToCreature(chosen.type, dur);
     };
 
     setTimeout(spawn, 1500);
     this._seaCreatureTimer = setInterval(spawn, 4000 + Math.random() * 4000);
+  },
+
+  _lastEmotionState: '',
+  _emotionTimer: null,
+  _updateLobsterEmotion(lobster) {
+    const el = document.getElementById('sea-lobster');
+    if (!el) return;
+
+    let emotionKey = 'neutral';
+    if (lobster.mood >= 81) emotionKey = 'ecstatic';
+    else if (lobster.mood >= 51) emotionKey = 'happy';
+    else if (lobster.mood <= 20) emotionKey = 'sad';
+    if (lobster.hunger >= 61) emotionKey = 'hungry';
+    if (lobster.energy <= 15) emotionKey = 'tired';
+
+    if (emotionKey === this._lastEmotionState) return;
+    this._lastEmotionState = emotionKey;
+
+    el.querySelectorAll('.lobster-glow').forEach(g => g.remove());
+    if (this._emotionTimer) clearInterval(this._emotionTimer);
+    this._emotionTimer = null;
+
+    if (emotionKey === 'ecstatic') {
+      const glow = document.createElement('div');
+      glow.className = 'lobster-glow lobster-glow-happy';
+      el.appendChild(glow);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💕'), 4000);
+    } else if (emotionKey === 'happy') {
+      this._emotionTimer = setInterval(() => {
+        if (Math.random() < 0.5) this._spawnEmotionParticle(el, ['♪', '♫', '~'][Math.floor(Math.random() * 3)]);
+      }, 5000);
+    } else if (emotionKey === 'hungry') {
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💭'), 4500);
+    } else if (emotionKey === 'tired') {
+      const glow = document.createElement('div');
+      glow.className = 'lobster-glow lobster-glow-tired';
+      el.appendChild(glow);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💤'), 3500);
+    } else if (emotionKey === 'sad') {
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '😢'), 5000);
+    }
+  },
+
+  _spawnEmotionParticle(parent, emoji) {
+    const p = document.createElement('div');
+    p.className = 'lobster-emotion';
+    p.textContent = emoji;
+    p.style.left = `${45 + Math.random() * 10}%`;
+    parent.appendChild(p);
+    setTimeout(() => p.remove(), 2500);
+  },
+
+  _lastReactTime: 0,
+  _lobsterReactToCreature(creatureType, dur) {
+    const now = Date.now();
+    if (now - this._lastReactTime < 6000) return;
+    if (Math.random() > 0.4) return;
+    this._lastReactTime = now;
+
+    const lobsterEl = document.getElementById('sea-lobster');
+    if (!lobsterEl || lobsterEl.classList.contains('pose-away')) return;
+
+    const personality = document.body.dataset.personality || '';
+    const big = ['whale', 'manta', 'turtle'];
+    const small = ['fish-school', 'clownfish', 'seahorse'];
+    const scary = ['eel', 'anglerfish'];
+    const friendly = ['crab', 'octopus', 'starfish'];
+
+    let reaction = null;
+
+    if (big.includes(creatureType)) {
+      if (personality === 'adventurous') reaction = { cls: 'react-chase', emoji: '✨', dur: 2000 };
+      else reaction = { cls: 'react-flinch', emoji: '😮', dur: 1200 };
+    } else if (scary.includes(creatureType)) {
+      if (personality === 'mischievous') reaction = { cls: 'react-chase', emoji: '😈', dur: 1500 };
+      else reaction = { cls: 'react-flinch', emoji: '😰', dur: 1000 };
+    } else if (small.includes(creatureType) && personality === 'gluttonous') {
+      reaction = { cls: 'react-chase', emoji: '🤤', dur: 1800 };
+    } else if (friendly.includes(creatureType)) {
+      if (personality === 'social') reaction = { cls: 'react-approach', emoji: '👋', dur: 2000 };
+      else if (Math.random() < 0.5) reaction = { cls: 'react-stare', emoji: '👀', dur: 1500 };
+    } else if (Math.random() < 0.3) {
+      reaction = { cls: 'react-stare', emoji: '👀', dur: 1200 };
+    }
+
+    if (!reaction) return;
+
+    lobsterEl.classList.add(reaction.cls);
+    const bubble = document.createElement('div');
+    bubble.className = 'lobster-react-bubble';
+    bubble.textContent = reaction.emoji;
+    lobsterEl.appendChild(bubble);
+
+    setTimeout(() => {
+      lobsterEl.classList.remove(reaction.cls);
+      bubble.remove();
+    }, reaction.dur);
   },
 
   _microActionTimer: null,
@@ -402,6 +528,81 @@ export const UIRenderer = {
       this._microActionTimer = setTimeout(() => { doAction(); schedule(); }, delay);
     };
     schedule();
+  },
+
+  _rareEventTimer: null,
+  _startRareEvents() {
+    const waterEl = document.querySelector('.sea-water');
+    if (!waterEl) return;
+
+    const tryEvent = () => {
+      const roll = Math.random();
+      if (roll < 0.08) this._rareWhalePass(waterEl);
+      else if (roll < 0.14) this._rareJellyBloom(waterEl);
+      else if (roll < 0.20) this._rareTreasureChest(waterEl);
+      else if (roll < 0.24) this._rareRainbow();
+    };
+
+    this._rareEventTimer = setInterval(tryEvent, 30000 + Math.random() * 30000);
+  },
+
+  _rareWhalePass(container) {
+    const el = document.createElement('div');
+    el.className = 'sea-whale-pass';
+    el.textContent = '🐋';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 16000);
+    this.showNotification('🐋 远处有鲸鱼经过...', 3000);
+  },
+
+  _rareJellyBloom(container) {
+    const wrap = document.createElement('div');
+    wrap.className = 'sea-jelly-bloom';
+    wrap.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:3;';
+    const count = 8 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < count; i++) {
+      const j = document.createElement('div');
+      j.className = 'jelly-bloom-item';
+      j.textContent = '🪼';
+      j.style.left = `${5 + Math.random() * 90}%`;
+      j.style.bottom = `${10 + Math.random() * 60}%`;
+      j.style.setProperty('--jb-dur', `${6 + Math.random() * 4}s`);
+      j.style.setProperty('--jb-delay', `${Math.random() * 2}s`);
+      wrap.appendChild(j);
+    }
+    container.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 14000);
+    this.showNotification('🪼 水母大爆发！', 3000);
+  },
+
+  _rareTreasureChest(container) {
+    const el = document.createElement('div');
+    el.className = 'sea-treasure-chest';
+    el.textContent = '🧰';
+    el.style.left = `${20 + Math.random() * 60}%`;
+    el.addEventListener('click', () => {
+      const reward = 5 + Math.floor(Math.random() * 10);
+      window.dispatchEvent(new CustomEvent('sea:treasure-found', { detail: { shells: reward } }));
+      el.style.transition = 'transform 0.3s, opacity 0.3s';
+      el.style.transform = 'scale(1.5)';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 400);
+    }, { once: true });
+    container.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 12000);
+    this.showNotification('✨ 海底出现了一个宝箱！快点击！', 3000);
+  },
+
+  _rareRainbow() {
+    const surface = document.querySelector('.sea-surface');
+    if (!surface) return;
+    const weather = document.body.dataset.weather;
+    if (weather !== 'rainy' && weather !== 'breezy' && Math.random() > 0.3) return;
+    const el = document.createElement('div');
+    el.className = 'sea-rainbow';
+    surface.appendChild(el);
+    setTimeout(() => el.remove(), 9000);
+    this.showNotification('🌈 彩虹出现了！', 3000);
   },
 
   _onCreatureClick(eventType, el) {
