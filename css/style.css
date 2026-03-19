@@ -495,11 +495,18 @@ header {
   font-size: 11px;
 }
 
-.header-mute-btn {
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px 6px;
-  min-width: unset;
+.action-btn-mute {
+  flex: 0 0 auto !important;
+  min-width: 32px !important;
+  width: 32px;
+  padding: 4px 0 !important;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+}
+
+.action-btn-mute:hover,
+.action-btn-mute:active {
+  opacity: 0.8;
 }
 
 .status-strip {

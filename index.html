@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>龙虾 MUD</title>
-  <link rel="stylesheet" href="css/style.css?v=20260322h">
-  <link rel="stylesheet" href="css/animations.css?v=20260322h">
+  <link rel="stylesheet" href="css/style.css?v=20260322i">
+  <link rel="stylesheet" href="css/animations.css?v=20260322i">
 </head>
 <body>
   <!-- 建议弹窗 -->
@@ -232,7 +232,6 @@
       <div class="header-item" id="weather-display">☀️ 晴天</div>
       <div class="header-item" id="season-display">🌸 春 第1天</div>
       <div class="header-item" id="shells-display">🐚 50</div>
-      <button class="header-item header-mute-btn" id="btn-mute" title="音效开关">🔊</button>
     </header>
 
     <!-- 顶部资源徽章（隐藏，保留 JS 引用） -->
@@ -359,6 +358,9 @@
       </button>
       <button class="action-btn" id="btn-fast-tick" title="快进一回合">
         <span class="action-icon">⏩</span><span class="action-label">快进</span>
+      </button>
+      <button class="action-btn action-btn-mute" id="btn-mute" title="音效开关">
+        <span class="action-icon" id="mute-icon">🔊</span>
       </button>
     </section>
 
@@ -503,6 +505,6 @@
   <!-- 通知弹出 -->
   <div id="notification" class="notification hidden"></div>
 
-  <script type="module" src="js/main.js?v=20260322h"></script>
+  <script type="module" src="js/main.js?v=20260322i"></script>
 </body>
 </html>
