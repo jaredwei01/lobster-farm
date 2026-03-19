@@ -1,0 +1,298 @@
+[
+  {
+    "id": "dungeon_coral_guardian",
+    "tier": 1,
+    "name": "珊瑚礁守护者",
+    "icon": "🪸",
+    "minLevel": 3,
+    "difficulty": 22,
+    "description": "守护珊瑚礁入口的古老石像，被海洋魔法赋予了生命。",
+    "narration": "珊瑚礁的入口处，一尊长满海藻的石像突然睁开了眼睛。它缓缓站起来，身上的珊瑚碎片簌簌落下。\"想要通过这里，先证明你的实力。\"",
+    "choices": [
+      {
+        "text": "直接冲过去！",
+        "strategyBonus": 0,
+        "skillWeight": "exploring",
+        "winText": "龙虾灵活地躲过了石像的手臂，从它的腿间穿了过去！石像愣了一下，然后笑了：\"好身手。\"",
+        "loseText": "石像轻轻一挡就把龙虾弹了回来。\"太弱了，回去练练再来。\""
+      },
+      {
+        "text": "用食物供奉它",
+        "strategyBonus": 4,
+        "skillWeight": "cooking",
+        "winText": "龙虾摆上了精心准备的料理。石像闻了闻，眼中闪过一丝温柔：\"好久没人给我做饭了...通过吧。\"",
+        "loseText": "石像看了看食物，摇了摇头：\"这...不够诚意。\""
+      },
+      {
+        "text": "研究它的弱点",
+        "strategyBonus": 3,
+        "skillWeight": "exploring",
+        "winText": "龙虾发现石像背后有一块松动的珊瑚，轻轻一推，石像就失去了平衡。\"聪明...你通过了。\"",
+        "loseText": "龙虾绕着石像转了好几圈，没找到任何破绽。需要更敏锐的观察力。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 25, "shells": 50, "item": "coral_fragment" },
+      "lose": { "exp": 5, "mood": -3, "energy": -5 }
+    }
+  },
+  {
+    "id": "dungeon_dark_current",
+    "tier": 2,
+    "name": "暗流漩涡",
+    "icon": "🌀",
+    "minLevel": 6,
+    "difficulty": 35,
+    "description": "一股强大的海底暗流形成了巨大的漩涡，吞噬一切靠近的东西。",
+    "narration": "前方的海水开始剧烈旋转，一个巨大的漩涡挡住了去路。水流中夹杂着碎石和海藻，发出低沉的呜咽声。传说只有最聪明的海洋生物才能通过这个考验...",
+    "choices": [
+      {
+        "text": "逆流而上硬闯！",
+        "strategyBonus": 0,
+        "skillWeight": "exploring",
+        "winText": "龙虾找到了水流的节奏，借力打力，像冲浪一样穿过了漩涡！漩涡似乎对这份勇气表示了尊重。",
+        "loseText": "水流太强了，龙虾被甩了出来。需要更强的体魄和更丰富的探索经验。"
+      },
+      {
+        "text": "寻找漩涡的中心投喂",
+        "strategyBonus": 5,
+        "skillWeight": "cooking",
+        "winText": "龙虾向漩涡中心投入了一份料理，漩涡竟然慢了下来——它在品尝！趁这个机会赶紧通过！",
+        "loseText": "食物被漩涡瞬间撕碎了，看来需要更有分量的料理才能让它停下来。"
+      },
+      {
+        "text": "观察规律找安全通道",
+        "strategyBonus": 4,
+        "skillWeight": "exploring",
+        "winText": "龙虾耐心观察了好一会儿，发现漩涡每隔一段时间就会出现一个缺口。精准地抓住时机冲了过去！",
+        "loseText": "规律太复杂了，龙虾算错了时机。需要更多的探索经验来提升判断力。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 35, "shells": 80, "item": "compass" },
+      "lose": { "exp": 8, "mood": -4, "energy": -8 }
+    }
+  },
+  {
+    "id": "dungeon_anglerfish",
+    "tier": 3,
+    "name": "深海灯笼鱼",
+    "icon": "🐟",
+    "minLevel": 10,
+    "difficulty": 50,
+    "description": "用头顶的发光诱饵引诱猎物的深海猎手，狡猾而危险。",
+    "narration": "黑暗中出现了一盏温暖的灯光，看起来很友好。但龙虾的直觉告诉它——那是一只巨大的灯笼鱼！它的嘴巴能吞下比自己大两倍的猎物，正用假灯引诱着路过的生物...",
+    "choices": [
+      {
+        "text": "用更亮的光吸引它的注意",
+        "strategyBonus": 3,
+        "skillWeight": "exploring",
+        "winText": "龙虾用发光海藻做了一个更亮的灯！灯笼鱼被吸引过去了，龙虾趁机从另一边溜走。以其人之道还治其人之身！",
+        "loseText": "龙虾的光源不够亮，灯笼鱼只是瞥了一眼就继续盯着龙虾。需要更丰富的探索知识。"
+      },
+      {
+        "text": "做一顿大餐喂饱它",
+        "strategyBonus": 6,
+        "skillWeight": "cooking",
+        "winText": "龙虾做了一份超大份的料理扔了过去。灯笼鱼吃得太饱了，打了个饱嗝后沉沉睡去。",
+        "loseText": "灯笼鱼的胃口太大了，这点食物根本不够塞牙缝。需要更高级的烹饪技术做出更丰盛的大餐。"
+      },
+      {
+        "text": "和它谈判：互利共存",
+        "strategyBonus": 4,
+        "skillWeight": "social",
+        "winText": "龙虾提出了一个交易——帮灯笼鱼清理身上的寄生虫，换取通行权。灯笼鱼想了想，点了点头。",
+        "loseText": "灯笼鱼对谈判不感兴趣，它只对食物感兴趣。也许换个策略？"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 45, "shells": 100, "item": "golden_shard" },
+      "lose": { "exp": 10, "mood": -5, "energy": -10 }
+    }
+  },
+  {
+    "id": "dungeon_volcano_crab",
+    "tier": 4,
+    "name": "海底火山巨蟹",
+    "icon": "🦀",
+    "minLevel": 15,
+    "difficulty": 65,
+    "description": "在海底火山口安家的远古巨蟹，甲壳被岩浆烤成了暗红色。",
+    "narration": "火山口的热浪中，一只通体暗红的巨蟹从熔岩中爬出。它的甲壳上还冒着蒸汽，钳子里夹着一块滚烫的火山石。这是传说中的火山巨蟹——据说它的甲壳刀枪不入...",
+    "choices": [
+      {
+        "text": "寻找甲壳的裂缝",
+        "strategyBonus": 3,
+        "skillWeight": "exploring",
+        "winText": "龙虾在巨蟹转身时发现了甲壳连接处的一条细缝。精准一击！巨蟹被震得后退了几步，承认了龙虾的实力。",
+        "loseText": "巨蟹的甲壳太厚了，龙虾找不到任何破绽。需要更丰富的战斗经验。"
+      },
+      {
+        "text": "用冰凉的料理降温",
+        "strategyBonus": 7,
+        "skillWeight": "cooking",
+        "winText": "龙虾端出了一份冰凉的霜珍珠布丁。巨蟹尝了一口，滚烫的身体瞬间凉爽了下来。它感激地让出了路。",
+        "loseText": "料理的凉度不够，巨蟹吃完后觉得还是太热了。需要更精湛的烹饪技术！"
+      },
+      {
+        "text": "用水流浇灭它的热量",
+        "strategyBonus": 4,
+        "skillWeight": "farming",
+        "winText": "龙虾利用农田浇水的经验，引导了一股冷水流冲向巨蟹。巨蟹被浇了个透心凉，气势全消。",
+        "loseText": "水流不够大，巨蟹身上的热量瞬间就蒸发了。需要更强的引水能力。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 55, "shells": 150, "item": "exp_book_m", "skill": "cooking" },
+      "lose": { "exp": 12, "mood": -6, "energy": -12 }
+    }
+  },
+  {
+    "id": "dungeon_ice_serpent",
+    "tier": 5,
+    "name": "冰晶海蛇",
+    "icon": "🐍",
+    "minLevel": 20,
+    "difficulty": 80,
+    "description": "身体由纯净冰晶构成的远古海蛇，能冻结周围的一切。",
+    "narration": "海水的温度骤然下降，冰晶从四面八方生长出来。一条通体透明的巨蛇从冰层中浮现，它的鳞片是一片片完美的六角冰晶，每一次呼吸都会让周围的海水结冰...",
+    "choices": [
+      {
+        "text": "在冰层中找到温暖的通道",
+        "strategyBonus": 4,
+        "skillWeight": "exploring",
+        "winText": "龙虾凭借丰富的探索经验，发现了冰层中的一条温暖暗流。沿着暗流穿过了海蛇的领地，海蛇甚至没有发现！",
+        "loseText": "到处都是冰，龙虾找不到温暖的通道。需要更高超的探索技巧。"
+      },
+      {
+        "text": "做一锅滚烫的汤融化冰层",
+        "strategyBonus": 7,
+        "skillWeight": "cooking",
+        "winText": "龙虾做了一锅超级热的琥珀炖汤，热气融化了海蛇周围的冰层。海蛇被温暖包围后，竟然舒服地睡着了。",
+        "loseText": "汤的温度不够高，刚端出来就被冻住了。需要更强的烹饪火候控制。"
+      },
+      {
+        "text": "用音乐安抚它",
+        "strategyBonus": 6,
+        "skillWeight": "social",
+        "winText": "龙虾用钳子敲击冰晶，奏出了一段美妙的旋律。海蛇被音乐感动了，冰层缓缓消融，它让出了一条路。",
+        "loseText": "龙虾的节奏感还不够好，海蛇只是微微晃了晃头。需要更高的艺术修养。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 70, "shells": 200, "item": "exp_book_l", "skill": "exploring" },
+      "lose": { "exp": 15, "mood": -8, "energy": -15 }
+    }
+  },
+  {
+    "id": "dungeon_ancient_dragon",
+    "tier": 6,
+    "name": "远古海龙",
+    "icon": "🐉",
+    "minLevel": 28,
+    "difficulty": 100,
+    "description": "沉睡万年的海底巨龙，传说它的鳞片蕴含着海洋的力量。",
+    "narration": "海底最深处的洞穴中，传来了沉重的呼吸声。一只巨大的海龙盘踞在金银珠宝之上，它的鳞片闪着深蓝色的光芒，每一片都有龙虾的身体那么大。它缓缓睁开了一只眼睛...",
+    "choices": [
+      {
+        "text": "展示自己的冒险经历",
+        "strategyBonus": 5,
+        "skillWeight": "exploring",
+        "winText": "龙虾讲述了自己的冒险故事。海龙听完后，眼中闪过一丝赞赏：\"有趣的小家伙...拿去吧。\"它抖落了一片鳞片。",
+        "loseText": "海龙打了个哈欠：\"你的故事还不够精彩。去经历更多再来找我。\""
+      },
+      {
+        "text": "做一道传说级料理",
+        "strategyBonus": 8,
+        "skillWeight": "cooking",
+        "winText": "龙虾拿出了毕生所学，做了一道前所未有的料理。海龙品尝后，龙眼中第一次露出了惊讶：\"万年来最好的一餐。\"",
+        "loseText": "海龙尝了一口就放下了：\"不错，但还不够打动一条活了万年的龙。\""
+      },
+      {
+        "text": "以礼相待，请求赐教",
+        "strategyBonus": 6,
+        "skillWeight": "social",
+        "winText": "龙虾恭敬地行了一个大礼。海龙被这份谦逊打动了：\"很久没有生物对我如此尊敬了。\"它赠予了一片龙鳞。",
+        "loseText": "海龙感受到了龙虾的诚意，但摇了摇头：\"你的修为还不够。再修炼一段时间吧。\""
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 90, "shells": 300, "item": "golden_shard", "skill": "social" },
+      "lose": { "exp": 18, "mood": -8, "energy": -15 }
+    }
+  },
+  {
+    "id": "dungeon_abyss_eye",
+    "tier": 7,
+    "name": "深渊之眼",
+    "icon": "👁️",
+    "minLevel": 36,
+    "difficulty": 120,
+    "description": "深渊中的神秘存在，没有人知道它的真面目。",
+    "narration": "深渊的最深处，一只巨大的眼睛在黑暗中睁开。它没有身体，只有那只散发着幽绿光芒的眼睛，仿佛能看穿一切。海水在它的注视下变得凝重，连时间都似乎慢了下来...",
+    "choices": [
+      {
+        "text": "直视它的目光！",
+        "strategyBonus": 5,
+        "skillWeight": "exploring",
+        "winText": "龙虾鼓起勇气直视深渊之眼。在那一瞬间，龙虾看到了整个海洋的历史。深渊之眼认可了这份勇气，缓缓闭上了眼。",
+        "loseText": "深渊之眼的目光太过强大，龙虾不由自主地移开了视线。需要更强大的意志力。"
+      },
+      {
+        "text": "献上最珍贵的料理",
+        "strategyBonus": 6,
+        "skillWeight": "cooking",
+        "winText": "龙虾将自己最得意的作品放在深渊之眼前。那只眼睛闪了闪，一滴泪珠落下——那是深渊珍珠。它很久没有被感动了。",
+        "loseText": "深渊之眼看了看料理，没有任何反应。也许需要能触动灵魂的味道。"
+      },
+      {
+        "text": "用心灵与它对话",
+        "strategyBonus": 8,
+        "skillWeight": "social",
+        "winText": "龙虾闭上眼睛，用心灵感应与深渊之眼交流。在无声的对话中，它们达成了理解。深渊之眼赠予了一颗蕴含深渊力量的珍珠。",
+        "loseText": "龙虾的心灵力量还不够强大，无法与深渊之眼建立连接。需要更深厚的内心修为。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 120, "shells": 400, "item": "frost_pearl", "skill": "social" },
+      "lose": { "exp": 20, "mood": -10, "energy": -18 }
+    }
+  },
+  {
+    "id": "dungeon_sea_god",
+    "tier": 8,
+    "name": "海神之影",
+    "icon": "🔱",
+    "minLevel": 45,
+    "difficulty": 150,
+    "description": "海神留在深海的一缕意识，拥有支配海洋的力量。",
+    "narration": "海底最深最暗的地方，一道巨大的光影浮现。那是海神的残影——即使只是一缕意识，也散发着令整个海洋颤抖的威压。海水在它周围形成了完美的球形空间，万物静止...\n\n\"小小的龙虾...你竟然走到了这里。\"",
+    "choices": [
+      {
+        "text": "展示一路走来的所有经历",
+        "strategyBonus": 6,
+        "skillWeight": "exploring",
+        "winText": "龙虾的记忆在海神面前展开——从幼体时的第一次探索，到穿越深渊的勇气。海神微笑了：\"你让我看到了生命的美好。\"",
+        "loseText": "海神看完后沉默了一会儿：\"你的旅程还不够完整。继续走下去，终有一天你会再回到这里。\""
+      },
+      {
+        "text": "做一道融合所有技艺的终极料理",
+        "strategyBonus": 8,
+        "skillWeight": "cooking",
+        "winText": "龙虾将毕生所学融入一道料理。海神品尝后，整个海底都亮了起来：\"这是...海洋的味道。你做到了。\"",
+        "loseText": "海神品尝后微微摇头：\"差一点...你的技艺已经很好了，但还缺少那份对海洋的终极理解。\""
+      },
+      {
+        "text": "以海洋之子的身份请求认可",
+        "strategyBonus": 10,
+        "skillWeight": "social",
+        "winText": "龙虾以最真诚的姿态面对海神，表达了对海洋的热爱。海神的光芒变得温柔：\"海洋之子...我认可你。从今以后，你是海神之友。\"",
+        "loseText": "海神感受到了龙虾的真心，但轻轻叹息：\"你的心还不够纯粹。去感受更多，爱更多，然后再来。\""
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 200, "shells": 500, "item": "lucky_star" },
+      "lose": { "exp": 25, "mood": -10, "energy": -20 }
+    }
+  }
+]

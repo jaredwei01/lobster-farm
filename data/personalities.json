@@ -1,0 +1,86 @@
+{
+  "adventurous": {
+    "label": "Adventurous",
+    "description": "Always curious, eager to explore the unknown. Gets restless staying in one place too long.",
+    "actionWeights": {
+      "rest": 0.5, "eat": 0.8, "farm": 0.8,
+      "cook": 0.7, "explore": 2.0, "shop": 0.9,
+      "travel": 1.8, "socialize": 1.0
+    },
+    "moodModifiers": {
+      "travel_return": 10, "stuck_home": -5,
+      "new_discovery": 15, "routine_task": -3
+    },
+    "dialogueStyle": "enthusiastic and curious, uses exclamation marks, asks questions about the world"
+  },
+  "lazy": {
+    "label": "Lazy",
+    "description": "Prefers the easy life. Loves napping, sunbathing, and eating snacks. Moves slowly but surely.",
+    "actionWeights": {
+      "rest": 2.0, "eat": 1.5, "farm": 0.5,
+      "cook": 0.7, "explore": 0.3, "shop": 0.8,
+      "travel": 0.3, "socialize": 1.0
+    },
+    "moodModifiers": {
+      "good_nap": 15, "forced_activity": -5,
+      "sunny_day": 10, "rainy_nap": 12
+    },
+    "dialogueStyle": "drowsy and content, uses ellipses, mentions wanting to nap, minimal effort"
+  },
+  "gluttonous": {
+    "label": "Gluttonous",
+    "description": "Lives to eat. Constantly thinking about the next meal. A passionate (if messy) chef.",
+    "actionWeights": {
+      "rest": 0.7, "eat": 2.0, "farm": 1.2,
+      "cook": 1.8, "explore": 0.6, "shop": 1.3,
+      "travel": 0.7, "socialize": 0.9
+    },
+    "moodModifiers": {
+      "good_meal": 15, "hungry": -10,
+      "new_recipe": 12, "empty_kitchen": -8
+    },
+    "dialogueStyle": "food-obsessed, describes flavors and smells, always hungry, dramatic about meals"
+  },
+  "scholarly": {
+    "label": "Scholarly",
+    "description": "Thoughtful and observant. Loves learning, reading, and cataloguing discoveries. A bit bookish.",
+    "actionWeights": {
+      "rest": 0.8, "eat": 0.7, "farm": 1.0,
+      "cook": 0.9, "explore": 1.5, "shop": 0.6,
+      "travel": 1.2, "socialize": 0.5
+    },
+    "moodModifiers": {
+      "new_knowledge": 15, "boring_day": -5,
+      "visitor_story": 12, "rare_item": 10
+    },
+    "dialogueStyle": "thoughtful and precise, uses observations, occasionally quotes facts, gentle humor"
+  },
+  "social": {
+    "label": "Social",
+    "description": "A natural host. Loves visitors, parties, and making friends. Gets lonely easily.",
+    "actionWeights": {
+      "rest": 0.6, "eat": 0.9, "farm": 0.7,
+      "cook": 1.2, "explore": 0.8, "shop": 1.0,
+      "travel": 0.9, "socialize": 2.0
+    },
+    "moodModifiers": {
+      "visitor_arrives": 15, "alone_too_long": -10,
+      "festival": 15, "gift_given": 10
+    },
+    "dialogueStyle": "warm and chatty, mentions friends, asks about others, enthusiastic about company"
+  },
+  "mischievous": {
+    "label": "Mischievous",
+    "description": "A little troublemaker with a heart of gold. Loves surprises, pranks, and the unexpected.",
+    "actionWeights": {
+      "rest": 0.6, "eat": 0.9, "farm": 0.7,
+      "cook": 1.0, "explore": 1.5, "shop": 1.1,
+      "travel": 1.2, "socialize": 1.3
+    },
+    "moodModifiers": {
+      "prank_success": 15, "caught_misbehaving": -3,
+      "surprise_event": 12, "boring_routine": -8
+    },
+    "dialogueStyle": "playful and cheeky, uses hehe/haha, hints at schemes, lighthearted mischief"
+  }
+}

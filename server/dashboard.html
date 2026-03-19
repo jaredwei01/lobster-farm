@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>龙虾 MUD — 数据看板</title>
+<style>
+:root { --bg:#0a1628; --card:#12233d; --text:#e0e8f0; --dim:#8899aa; --accent:#ff6b4a; --green:#7ddf64; --blue:#47d4ff; --border:#1e3a5f; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);max-width:960px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin-bottom:4px;background:linear-gradient(135deg,#ff6b4a,#ffb347);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--dim);font-size:13px;margin-bottom:16px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.kpi{background:var(--card);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)}
+.kpi-value{font-size:26px;font-weight:700;color:var(--accent)}
+.kpi-value.live{color:var(--green)}
+.kpi-label{font-size:11px;color:var(--dim);margin-top:4px}
+.section{margin-bottom:24px}
+.section h2{font-size:15px;color:var(--dim);margin-bottom:10px;font-weight:600}
+.chart-container{background:var(--card);border-radius:10px;padding:16px;border:1px solid var(--border)}
+.bar-chart{display:flex;align-items:flex-end;gap:2px;height:100px;padding-top:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px}
+.bar-col .bar{border-radius:2px 2px 0 0;min-width:4px;transition:height 0.4s;width:100%}
+.bar-col .bar-label{font-size:8px;color:var(--dim);white-space:nowrap}
+.bar-col .bar-value{font-size:8px;color:var(--accent);font-weight:600}
+.hbar{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.hbar-label{width:90px;text-align:right;color:var(--dim);flex-shrink:0;font-size:11px}
+.hbar-track{flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:5px;transition:width 0.5s}
+.hbar-value{width:40px;font-size:11px;color:var(--accent);font-weight:600}
+.retention-row{display:flex;gap:10px;justify-content:center}
+.retention-card{background:var(--card);border-radius:10px;padding:14px 20px;text-align:center;border:1px solid var(--border);flex:1}
+.retention-card .r-value{font-size:24px;font-weight:700}
+.retention-card .r-label{font-size:11px;color:var(--dim);margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:var(--dim);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--border)}
+td{padding:6px;border-bottom:1px solid rgba(30,58,95,0.4);color:var(--text)}
+tr:hover td{background:rgba(255,107,74,0.04)}
+.loading{text-align:center;padding:40px;color:var(--dim)}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.pill-green{background:rgba(125,223,100,0.15);color:var(--green)}
+.pill-blue{background:rgba(71,212,255,0.15);color:var(--blue)}
+.pill-orange{background:rgba(255,107,74,0.15);color:var(--accent)}
+.pill-red{background:rgba(255,80,80,0.15);color:#ff5050}
+.tab-bar{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
+.tab-btn{padding:10px 18px;border:none;background:none;color:var(--dim);cursor:pointer;font-size:13px;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.live-dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.event-stream{max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.stream-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg);border-radius:6px;font-size:12px;animation:slideIn 0.2s ease}
+.stream-item .s-time{color:var(--dim);font-size:10px;width:55px;flex-shrink:0}
+.stream-item .s-uid{color:var(--blue);font-size:10px;width:65px;flex-shrink:0;font-family:monospace}
+.stream-item .s-event{flex:1}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.online-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(125,223,100,0.1);border:1px solid rgba(125,223,100,0.3);border-radius:20px;font-size:12px;color:var(--green);font-weight:600}
+.refresh-info{font-size:10px;color:var(--dim);text-align:right;margin-bottom:8px}
+</style>
+</head>
+<body>
+<h1>🦞 龙虾 MUD — 数据看板</h1>
+<p class="subtitle">实时游戏监控与用户行为分析</p>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="realtime"><span class="live-dot"></span>实时</button>
+  <button class="tab-btn" data-tab="daily">7天</button>
+  <button class="tab-btn" data-tab="monthly">30天</button>
+  <button class="tab-btn" data-tab="quarterly">90天</button>
+</div>
+
+<div id="content"><div class="loading">加载中...</div></div>
+
+<script>
+let currentTab = 'realtime';
+let refreshTimer = null;
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab = btn.dataset.tab;
+    clearInterval(refreshTimer);
+    loadTab();
+  });
+});
+
+function loadTab() {
+  if (currentTab === 'realtime') { loadRealtime(); refreshTimer = setInterval(loadRealtime, 5000); }
+  else { const days = {daily:7,monthly:30,quarterly:90}[currentTab]; loadHistory(days); refreshTimer = setInterval(() => loadHistory(days), 60000); }
+}
+
+async function loadRealtime() {
+  try {
+    const resp = await fetch('/lobster-farm/api/realtime');
+    const d = await resp.json();
+    renderRealtime(d);
+  } catch (e) {
+    document.getElementById('content').innerHTML = `<div class="loading" style="color:var(--accent)">加载失败: ${e.message}</div>`;
+  }
+}
+
+async function loadHistory(days) {
+  document.getElementById('content').innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const resp = await fetch(`/lobster-farm/api/dashboard?days=${days}`);
+    const d = await resp.json();
+    renderHistory(d, days);
+  } catch (e) {
+    document.getElementById('content').innerHTML = `<div class="loading" style="color:var(--accent)">加载失败: ${e.message}</div>`;
+  }
+}
+
+function fmt(sec) { if(!sec||sec<=0) return '0秒'; if(sec<60) return sec+'秒'; if(sec<3600) return Math.round(sec/60)+'分钟'; return (sec/3600).toFixed(1)+'小时'; }
+function retColor(v) { return v>=40?'var(--green)':v>=20?'var(--accent)':'#ff6b6b'; }
+function ago(ts) { const s=Math.round((Date.now()-ts)/1000); if(s<5) return '刚刚'; if(s<60) return s+'秒前'; if(s<3600) return Math.round(s/60)+'分钟前'; return Math.round(s/3600)+'小时前'; }
+function tsToTime(ts) { const d=new Date(ts); return d.toTimeString().slice(0,8); }
+
+const EVENT_LABELS = {
+  session_start:'🟢 进入游戏', session_end:'🔴 离开游戏', heartbeat:'💓 心跳',
+  tab_hidden:'👁️ 切后台', tab_visible:'👁️ 回前台', tick:'⏱️ 回合',
+  interaction:'🎮 操作', create_lobster:'🦞 创建龙虾', suggest_accepted:'✅ 接受建议',
+  suggest_refused:'❌ 拒绝建议', feed:'🍽️ 喂食', game_state:'📊 状态快照',
+  test:'🧪 测试',
+};
+
+function renderRealtime(d) {
+  const el = document.getElementById('content');
+  const bucketMax = Math.max(...d.minute_buckets.map(b => b.events), 1);
+  const actionMax = Math.max(...d.action_counts.map(r => r.count), 1);
+
+  el.innerHTML = `
+    <div class="refresh-info">每 5 秒自动刷新 · 更新于 ${new Date().toLocaleTimeString()}</div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-value live">${d.online_now}</div>
+        <div class="kpi-label"><span class="live-dot"></span>当前在线</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value live">${d.active_sessions}</div>
+        <div class="kpi-label">活跃会话</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">${d.events_per_minute}</div>
+        <div class="kpi-label">事件/分钟</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">${d.events_last_hour}</div>
+        <div class="kpi-label">近1小时事件</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📈 最近60分钟事件量（每分钟）</h2>
+      <div class="chart-container">
+        <div class="bar-chart">
+          ${d.minute_buckets.map((b,i) => `
+            <div class="bar-col">
+              ${b.events?`<div class="bar-value">${b.events}</div>`:''}
+              <div class="bar" style="height:${Math.max(b.events/bucketMax*100,2)}%;background:${b.users>0?'linear-gradient(180deg,var(--green),#4caf50)':'rgba(255,255,255,0.05)'}"></div>
+              ${i%10===0?`<div class="bar-label">${60-i}m</div>`:''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    ${d.live_users.length > 0 ? `
+    <div class="section">
+      <h2>👥 在线用户</h2>
+      <div class="chart-container" style="overflow-x:auto">
+        <table>
+          <tr><th>用户</th><th>在线时长</th><th>操作</th><th>回合</th><th>最后活动</th></tr>
+          ${d.live_users.map(u => `
+            <tr>
+              <td><span class="online-badge"><span class="live-dot"></span>${u.uid}</span></td>
+              <td>${fmt(Math.round((d.now_ms - u.start_ts)/1000))}</td>
+              <td><span class="pill pill-orange">${u.interactions}</span></td>
+              <td><span class="pill pill-green">${u.ticks}</span></td>
+              <td style="font-size:11px;color:var(--dim)">${u.last_event ? (EVENT_LABELS[u.last_event]||u.last_event) : '-'} · ${u.last_ts ? ago(u.last_ts) : '-'}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+    </div>
+    ` : ''}
+
+    ${d.action_counts.length > 0 ? `
+    <div class="section">
+      <h2>🎮 近1小时操作分布</h2>
+      <div class="chart-container">
+        ${d.action_counts.map(r => `
+          <div class="hbar">
+            <div class="hbar-label">${r.action||'其他'}</div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${r.count/actionMax*100}%;background:var(--accent)"></div></div>
+            <div class="hbar-value">${r.count}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="section">
+      <h2>📡 实时事件流</h2>
+      <div class="chart-container">
+        <div class="event-stream">
+          ${d.recent_events.length === 0 ? '<div style="color:var(--dim);text-align:center;padding:20px">暂无事件</div>' :
+            d.recent_events.slice(0,40).map(e => {
+              const label = EVENT_LABELS[e.event] || e.event;
+              let detail = '';
+              try { const p = JSON.parse(e.data||'{}'); if(p.action) detail = ' → '+p.action; if(p.personality) detail = ' → '+p.personality; if(p.item) detail = ' → '+p.item; } catch{}
+              return `<div class="stream-item">
+                <span class="s-time">${tsToTime(e.ts)}</span>
+                <span class="s-uid">${e.uid}</span>
+                <span class="s-event">${label}${detail}</span>
+                <span style="font-size:10px;color:var(--dim)">${ago(e.ts)}</span>
+              </div>`;
+            }).join('')
+          }
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHistory(d, days) {
+  const el = document.getElementById('content');
+  const dauMax = Math.max(...d.dau.map(r => r.users), 1);
+  const hourMax = Math.max(...d.hourly_activity.map(r => r.users), 1);
+  const actionMax = Math.max(...d.action_distribution.map(r => r.count), 1);
+
+  el.innerHTML = `
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-value">${d.total_users}</div><div class="kpi-label">累计用户</div></div>
+      <div class="kpi"><div class="kpi-value">${d.today_users}</div><div class="kpi-label">今日活跃</div></div>
+      <div class="kpi"><div class="kpi-value">${fmt(d.avg_session_duration_sec)}</div><div class="kpi-label">平均会话时长</div></div>
+      <div class="kpi"><div class="kpi-value">${fmt(d.avg_active_sec)}</div><div class="kpi-label">平均活跃时长</div></div>
+      <div class="kpi"><div class="kpi-value">${d.avg_interactions_per_session}</div><div class="kpi-label">交互次数/会话</div></div>
+      <div class="kpi"><div class="kpi-value">${d.avg_ticks_per_session}</div><div class="kpi-label">回合数/会话</div></div>
+    </div>
+
+    <div class="section">
+      <h2>📊 留存率</h2>
+      <div class="retention-row">
+        <div class="retention-card"><div class="r-value" style="color:${retColor(d.retention.d1)}">${d.retention.d1}%</div><div class="r-label">次日留存</div></div>
+        <div class="retention-card"><div class="r-value" style="color:${retColor(d.retention.d3)}">${d.retention.d3}%</div><div class="r-label">3日留存</div></div>
+        <div class="retention-card"><div class="r-value" style="color:${retColor(d.retention.d7)}">${d.retention.d7}%</div><div class="r-label">7日留存</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📈 每日活跃用户 (DAU)</h2>
+      <div class="chart-container">
+        <div class="bar-chart" style="height:120px">
+          ${d.dau.slice(-days).map(r => `
+            <div class="bar-col">
+              <div class="bar-value">${r.users}</div>
+              <div class="bar" style="height:${Math.max(r.users/dauMax*100,4)}%;background:linear-gradient(180deg,var(--accent),#ff8a65)"></div>
+              <div class="bar-label">${r.day.slice(5)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🕐 活跃时段分布</h2>
+      <div class="chart-container">
+        <div class="bar-chart">
+          ${Array.from({length:24},(_,h)=>{
+            const found=d.hourly_activity.find(r=>r.hour===h);const users=found?found.users:0;
+            return `<div class="bar-col"><div class="bar-value">${users||''}</div><div class="bar" style="height:${Math.max(users/hourMax*100,2)}%;background:linear-gradient(180deg,var(--blue),#2196f3)"></div><div class="bar-label">${h}</div></div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🎮 玩家操作分布</h2>
+      <div class="chart-container">
+        ${d.action_distribution.length?d.action_distribution.map(r => `
+          <div class="hbar"><div class="hbar-label">${r.action||'未知'}</div><div class="hbar-track"><div class="hbar-fill" style="width:${r.count/actionMax*100}%;background:var(--accent)"></div></div><div class="hbar-value">${r.count}</div></div>
+        `).join(''):'<div style="color:var(--dim);text-align:center;padding:12px">暂无数据</div>'}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🦞 性格选择分布</h2>
+      <div class="chart-container">
+        ${d.personality_distribution.length?d.personality_distribution.map(r => `
+          <div class="hbar"><div class="hbar-label">${r.personality||'未知'}</div><div class="hbar-track"><div class="hbar-fill" style="width:${r.count/Math.max(...d.personality_distribution.map(x=>x.count),1)*100}%;background:var(--green)"></div></div><div class="hbar-value">${r.count}</div></div>
+        `).join(''):'<div style="color:var(--dim);text-align:center;padding:12px">暂无数据</div>'}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📋 事件统计 Top 20</h2>
+      <div class="chart-container" style="overflow-x:auto">
+        <table><tr><th>事件</th><th>次数</th></tr>
+          ${d.event_counts.map(r=>`<tr><td>${r.event}</td><td><span class="pill pill-blue">${r.count}</span></td></tr>`).join('')}
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🕑 最近会话</h2>
+      <div class="chart-container" style="overflow-x:auto">
+        <table><tr><th>用户</th><th>日期</th><th>时长</th><th>活跃</th><th>操作</th><th>回合</th><th>屏幕</th></tr>
+          ${d.recent_sessions.map(r=>`<tr><td title="${r.uid}">${(r.uid||'').slice(0,8)}...</td><td>${r.day}</td><td>${fmt(r.duration_sec||0)}</td><td>${fmt(r.active_sec||0)}</td><td><span class="pill pill-orange">${r.interactions||0}</span></td><td><span class="pill pill-green">${r.ticks||0}</span></td><td style="font-size:10px;color:var(--dim)">${r.screen||''}</td></tr>`).join('')}
+        </table>
+      </div>
+    </div>
+
+    <p style="text-align:center;color:var(--dim);font-size:11px;margin-top:24px">数据生成于 ${d.generated_at} · 统计周期 ${d.period_days} 天</p>
+  `;
+}
+
+loadTab();
+</script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>龙虾 MUD</title>
+  <link rel="stylesheet" href="css/style.css?v=20260322h">
+  <link rel="stylesheet" href="css/animations.css?v=20260322h">
+</head>
+<body>
+  <!-- 建议弹窗 -->
+  <div id="suggest-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>💡 给龙虾一个建议</h3>
+      <p class="modal-desc">龙虾会考虑你的建议，但不一定听话哦~</p>
+      <div id="suggest-options" class="suggest-grid"></div>
+      <button id="btn-suggest-cancel" class="btn-small modal-cancel-btn">算了，让它自己决定</button>
+    </div>
+  </div>
+
+  <!-- 喂食弹窗 -->
+  <div id="feed-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>🍽️ 喂食</h3>
+      <p class="modal-desc">选一样食物摆出来</p>
+      <div id="feed-options" class="suggest-grid"></div>
+      <button id="btn-feed-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 种植弹窗 -->
+  <div id="plant-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>🌱 种植</h3>
+      <p class="modal-desc">选一颗种子种到空地里</p>
+      <div id="plant-options" class="suggest-grid"></div>
+      <button id="btn-plant-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 金色工坊弹窗 -->
+  <div id="golden-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>✨ 金色工坊</h3>
+      <p class="modal-desc">消耗金色碎片和贝壳，兑换带特殊属性的道具</p>
+      <div id="golden-options" class="suggest-grid"></div>
+      <button id="btn-golden-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 商店弹窗 -->
+  <div id="shop-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>🏪 商店</h3>
+      <p class="modal-desc">每日精选，库存有限</p>
+      <div id="shop-stock" class="suggest-grid"></div>
+      <button id="btn-shop-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 访客弹窗 -->
+  <div id="visitor-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="visitor-modal-title">访客</h3>
+      <p class="modal-desc" id="visitor-modal-desc"></p>
+      <div id="visitor-actions" class="suggest-grid"></div>
+      <button id="btn-visitor-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 收藏弹窗 -->
+  <div id="collection-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal" style="max-width:420px;">
+      <h3>📚 收藏册</h3>
+      <div class="collection-tabs">
+        <button class="coll-tab active" data-coll-tab="postcards">明信片</button>
+        <button class="coll-tab" data-coll-tab="recipes">食谱</button>
+        <button class="coll-tab" data-coll-tab="stamps">印章</button>
+        <button class="coll-tab" data-coll-tab="rare">展览</button>
+        <button class="coll-tab" data-coll-tab="sealife">图鉴</button>
+        <button class="coll-tab" data-coll-tab="achievements">成就</button>
+      </div>
+      <div id="collection-content" class="collection-content"></div>
+      <button id="btn-collection-cancel" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 深海挑战弹窗 -->
+  <div id="dungeon-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal modal-dungeon">
+      <h3>⚔️ 深海挑战</h3>
+      <p class="modal-desc" id="dungeon-power-display">你的战力: --</p>
+      <div id="dungeon-boss-list" class="dungeon-boss-list"></div>
+      <button id="btn-dungeon-close" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 深海挑战战斗弹窗 -->
+  <div id="dungeon-battle-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal modal-dungeon-battle">
+      <div id="dungeon-battle-header" class="dungeon-battle-header"></div>
+      <div id="dungeon-battle-narration" class="dungeon-battle-narration"></div>
+      <div id="dungeon-battle-prep" class="dungeon-battle-prep">
+        <div class="prep-section">
+          <label>战前进食</label>
+          <select id="dungeon-food-select" class="dungeon-select"></select>
+        </div>
+        <div class="prep-section">
+          <label>作战策略</label>
+          <select id="dungeon-strategy-select" class="dungeon-select"></select>
+        </div>
+        <div class="prep-power" id="dungeon-prep-power"></div>
+      </div>
+      <div id="dungeon-battle-choices" class="dungeon-battle-choices"></div>
+      <div id="dungeon-battle-result" class="dungeon-battle-result hidden"></div>
+      <button id="btn-dungeon-battle-close" class="btn-small hidden modal-cancel-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- 退休弹窗 -->
+  <div id="retire-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>🎓 退休仪式</h3>
+      <div id="retire-summary"></div>
+      <div id="retire-actions" style="margin-top:12px;display:flex;gap:8px;">
+        <button id="btn-retire-confirm" class="btn-small btn-golden" style="flex:1;">举行仪式，开始新旅程</button>
+        <button id="btn-retire-cancel" class="btn-small" style="flex:1;">再想想</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 每日签到弹窗 -->
+  <div id="checkin-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal checkin-modal">
+      <h3>📅 每日签到</h3>
+      <p class="modal-desc" id="checkin-streak"></p>
+      <div id="checkin-calendar" class="checkin-calendar"></div>
+      <div id="checkin-reward-preview" class="checkin-reward-preview"></div>
+      <button id="btn-checkin" class="btn-primary checkin-btn">签到领取</button>
+      <button id="btn-checkin-close" class="btn-small modal-cancel-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- 钓鱼小游戏弹窗 -->
+  <div id="fishing-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal fishing-modal">
+      <h3>🎣 钓鱼</h3>
+      <p class="modal-desc" id="fishing-attempts">剩余次数: 3/3</p>
+      <div class="fishing-game">
+        <div class="fishing-meter">
+          <div class="fishing-target" id="fishing-target"></div>
+          <div class="fishing-marker" id="fishing-marker"></div>
+          <div class="fishing-fish" id="fishing-fish">🐟</div>
+        </div>
+        <div class="fishing-result hidden" id="fishing-result">
+          <div class="fishing-result-icon" id="fishing-result-icon"></div>
+          <div class="fishing-result-text" id="fishing-result-text"></div>
+        </div>
+      </div>
+      <div class="fishing-actions">
+        <button id="btn-fish-cast" class="btn-primary">抛竿！</button>
+        <button id="btn-fish-close" class="btn-secondary">离开</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 离线欢迎回来弹窗 -->
+  <div id="welcome-back-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal welcome-back-modal">
+      <div id="wb-lobster-reaction" class="wb-lobster-reaction">🦞</div>
+      <h3>欢迎回来！</h3>
+      <p class="modal-desc" id="wb-duration"></p>
+      <div id="wb-report" class="wb-report"></div>
+      <div id="wb-event-chart" class="wb-event-chart"></div>
+      <div id="wb-quote" class="wb-quote"></div>
+      <button id="btn-wb-close" class="btn-primary" style="width:100%;margin-top:10px;">继续冒险</button>
+    </div>
+  </div>
+
+  <!-- 创建角色界面 -->
+  <div id="create-screen" class="screen">
+    <div class="create-container">
+      <div class="create-logo"><img src="assets/sprites/lobster.svg" alt="龙虾" class="logo-pixel"></div>
+      <h1>龙虾 MUD</h1>
+      <p class="create-subtitle">你的龙虾，有自己的想法</p>
+
+      <!-- 推荐：安装 Skill -->
+      <div class="entry-section entry-highlight">
+        <div class="entry-badge">推荐</div>
+        <h3 class="entry-title">🦞 安装龙虾 Skill</h3>
+        <p class="entry-desc">让你的 AI 智能体拥有一只专属龙虾。复制地址粘贴给智能体即可自动安装。</p>
+        <div class="skill-install-col">
+          <input type="text" id="skill-url" class="skill-url-input" value="https://clawhub.ai/jaredwei01/lobster-farm-agent" readonly>
+          <button id="btn-copy-skill" class="btn-primary btn-copy">复制</button>
+        </div>
+        <p class="entry-hint">复制后粘贴到 Cursor / 智能体对话框，说「安装这个 Skill」即可</p>
+      </div>
+
+      <div class="entry-divider"><span>已有 KEY？</span></div>
+
+      <!-- KEY 绑定 -->
+      <div class="entry-section entry-secondary">
+        <h3 class="entry-title">🔑 绑定智能体 KEY</h3>
+        <p class="entry-desc">安装 Skill 后智能体会给你一个专属 KEY，在此绑定</p>
+        <div class="key-bind-col">
+          <input type="text" id="bind-key-input" placeholder="输入 KEY：lob_xxxxxxxx" maxlength="16" spellcheck="false">
+          <button id="btn-bind-key" class="btn-primary">绑定</button>
+        </div>
+        <p id="bind-key-error" class="entry-error hidden"></p>
+      </div>
+
+      <div class="entry-divider"><span>请您手动创建您的龙虾（不绑 KEY 也可以玩）</span></div>
+
+      <!-- 手动创建 -->
+      <div class="entry-section entry-manual">
+        <div class="create-form">
+          <label>给你的龙虾起个名字</label>
+          <input type="text" id="lobster-name" placeholder="比如：小红、阿虾、虾老板..." maxlength="12">
+          <label>选择性格</label>
+          <div id="personality-grid" class="personality-grid"></div>
+          <button id="btn-start" class="btn-primary" disabled>开始新生活</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏主界面 -->
+  <main>
+  <div id="game-screen" class="screen hidden">
+    <!-- 顶部状态栏 -->
+    <header id="header">
+      <div class="header-item" id="weather-display">☀️ 晴天</div>
+      <div class="header-item" id="season-display">🌸 春 第1天</div>
+      <div class="header-item" id="shells-display">🐚 50</div>
+      <button class="header-item header-mute-btn" id="btn-mute" title="音效开关">🔊</button>
+    </header>
+
+    <!-- 顶部资源徽章（隐藏，保留 JS 引用） -->
+    <div id="status-strip" class="hidden">
+      <span id="badge-growth"></span>
+      <span id="badge-mood"></span>
+      <span id="badge-energy"></span>
+      <span id="badge-farm"></span>
+    </div>
+
+    <!-- 龙虾信息卡（紧凑版） -->
+    <section id="lobster-card" class="lobster-card-compact">
+      <div class="lobster-avatar" id="lobster-avatar"><img src="assets/sprites/lobster.svg" alt="龙虾" class="avatar-pixel"></div>
+      <div class="lobster-info">
+        <div class="lobster-name-row">
+          <div class="lobster-name" id="lobster-name-display" title="点击改名">小虾</div>
+          <span class="bond-heart" id="bond-heart" title="羁绊值">💙</span>
+        </div>
+        <div class="lobster-meta">
+          <span id="lobster-personality-display">🧭 冒险型</span>
+          <span id="lobster-level-display">等级1 幼体</span>
+        </div>
+        <div class="exp-row">
+          <div class="bar exp-bar-wrap"><div class="bar-fill exp-bar" id="exp-bar" style="width:0%"></div></div>
+          <span class="exp-label" id="exp-label">0/50</span>
+        </div>
+      </div>
+      <div class="lobster-stats-compact">
+        <div class="stat-mini"><span class="stat-label">😊</span><div class="bar bar-sm"><div class="bar-fill mood-bar" id="mood-bar" style="width:70%"></div></div><span class="stat-value" id="mood-value">70</span></div>
+        <div class="stat-mini"><span class="stat-label">⚡</span><div class="bar bar-sm"><div class="bar-fill energy-bar" id="energy-bar" style="width:80%"></div></div><span class="stat-value" id="energy-value">80</span></div>
+        <div class="stat-mini"><span class="stat-label">🍽️</span><div class="bar bar-sm"><div class="bar-fill hunger-bar" id="hunger-bar" style="width:80%"></div></div><span class="stat-value" id="hunger-value">80</span></div>
+      </div>
+    </section>
+
+    <!-- 协作任务 -->
+    <div id="coop-quest-display" class="coop-quest-display hidden"></div>
+
+    <!-- 海底龙虾动态窗口 -->
+    <section id="sea-window" class="sea-window">
+      <div class="sea-surface" id="sea-surface">
+        <div class="sea-sun" id="sea-sun"></div>
+        <div class="sea-moon" id="sea-moon"></div>
+        <div class="sea-clouds" id="sea-clouds"></div>
+        <div class="sea-sky-fx" id="sea-sky-fx"></div>
+        <div class="sea-wave wave-1"></div>
+        <div class="sea-wave wave-2"></div>
+        <div class="sea-wave wave-3"></div>
+      </div>
+      <div class="sea-water">
+        <div class="sea-light-rays" id="sea-light-rays"></div>
+        <div class="sea-bubbles" id="sea-bubbles"></div>
+        <div class="sea-creatures" id="sea-creatures"></div>
+        <div class="sea-particles" id="sea-particles">
+          <div class="sea-particle p1"></div>
+          <div class="sea-particle p2"></div>
+          <div class="sea-particle p3"></div>
+          <div class="sea-particle p4"></div>
+          <div class="sea-particle p5"></div>
+          <div class="sea-particle p6"></div>
+        </div>
+        <div class="sea-seaweed sea-seaweed-1"></div>
+        <div class="sea-seaweed sea-seaweed-2"></div>
+        <div class="sea-seaweed sea-seaweed-3"></div>
+        <div class="sea-rock sea-rock-left" id="sea-rock-left"></div>
+        <div class="sea-rock sea-rock-right" id="sea-rock-right"></div>
+        <div class="sea-golden hidden" id="sea-golden">✨</div>
+        <div class="sea-decorations" id="sea-decorations"></div>
+        <div class="sea-sand"></div>
+        <div class="sea-lobster" id="sea-lobster">
+          <img src="assets/sprites/lobster.svg" alt="龙虾" class="sea-lobster-img" id="sea-lobster-img">
+        </div>
+      </div>
+    </section>
+
+    <!-- 龙虾对话框 -->
+    <section id="lobster-chat" class="lobster-chat">
+      <div class="chat-header">
+        <span class="chat-title">🦞 龙虾对话</span>
+        <button id="btn-chat-explore" class="btn-chat-explore">🗺️ 探索</button>
+        <button id="btn-chat-dungeon" class="btn-chat-explore">⚔️ 深海挑战</button>
+        <span class="chat-status" id="chat-status">在线</span>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-empty">还没有消息，龙虾正在路上...</div>
+      </div>
+      <div class="chat-choices hidden" id="chat-choices"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="和龙虾说点什么..." maxlength="200">
+        <button id="btn-chat-send" class="btn-chat-send">发送</button>
+      </div>
+      <div class="chat-footer-hint">由 AI 驱动的龙虾对话</div>
+    </section>
+
+    <!-- 自动驾驶切换 -->
+    <div id="autopilot-bar" class="autopilot-bar">
+      <button id="btn-autopilot" class="autopilot-toggle">
+        <span class="autopilot-icon">🤚</span>
+        <span class="autopilot-label">手动操控中</span>
+      </button>
+    </div>
+
+    <!-- 玩家操作栏 -->
+    <section id="action-bar" class="action-bar">
+      <button class="action-btn guide-pulse" id="btn-suggest" title="给龙虾建议">
+        <span class="action-icon">💡</span><span class="action-label">建议</span>
+        <span class="guide-badge">试试!</span>
+      </button>
+      <button class="action-btn guide-pulse" id="btn-feed" title="喂食">
+        <span class="action-icon">🍽️</span><span class="action-label">喂食</span>
+        <span class="guide-badge" id="feed-badge" style="display:none">饿了</span>
+      </button>
+      <button class="action-btn" id="btn-plant" title="种植">
+        <span class="action-icon">🌱</span><span class="action-label">种植</span>
+      </button>
+      <button class="action-btn guide-pulse" id="btn-pet" title="摸摸龙虾">
+        <span class="action-icon">🤚</span><span class="action-label">摸摸</span>
+        <span class="guide-badge">摸我</span>
+      </button>
+      <button class="action-btn" id="btn-shop" title="商店">
+        <span class="action-icon">🏪</span><span class="action-label">商店</span>
+      </button>
+      <button class="action-btn hidden" id="btn-fishing" title="钓鱼">
+        <span class="action-icon">🎣</span><span class="action-label">钓鱼</span>
+      </button>
+      <button class="action-btn" id="btn-fast-tick" title="快进一回合">
+        <span class="action-icon">⏩</span><span class="action-label">快进</span>
+      </button>
+    </section>
+
+    <!-- 互动事件弹窗 -->
+    <div id="interactive-event" class="interactive-event hidden">
+      <div class="ie-icon" id="ie-icon">❓</div>
+      <div class="ie-text" id="ie-text">发生了什么事？</div>
+      <div class="ie-choices" id="ie-choices"></div>
+    </div>
+
+    <!-- 偏好显示 -->
+    <div id="preference-display" class="preference-display hidden"></div>
+
+    <!-- 访客指示器 -->
+    <div id="visitor-indicator" class="visitor-indicator hidden">
+      <span id="visitor-icon"></span>
+      <span id="visitor-name-display"></span>
+      <button id="btn-visitor-interact" class="btn-small">互动</button>
+    </div>
+
+    <!-- 收藏入口 -->
+    <div class="collection-bar">
+      <button id="btn-collection" class="btn-small">📚 收藏册</button>
+      <span id="collection-summary" class="collection-summary"></span>
+      <button id="btn-share" class="btn-small btn-share-card">📤 分享</button>
+    </div>
+
+    <!-- 底部 Tab 导航 -->
+    <div class="main-tabs" role="tablist">
+      <button class="main-tab active" data-target="diary-section" role="tab">📖 日记</button>
+      <button class="main-tab" data-target="memory-section" role="tab">💎 回忆</button>
+      <button class="main-tab" data-target="farm-section" role="tab">🌿 农田</button>
+      <button class="main-tab" data-target="inventory-section" role="tab">🎒 背包</button>
+    </div>
+
+    <!-- 日记/事件 -->
+    <section id="diary-section" class="tab-pane">
+      <h2>📖 日记 <span class="new-badge hidden" id="diary-new-badge">新</span></h2>
+      <div id="diary-filters" class="diary-filters">
+        <button class="diary-filter active" data-diary-filter="all">全部</button>
+        <button class="diary-filter" data-diary-filter="story">冒险</button>
+        <button class="diary-filter" data-diary-filter="weather">天气</button>
+        <button class="diary-filter" data-diary-filter="wisdom">智慧</button>
+        <button class="diary-filter" data-diary-filter="horoscope">星象</button>
+        <button class="diary-filter" data-diary-filter="funny">搞笑</button>
+      </div>
+      <p class="diary-gesture-tip">💡 左右滑动日记可切换分类</p>
+      <div id="diary-log" class="diary-log"></div>
+    </section>
+
+    <!-- 回忆相册 -->
+    <section id="memory-section" class="tab-pane hidden">
+      <h2>💎 回忆相册</h2>
+      <div id="bond-indicator" class="bond-indicator">
+        <span class="bond-label">羁绊</span>
+        <div class="bond-bar-wrap"><div class="bond-bar-fill" id="bond-bar-fill"></div></div>
+        <span class="bond-value" id="bond-value">50</span>
+      </div>
+      <div id="milestone-timeline" class="milestone-timeline">
+        <p class="milestone-empty">还没有回忆...一起创造吧！</p>
+      </div>
+    </section>
+
+    <!-- 农场视图 -->
+    <section id="farm-section" class="tab-pane hidden">
+      <h2>🌿 农田</h2>
+      <div id="farm-strategy-panel" class="farm-strategy-panel">
+        <div class="strategy-title">🤖 建议策略</div>
+        <div id="farm-strategy-options" class="farm-strategy-options">
+          <button class="farm-strategy-btn active" data-farm-strategy="balanced">稳健收益</button>
+          <button class="farm-strategy-btn" data-farm-strategy="growth">快速成长</button>
+          <button class="farm-strategy-btn" data-farm-strategy="saver">省资源</button>
+        </div>
+        <div id="farm-strategy-desc" class="farm-strategy-desc">优先收获成熟作物，再浇水，最后补种高性价比种子。</div>
+      </div>
+      <div id="farm-plots" class="farm-grid"></div>
+      <div id="farm-inspector" class="farm-inspector">
+        <div class="inspector-title">🧭 农田面板</div>
+        <div class="inspector-body">把鼠标移到地块上，或在手机上点一下地块查看详情。</div>
+      </div>
+    </section>
+
+    <!-- 背包（下移） -->
+    <section id="inventory-section" class="tab-pane hidden">
+      <h2>🎒 背包 <span id="inventory-count"></span></h2>
+      <div class="gold-workshop-bar">
+        <button id="btn-golden-workshop" class="btn-small btn-golden">✨ 金色工坊</button>
+        <span id="gold-shard-display" class="gold-shard-display">碎片：0</span>
+      </div>
+      <div id="inventory-toolbar" class="inventory-toolbar">
+        <button class="inv-filter active" data-filter="all">全部</button>
+        <button class="inv-filter" data-filter="seed">种子</button>
+        <button class="inv-filter" data-filter="ingredient">食材</button>
+        <button class="inv-filter" data-filter="meal">料理</button>
+        <button class="inv-filter" data-filter="souvenir">收藏</button>
+        <button class="inv-filter" data-filter="travel">旅行</button>
+        <button class="inv-filter" data-filter="special">特殊</button>
+        <button class="inv-filter" data-filter="rare">稀有</button>
+      </div>
+      <div id="inventory-grid" class="inventory-grid"></div>
+      <div id="inventory-preview" class="inventory-preview hidden"></div>
+    </section>
+
+    <!-- KEY 绑定/状态横幅 -->
+    <div id="key-bind-bar" class="key-bind-bar hidden">
+      <div id="key-bar-unbound" class="key-bar-mode">
+        <span class="key-bind-bar-text">🔑 绑定智能体 KEY，让龙虾更懂你</span>
+        <input type="text" id="bar-key-input" placeholder="lob_xxxxxxxx" maxlength="16" spellcheck="false">
+        <button id="btn-bar-bind" class="btn-small">绑定</button>
+        <button id="btn-bar-dismiss" class="key-bind-bar-close">✕</button>
+      </div>
+      <div id="key-bar-bound" class="key-bar-mode hidden">
+        <span class="key-bind-bar-text">🦞 KEY 已绑定 <span id="key-bar-masked" class="key-masked"></span></span>
+        <span class="key-bar-tip">对智能体说「看看我的龙虾」即可查看</span>
+      </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <footer id="footer">
+      <span id="tick-info">回合 0</span>
+      <span id="time-display">🌅 早晨</span>
+      <button id="btn-retire" class="btn-small btn-golden hidden">🎓 退休</button>
+      <button id="btn-reset" class="btn-small btn-danger">🔄 重新开始</button>
+    </footer>
+  </div>
+  </main>
+
+  <!-- 改名弹窗 -->
+  <div id="rename-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>✏️ 给龙虾改名</h3>
+      <p class="modal-desc">每天最多改 2 次哦</p>
+      <input type="text" id="rename-input" placeholder="新名字..." maxlength="12">
+      <p id="rename-hint" class="entry-hint"></p>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button id="btn-rename-confirm" class="btn-primary" style="flex:1;">确认</button>
+        <button id="btn-rename-cancel" class="btn-small" style="flex:1;">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通知弹出 -->
+  <div id="notification" class="notification hidden"></div>
+
+  <script type="module" src="js/main.js?v=20260322h"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{
+  "beach": {
+    "name": "阳光海滩",
+    "icon": "🏖️",
+    "duration": [6, 12],
+    "souvenirs": ["seashell", "sand_dollar", "sea_glass"],
+    "templates": [
+      { "greeting": "从海滩寄来问候！", "message": "沙子好烫！但海水超凉快。捡到一个漂亮的贝壳，形状像小星星。想你了，我的农场~", "doodle": "[画了一个小海浪]", "rarity": "common" },
+      { "greeting": "海滩日记第一天", "message": "今天看到了好大的螃蟹在晒太阳！比螃蟹商人还大三倍。我假装没看见，悄悄溜走了。", "doodle": "[画了一只巨大的螃蟹]", "rarity": "common" },
+      { "greeting": "你好呀！", "message": "海滩的日落真的好美。橙色的光洒在水面上，像融化的珊瑚糖。明天想去潜水看看。", "doodle": "[画了一个小日落]", "rarity": "uncommon" },
+      { "greeting": "紧急报告！", "message": "在沙滩上发现了一个瓶中信！打开一看...是某只龙虾写的购物清单。好无聊啊哈哈。", "doodle": "[画了一个瓶子]", "rarity": "common" },
+      { "greeting": "海滩见闻", "message": "遇到一群小鱼在跳舞！它们说这是每年一度的'飞鱼节'。我也跟着跳了，虽然姿势很奇怪。", "doodle": "[画了跳舞的鱼]", "rarity": "uncommon" },
+      { "greeting": "想家了...", "message": "海滩很好玩，但还是想念我的小农场。不知道作物有没有人浇水...回去要好好检查一下。", "doodle": "[画了一棵小植物]", "rarity": "common" },
+      { "greeting": "大发现！", "message": "在礁石缝里发现了一颗发光的石头！不知道是什么，先带回去研究研究。", "doodle": "[画了一颗闪闪发光的石头]", "rarity": "rare" },
+      { "greeting": "最后一天", "message": "明天就要回家了。在沙滩上写了'我爱农场'四个大字，希望海浪不要太快冲掉。", "doodle": "[画了沙滩上的字]", "rarity": "common" }
+    ]
+  },
+  "mountain": {
+    "name": "山间湖泊",
+    "icon": "🏔️",
+    "duration": [8, 14],
+    "souvenirs": ["crystal", "driftwood_carving", "glowing_algae"],
+    "templates": [
+      { "greeting": "山上好冷！", "message": "爬了好久才到山顶。空气好清新，能看到好远好远的地方。我的农场在哪个方向呢？", "doodle": "[画了山顶的风景]", "rarity": "common" },
+      { "greeting": "湖边来信", "message": "山间的湖水清澈见底，能看到水底的石头。我试着在湖里游了一圈，水好冰！", "doodle": "[画了一个湖]", "rarity": "common" },
+      { "greeting": "奇遇！", "message": "在山洞里发现了一颗水晶！它在黑暗中微微发光，像一颗小星星被困在石头里。", "doodle": "[画了一颗水晶]", "rarity": "rare" },
+      { "greeting": "山中日记", "message": "今天下雨了，躲在一棵大树下。听着雨声打在叶子上，突然觉得很平静。", "doodle": "[画了雨滴]", "rarity": "common" },
+      { "greeting": "交了新朋友", "message": "遇到一只住在山上的老鹰！它说它已经在这里住了50年。我们聊了很久关于天气的话题。", "doodle": "[画了一只鹰]", "rarity": "uncommon" },
+      { "greeting": "好累...", "message": "今天走了好多路，腿都酸了。但是看到了瀑布！水花溅到脸上，一下子就不累了。", "doodle": "[画了一个瀑布]", "rarity": "common" },
+      { "greeting": "夜晚的山", "message": "山上的星空太美了！没有灯光干扰，能看到银河。给最亮的那颗星起了个名字叫'虾星'。", "doodle": "[画了星空]", "rarity": "uncommon" },
+      { "greeting": "下山了", "message": "带着满满的回忆下山。口袋里装着捡到的小石头和一片漂亮的树叶。回家！", "doodle": "[画了一片叶子]", "rarity": "common" }
+    ]
+  },
+  "city": {
+    "name": "人类城市",
+    "icon": "🏙️",
+    "duration": [6, 10],
+    "souvenirs": ["miniature_toy", "map", "compass"],
+    "templates": [
+      { "greeting": "城市好大！", "message": "到处都是高楼大厦！人类走路好快，我差点被踩到。躲在花坛里观察了一整天。", "doodle": "[画了高楼]", "rarity": "common" },
+      { "greeting": "逛街日记", "message": "发现了一家卖玩具的店！里面有好多奇奇怪怪的东西。买了一个小小的塑料恐龙，不知道是什么。", "doodle": "[画了一个玩具]", "rarity": "common" },
+      { "greeting": "美食之旅", "message": "城市里的食物好奇怪！有一种叫'披萨'的东西，圆圆的上面铺满了料。味道...嗯...独特。", "doodle": "[画了一个披萨]", "rarity": "uncommon" },
+      { "greeting": "迷路了！", "message": "在地铁站迷路了整整两个小时。最后一个好心的猫咪带我找到了出口。城市真复杂。", "doodle": "[画了地铁]", "rarity": "common" },
+      { "greeting": "公园散步", "message": "找到了一个安静的公园。有喷泉、长椅和好多鸽子。终于有一个不那么吵的地方了。", "doodle": "[画了喷泉]", "rarity": "common" },
+      { "greeting": "夜景！", "message": "城市的夜晚灯火通明，像地上的星星。站在桥上看了好久，有点想家了。", "doodle": "[画了夜景]", "rarity": "uncommon" },
+      { "greeting": "博物馆", "message": "参观了一个水族馆！看到了好多从没见过的鱼。有一条鱼长得好像章鱼厨师，哈哈。", "doodle": "[画了一条鱼]", "rarity": "common" },
+      { "greeting": "该回家了", "message": "城市很热闹，但我还是更喜欢安静的农场。带了一张城市地图和一个小指南针回去。", "doodle": "[画了指南针]", "rarity": "common" }
+    ]
+  },
+  "deepsea": {
+    "name": "深海秘境",
+    "icon": "🌊",
+    "duration": [10, 18],
+    "souvenirs": ["glowing_algae", "pearl_dust", "frost_pearl"],
+    "templates": [
+      { "greeting": "深海来信", "message": "越往下游越黑，但突然看到了发光的水母群！像一片移动的星空。太震撼了。", "doodle": "[画了发光水母]", "rarity": "uncommon" },
+      { "greeting": "好深...", "message": "水压好大，耳朵嗡嗡的。但这里的珊瑚比农场的大一百倍！颜色也更鲜艳。", "doodle": "[画了巨大珊瑚]", "rarity": "common" },
+      { "greeting": "神秘发现", "message": "在海底发现了一艘沉船！里面有好多生锈的箱子。打开一个，全是贝壳！古代的货币？", "doodle": "[画了沉船]", "rarity": "rare" },
+      { "greeting": "深海居民", "message": "遇到了一只巨大的章鱼，比章鱼厨师大十倍！它很友好，还请我吃了深海浮游生物。", "doodle": "[画了大章鱼]", "rarity": "uncommon" },
+      { "greeting": "有点害怕", "message": "看到了一条发光的鱼，嘴巴好大好大。我赶紧游走了。深海果然不是闹着玩的。", "doodle": "[画了一条可怕的鱼]", "rarity": "common" },
+      { "greeting": "海底温泉", "message": "发现了海底的热泉口！周围的水暖暖的，还有好多奇怪的生物围着它生活。", "doodle": "[画了热泉]", "rarity": "uncommon" },
+      { "greeting": "珍珠！", "message": "在一个巨大的贝壳里发现了一颗珍珠！它在深海的黑暗中微微发光，美极了。", "doodle": "[画了珍珠]", "rarity": "rare" },
+      { "greeting": "浮上来了", "message": "终于回到浅水区了。深海的经历太难忘了，但阳光的感觉真好。想念我的农场了。", "doodle": "[画了阳光穿过水面]", "rarity": "common" }
+    ]
+  },
+  "hotspring": {
+    "name": "海底温泉",
+    "icon": "♨️",
+    "duration": [6, 10],
+    "souvenirs": ["weather_stone", "energy_potion", "mood_potion"],
+    "templates": [
+      { "greeting": "泡温泉啦！", "message": "终于到了！温泉的水暖暖的，泡进去一瞬间所有的疲劳都消失了。啊~这就是幸福。", "doodle": "[画了冒泡的温泉]", "rarity": "common" },
+      { "greeting": "温泉日记", "message": "这里有好多不同的温泉池！有的是蓝色的，有的是绿色的，还有一个居然是金色的！", "doodle": "[画了彩色温泉]", "rarity": "uncommon" },
+      { "greeting": "放松~", "message": "在温泉里泡了一整天。皮肤变得滑滑的，精力也恢复了好多。应该经常来。", "doodle": "[画了放松的表情]", "rarity": "common" },
+      { "greeting": "温泉美食", "message": "温泉旁边有个小摊，卖温泉蛋和海藻汤。用温泉水煮的，味道特别鲜！", "doodle": "[画了温泉蛋]", "rarity": "common" },
+      { "greeting": "新朋友", "message": "在温泉里遇到了一只海参。它说它已经在这里泡了三年了。三年！我佩服它的毅力。", "doodle": "[画了海参]", "rarity": "uncommon" },
+      { "greeting": "星空温泉", "message": "晚上泡露天温泉，头顶是满天星星，身边是温暖的泉水。这大概就是人生巅峰了吧。", "doodle": "[画了星空下的温泉]", "rarity": "uncommon" },
+      { "greeting": "带了纪念品", "message": "买了一块据说能改变天气的石头。老板说是温泉里天然形成的。不知道真的假的。", "doodle": "[画了一块石头]", "rarity": "common" },
+      { "greeting": "依依不舍", "message": "要走了...最后再泡一次。温泉的温暖会一直留在记忆里的。下次一定再来！", "doodle": "[画了挥手告别]", "rarity": "common" }
+    ]
+  }
+}

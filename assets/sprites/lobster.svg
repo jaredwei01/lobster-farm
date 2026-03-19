@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!-- Pixel art lobster with open claws, 32x32 grid -->
+  <style>
+    .body { fill: #e84030; }
+    .dark { fill: #b02820; }
+    .claw { fill: #ff5040; }
+    .eye  { fill: #ffffff; }
+    .pupil { fill: #1a1a2e; }
+    .belly { fill: #ff8060; }
+    .leg   { fill: #c03028; }
+  </style>
+  <!-- Left claw (open) -->
+  <rect class="claw" x="2" y="8" width="2" height="2"/>
+  <rect class="claw" x="2" y="12" width="2" height="2"/>
+  <rect class="claw" x="4" y="7" width="2" height="2"/>
+  <rect class="claw" x="4" y="13" width="2" height="2"/>
+  <rect class="dark" x="4" y="9" width="2" height="4"/>
+  <rect class="claw" x="6" y="9" width="2" height="4"/>
+  <!-- Right claw (open) -->
+  <rect class="claw" x="28" y="8" width="2" height="2"/>
+  <rect class="claw" x="28" y="12" width="2" height="2"/>
+  <rect class="claw" x="26" y="7" width="2" height="2"/>
+  <rect class="claw" x="26" y="13" width="2" height="2"/>
+  <rect class="dark" x="26" y="9" width="2" height="4"/>
+  <rect class="claw" x="24" y="9" width="2" height="4"/>
+  <!-- Arms -->
+  <rect class="body" x="8" y="10" width="2" height="2"/>
+  <rect class="body" x="22" y="10" width="2" height="2"/>
+  <!-- Head -->
+  <rect class="body" x="12" y="4" width="8" height="2"/>
+  <rect class="body" x="10" y="6" width="12" height="2"/>
+  <!-- Eyes -->
+  <rect class="eye" x="12" y="6" width="3" height="2"/>
+  <rect class="eye" x="17" y="6" width="3" height="2"/>
+  <rect class="pupil" x="13" y="6" width="2" height="2"/>
+  <rect class="pupil" x="18" y="6" width="2" height="2"/>
+  <!-- Antennae -->
+  <rect class="dark" x="13" y="2" width="2" height="2"/>
+  <rect class="dark" x="17" y="2" width="2" height="2"/>
+  <rect class="claw" x="12" y="1" width="2" height="1"/>
+  <rect class="claw" x="18" y="1" width="2" height="1"/>
+  <!-- Body -->
+  <rect class="body" x="10" y="8" width="12" height="2"/>
+  <rect class="body" x="10" y="10" width="12" height="2"/>
+  <rect class="belly" x="12" y="10" width="8" height="2"/>
+  <rect class="body" x="10" y="12" width="12" height="2"/>
+  <rect class="belly" x="12" y="12" width="8" height="2"/>
+  <rect class="body" x="10" y="14" width="12" height="2"/>
+  <rect class="belly" x="13" y="14" width="6" height="2"/>
+  <!-- Tail segments -->
+  <rect class="body" x="11" y="16" width="10" height="2"/>
+  <rect class="dark" x="12" y="18" width="8" height="2"/>
+  <rect class="body" x="13" y="20" width="6" height="2"/>
+  <rect class="dark" x="14" y="22" width="4" height="2"/>
+  <!-- Tail fan -->
+  <rect class="claw" x="12" y="24" width="2" height="2"/>
+  <rect class="body" x="14" y="24" width="4" height="2"/>
+  <rect class="claw" x="18" y="24" width="2" height="2"/>
+  <rect class="claw" x="11" y="26" width="2" height="2"/>
+  <rect class="dark" x="13" y="26" width="6" height="2"/>
+  <rect class="claw" x="19" y="26" width="2" height="2"/>
+  <!-- Legs -->
+  <rect class="leg" x="8" y="12" width="2" height="2"/>
+  <rect class="leg" x="8" y="14" width="2" height="2"/>
+  <rect class="leg" x="22" y="12" width="2" height="2"/>
+  <rect class="leg" x="22" y="14" width="2" height="2"/>
+  <rect class="leg" x="9" y="16" width="2" height="2"/>
+  <rect class="leg" x="21" y="16" width="2" height="2"/>
+</svg>

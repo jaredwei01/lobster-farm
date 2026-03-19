@@ -1,0 +1,70 @@
+[
+  {
+    "id": "crab_merchant",
+    "name": "螃蟹商人",
+    "icon": "🦀",
+    "rarity": "common",
+    "weight": 40,
+    "interaction": "trade",
+    "greeting": "嘿！看看我的好货！",
+    "farewell": "下次再来光顾啊！",
+    "inventory": ["coral_rose_seed", "amber_moss_seed", "frost_pearl_seed", "lucky_charm", "backpack", "snack_pack"],
+    "discount": 0.85
+  },
+  {
+    "id": "fish_postman",
+    "name": "鱼邮差",
+    "icon": "🐟",
+    "rarity": "common",
+    "weight": 35,
+    "interaction": "gift",
+    "greeting": "有你的包裹！签收一下~",
+    "farewell": "还有好多信要送，先走啦！",
+    "gifts": ["exp_book_s", "seashell", "snack_pack", "seaweed_seed", "salt", "energy_potion"]
+  },
+  {
+    "id": "octopus_chef",
+    "name": "章鱼厨师",
+    "icon": "🐙",
+    "rarity": "uncommon",
+    "weight": 20,
+    "interaction": "teach",
+    "greeting": "今天教你做一道好菜！",
+    "farewell": "记得多练习哦~",
+    "teachableRecipes": ["crystal_candy", "deep_sea_ramen", "sunrise_toast", "amber_stew", "frost_pearl_pudding", "shell_soup", "plankton_pie", "kelp_salad"]
+  },
+  {
+    "id": "turtle_elder",
+    "name": "海龟长老",
+    "icon": "🐢",
+    "rarity": "rare",
+    "weight": 8,
+    "interaction": "story",
+    "greeting": "年轻人，听我讲个故事...",
+    "farewell": "好好生活，我们会再见的。",
+    "expReward": 50,
+    "stories": [
+      "很久以前，这片海域还是一片荒芜...",
+      "我年轻的时候，曾经游遍了七大洋...",
+      "你知道吗？贝壳里藏着大海的记忆...",
+      "传说在深海的尽头，有一座黄金城堡...",
+      "每一颗珊瑚，都是一段凝固的时光...",
+      "我见过最美的日落，是在南极的冰川上..."
+    ]
+  },
+  {
+    "id": "mystery_shrimp",
+    "name": "神秘虾",
+    "icon": "🦐",
+    "rarity": "legendary",
+    "weight": 3,
+    "interaction": "quest",
+    "greeting": "嘘...我有一个秘密任务给你...",
+    "farewell": "完成得不错，后会有期。",
+    "quests": [
+      { "desc": "收集3颗水晶", "require": { "crystal": 3 }, "reward": { "shells": 100, "item": "golden_shard", "count": 3 } },
+      { "desc": "种出一株黄金作物", "require": { "golden_crop": 1 }, "reward": { "shells": 150, "item": "exp_book_l", "count": 1 } },
+      { "desc": "做出5份料理", "require": { "seaweed_roll": 2, "ocean_tea": 2, "coral_cake": 1 }, "reward": { "shells": 80, "item": "skill_scroll_cooking", "count": 1 } }
+    ]
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "seaweed_roll": {
+    "name": "海苔卷",
+    "ingredients": { "seaweed": 2 },
+    "effects": { "hunger": -30, "mood": 3, "energy": 5 },
+    "battleBonus": 2,
+    "unlockCondition": "default",
+    "description": "简单、新鲜、满足，龙虾经典。"
+  },
+  "coral_cake": {
+    "name": "珊瑚蛋糕",
+    "ingredients": { "coral_fragment": 1, "sugar": 1 },
+    "effects": { "hunger": -40, "mood": 10, "energy": 5 },
+    "battleBonus": 4,
+    "unlockCondition": "default",
+    "description": "粉嫩香甜，酥脆可口，漂亮得舍不得吃。"
+  },
+  "shell_soup": {
+    "name": "贝壳汤",
+    "ingredients": { "seashell": 1, "salt": 1, "seaweed": 1 },
+    "effects": { "hunger": -50, "mood": 5, "energy": 20 },
+    "battleBonus": 3,
+    "unlockCondition": "default",
+    "description": "浓郁暖心，汤底闪着珍珠母贝的光泽。"
+  },
+  "plankton_pie": {
+    "name": "浮游生物派",
+    "ingredients": { "plankton": 2, "kelp_flour": 1 },
+    "effects": { "hunger": -35, "mood": 5, "energy": 10, "exp": 10 },
+    "battleBonus": 3,
+    "unlockCondition": "default",
+    "description": "营养丰富，满满的微小蛋白质。"
+  },
+  "kelp_salad": {
+    "name": "海带沙拉",
+    "ingredients": { "sun_kelp": 1, "seaweed": 1, "salt": 1 },
+    "effects": { "hunger": -25, "mood": 8, "energy": 15 },
+    "battleBonus": 3,
+    "unlockCondition": "level_5",
+    "description": "清爽脆嫩，夏天的完美选择。"
+  },
+  "amber_stew": {
+    "name": "琥珀炖汤",
+    "ingredients": { "amber_moss": 1, "plankton": 1, "salt": 1 },
+    "effects": { "hunger": -45, "mood": 12, "energy": 25 },
+    "battleBonus": 6,
+    "unlockCondition": "level_10",
+    "description": "浓郁的秋日风味，金色暖汤。"
+  },
+  "frost_pearl_pudding": {
+    "name": "霜珍珠布丁",
+    "ingredients": { "frost_pearl": 1, "sugar": 2, "kelp_flour": 1 },
+    "effects": { "hunger": -40, "mood": 15, "energy": 10 },
+    "battleBonus": 5,
+    "unlockCondition": "level_15",
+    "description": "发着微光，冰凉丝滑，冬日珍馐。"
+  },
+  "golden_feast": {
+    "name": "黄金盛宴",
+    "ingredients": { "golden_crop": 1, "pearl_dust": 1 },
+    "effects": { "hunger": -100, "mood": 30, "energy": 50, "exp": 50 },
+    "battleBonus": 12,
+    "unlockCondition": "event_golden_crop",
+    "description": "传说中的料理，完全恢复身心。"
+  },
+  "ocean_tea": {
+    "name": "海洋茶",
+    "ingredients": { "seaweed": 1, "salt": 1 },
+    "effects": { "hunger": -10, "mood": 8, "energy": 15 },
+    "battleBonus": 2,
+    "unlockCondition": "default",
+    "description": "一杯咸甜适中的温茶，安神静心。"
+  },
+  "crystal_candy": {
+    "name": "水晶糖果",
+    "ingredients": { "crystal": 1, "sugar": 2 },
+    "effects": { "hunger": -15, "mood": 20, "energy": 5 },
+    "battleBonus": 4,
+    "unlockCondition": "visitor_octopus_chef",
+    "description": "透明的糖果在光线下闪闪发亮，章鱼厨师亲传。"
+  },
+  "deep_sea_ramen": {
+    "name": "深海拉面",
+    "ingredients": { "glowing_algae": 1, "kelp_flour": 1, "salt": 1, "plankton": 1 },
+    "effects": { "hunger": -60, "mood": 15, "energy": 30 },
+    "battleBonus": 8,
+    "unlockCondition": "level_20",
+    "description": "发光汤底的拉面，整个房间都亮了。"
+  },
+  "sunrise_toast": {
+    "name": "日出吐司",
+    "ingredients": { "kelp_flour": 1, "coral_fragment": 1, "sugar": 1 },
+    "effects": { "hunger": -30, "mood": 10, "energy": 20 },
+    "battleBonus": 4,
+    "unlockCondition": "level_8",
+    "description": "金色脆皮面包配珊瑚果酱，早安！"
+  }
+}

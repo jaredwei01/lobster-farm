@@ -1,0 +1,14 @@
+[Unit]
+Description=Lobster Farm Agent Sync Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/www/wwwroot/lobster-farm/server
+ExecStart=/usr/bin/python3 /www/wwwroot/lobster-farm/server/sync_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,537 @@
+{
+  "seaweed_seed": {
+    "name": "海带种子",
+    "category": "seed",
+    "description": "基础但可靠的作物，四季皆可种植。",
+    "buyPrice": 5,
+    "sellPrice": 2,
+    "growthTicks": 4,
+    "season": null
+  },
+  "coral_rose_seed": {
+    "name": "珊瑚玫瑰种子",
+    "category": "seed",
+    "description": "会开出美丽的粉色珊瑚花，仅限春季。",
+    "buyPrice": 15,
+    "sellPrice": 6,
+    "growthTicks": 6,
+    "season": "spring"
+  },
+  "sun_kelp_seed": {
+    "name": "阳光海藻种子",
+    "category": "seed",
+    "description": "在夏日阳光下茁壮成长的金色海藻。",
+    "buyPrice": 12,
+    "sellPrice": 5,
+    "growthTicks": 5,
+    "season": "summer"
+  },
+  "amber_moss_seed": {
+    "name": "琥珀苔藓种子",
+    "category": "seed",
+    "description": "只在秋日薄雾中生长的暖色苔藓。",
+    "buyPrice": 18,
+    "sellPrice": 8,
+    "growthTicks": 7,
+    "season": "autumn"
+  },
+  "frost_pearl_seed": {
+    "name": "霜珍珠种子",
+    "category": "seed",
+    "description": "稀有的冬季作物，能结出发光的珍珠。",
+    "buyPrice": 30,
+    "sellPrice": 12,
+    "growthTicks": 10,
+    "season": "winter"
+  },
+  "rainbow_anemone_seed": {
+    "name": "彩虹海葵种子",
+    "category": "seed",
+    "description": "极其稀有，没人知道它从哪里来。",
+    "buyPrice": null,
+    "sellPrice": 25,
+    "growthTicks": 12,
+    "season": null
+  },
+
+  "seaweed": {
+    "name": "海带",
+    "category": "ingredient",
+    "description": "新鲜翠绿，用途广泛。",
+    "buyPrice": 8,
+    "sellPrice": 5
+  },
+  "coral_fragment": {
+    "name": "珊瑚碎片",
+    "category": "ingredient",
+    "description": "一块色彩斑斓的珊瑚，漂亮又实用。",
+    "buyPrice": 15,
+    "sellPrice": 8
+  },
+  "sun_kelp": {
+    "name": "阳光海藻",
+    "category": "ingredient",
+    "description": "金色的夏日海藻。",
+    "buyPrice": 12,
+    "sellPrice": 7
+  },
+  "amber_moss": {
+    "name": "琥珀苔藓",
+    "category": "ingredient",
+    "description": "温暖的泥土气息，带着一丝肉桂香。",
+    "buyPrice": 20,
+    "sellPrice": 10
+  },
+  "frost_pearl": {
+    "name": "霜珍珠",
+    "category": "ingredient",
+    "description": "在黑暗中微微发光，触感冰凉。",
+    "buyPrice": 35,
+    "sellPrice": 18
+  },
+  "salt": {
+    "name": "海盐",
+    "category": "ingredient",
+    "description": "必备调味料，从潮池中采集。",
+    "buyPrice": 3,
+    "sellPrice": 1
+  },
+  "sugar": {
+    "name": "珊瑚糖",
+    "category": "ingredient",
+    "description": "从珊瑚花蜜中提炼的甜蜜结晶。",
+    "buyPrice": 5,
+    "sellPrice": 2
+  },
+  "kelp_flour": {
+    "name": "海藻面粉",
+    "category": "ingredient",
+    "description": "磨得很细的海藻粉，适合烘焙。",
+    "buyPrice": 6,
+    "sellPrice": 3
+  },
+  "pearl_dust": {
+    "name": "珍珠粉",
+    "category": "ingredient",
+    "description": "碾碎珍珠得到的闪亮粉末，有神奇功效。",
+    "buyPrice": 40,
+    "sellPrice": 20
+  },
+  "plankton": {
+    "name": "新鲜浮游生物",
+    "category": "ingredient",
+    "description": "个头虽小，营养丰富，龙虾的主食。",
+    "buyPrice": 4,
+    "sellPrice": 2
+  },
+
+  "seaweed_roll": {
+    "name": "海苔卷",
+    "category": "meal",
+    "description": "简单、新鲜、满足感十足，龙虾经典美食。",
+    "buyPrice": null,
+    "sellPrice": 8
+  },
+  "coral_cake": {
+    "name": "珊瑚蛋糕",
+    "category": "meal",
+    "description": "粉嫩香甜，酥脆可口，漂亮得舍不得吃。",
+    "buyPrice": null,
+    "sellPrice": 12
+  },
+  "shell_soup": {
+    "name": "贝壳汤",
+    "category": "meal",
+    "description": "浓郁暖心，汤底闪着珍珠母贝的光泽。",
+    "buyPrice": null,
+    "sellPrice": 15
+  },
+  "plankton_pie": {
+    "name": "浮游生物派",
+    "category": "meal",
+    "description": "营养丰富，满满的微小蛋白质。",
+    "buyPrice": null,
+    "sellPrice": 10
+  },
+  "kelp_salad": {
+    "name": "海带沙拉",
+    "category": "meal",
+    "description": "清爽脆嫩，夏天的完美选择。",
+    "buyPrice": null,
+    "sellPrice": 10
+  },
+  "amber_stew": {
+    "name": "琥珀炖汤",
+    "category": "meal",
+    "description": "浓郁的秋日风味，金色暖汤。",
+    "buyPrice": null,
+    "sellPrice": 18
+  },
+  "frost_pearl_pudding": {
+    "name": "霜珍珠布丁",
+    "category": "meal",
+    "description": "发着微光，冰凉丝滑，冬日珍馐。",
+    "buyPrice": null,
+    "sellPrice": 20
+  },
+  "golden_feast": {
+    "name": "黄金盛宴",
+    "category": "meal",
+    "description": "传说中的料理，完全恢复身心。",
+    "buyPrice": null,
+    "sellPrice": 100
+  },
+  "ocean_tea": {
+    "name": "海洋茶",
+    "category": "meal",
+    "description": "一杯咸甜适中的温茶，安神静心。",
+    "buyPrice": null,
+    "sellPrice": 6
+  },
+  "crystal_candy": {
+    "name": "水晶糖果",
+    "category": "meal",
+    "description": "透明的糖果在光线下闪闪发亮，章鱼厨师亲传。",
+    "buyPrice": null,
+    "sellPrice": 15
+  },
+  "deep_sea_ramen": {
+    "name": "深海拉面",
+    "category": "meal",
+    "description": "发光汤底的拉面，整个房间都亮了。",
+    "buyPrice": null,
+    "sellPrice": 22
+  },
+  "sunrise_toast": {
+    "name": "日出吐司",
+    "category": "meal",
+    "description": "金色脆皮面包配珊瑚果酱，早安！",
+    "buyPrice": null,
+    "sellPrice": 12
+  },
+
+  "golden_crop": {
+    "name": "黄金作物",
+    "category": "special",
+    "description": "闪闪发光的神奇作物，极其珍贵。",
+    "buyPrice": null,
+    "sellPrice": 50
+  },
+  "golden_shard": {
+    "name": "金色碎片",
+    "category": "special",
+    "description": "在高光时刻掉落的稀有碎片，可在金色工坊兑换道具。",
+    "buyPrice": null,
+    "sellPrice": 30
+  },
+  "golden_seed": {
+    "name": "黄金种子",
+    "category": "seed",
+    "description": "种下后会长成黄金作物，价值与惊喜并存。",
+    "buyPrice": null,
+    "sellPrice": 45,
+    "growthTicks": 4,
+    "season": null
+  },
+  "golden_watering_can": {
+    "name": "黄金浇水壶",
+    "category": "special",
+    "description": "浇水时额外促进1阶段生长，农田推进更快。持有时战力+3。",
+    "buyPrice": null,
+    "sellPrice": 80,
+    "passivePower": 3
+  },
+  "golden_cookware": {
+    "name": "黄金厨具",
+    "category": "special",
+    "description": "烹饪时有概率做出双份料理，提升做饭收益。持有时战力+3。",
+    "buyPrice": null,
+    "sellPrice": 80,
+    "passivePower": 3
+  },
+  "golden_charm": {
+    "name": "黄金护符",
+    "category": "special",
+    "description": "互动事件中更容易触发好运，并小幅提高金色掉落概率。持有时战力+5。",
+    "buyPrice": null,
+    "sellPrice": 90,
+    "passivePower": 5
+  },
+  "golden_hourglass": {
+    "name": "黄金时计",
+    "category": "special",
+    "description": "离线时将部分时间转化为额外贝壳收益。持有时战力+4。",
+    "buyPrice": null,
+    "sellPrice": 95,
+    "passivePower": 4
+  },
+
+  "seashell": {
+    "name": "贝壳",
+    "category": "souvenir",
+    "description": "海滩上捡到的漂亮螺旋贝壳。持有时战力+1。",
+    "buyPrice": null,
+    "sellPrice": 3,
+    "passivePower": 1
+  },
+  "sand_dollar": {
+    "name": "沙元",
+    "category": "souvenir",
+    "description": "完美的圆形沙元，幸运的发现！持有时战力+2。",
+    "buyPrice": null,
+    "sellPrice": 8,
+    "passivePower": 2
+  },
+  "sea_glass": {
+    "name": "海玻璃",
+    "category": "souvenir",
+    "description": "被海浪打磨得光滑的磨砂玻璃。持有时战力+1。",
+    "buyPrice": null,
+    "sellPrice": 5,
+    "passivePower": 1
+  },
+  "glowing_algae": {
+    "name": "发光藻",
+    "category": "souvenir",
+    "description": "来自深海的生物荧光藻类，夜晚会发光。持有时战力+3。",
+    "buyPrice": null,
+    "sellPrice": 15,
+    "passivePower": 3
+  },
+  "crystal": {
+    "name": "山湖水晶",
+    "category": "souvenir",
+    "description": "在山湖附近发现的透明水晶。持有时战力+2。",
+    "buyPrice": null,
+    "sellPrice": 12,
+    "passivePower": 2
+  },
+  "miniature_toy": {
+    "name": "迷你玩具",
+    "category": "souvenir",
+    "description": "从人类城市带回的小玩具，这是什么东西？持有时战力+2。",
+    "buyPrice": null,
+    "sellPrice": 10,
+    "passivePower": 2
+  },
+  "driftwood_carving": {
+    "name": "浮木雕刻",
+    "category": "souvenir",
+    "description": "用海上漂来的浮木雕刻的小摆件。持有时战力+1。",
+    "buyPrice": null,
+    "sellPrice": 7,
+    "passivePower": 1
+  },
+
+  "backpack": {
+    "name": "旅行背包",
+    "category": "travel",
+    "description": "旅途必备，龙虾尺寸。",
+    "buyPrice": 20,
+    "sellPrice": 8
+  },
+  "map": {
+    "name": "旧地图",
+    "category": "travel",
+    "description": "手绘的附近目的地地图。持有时战力+1。",
+    "buyPrice": 15,
+    "sellPrice": 5,
+    "passivePower": 1
+  },
+  "compass": {
+    "name": "贝壳指南针",
+    "category": "travel",
+    "description": "用鹦鹉螺壳做的指南针，永远指向家的方向。持有时战力+2。",
+    "buyPrice": 25,
+    "sellPrice": 10,
+    "passivePower": 2
+  },
+  "snack_pack": {
+    "name": "旅行零食包",
+    "category": "travel",
+    "description": "海苔片和浮游生物干，路上吃的。",
+    "buyPrice": 8,
+    "sellPrice": 3
+  },
+
+  "lantern": {
+    "name": "海灯笼",
+    "category": "decoration",
+    "description": "用水母钟罩做的柔光灯笼。持有时战力+2。",
+    "buyPrice": 30,
+    "sellPrice": 12,
+    "passivePower": 2
+  },
+  "rock_garden": {
+    "name": "石头花园",
+    "category": "decoration",
+    "description": "精心排列的鹅卵石，很禅意。持有时战力+2。",
+    "buyPrice": 25,
+    "sellPrice": 10,
+    "passivePower": 2
+  },
+  "wind_chime": {
+    "name": "贝壳风铃",
+    "category": "decoration",
+    "description": "在海流中轻轻作响。持有时战力+1。",
+    "buyPrice": 20,
+    "sellPrice": 8,
+    "passivePower": 1
+  },
+  "mini_lighthouse": {
+    "name": "迷你灯塔",
+    "category": "decoration",
+    "description": "一座能亮的小灯塔，夜晚会闪烁。持有时战力+3。",
+    "buyPrice": 50,
+    "sellPrice": 20,
+    "passivePower": 3
+  },
+
+  "lucky_charm": {
+    "name": "幸运护符",
+    "category": "special",
+    "description": "四叶海草，10回合内提高稀有事件概率。持有时战力+3。",
+    "buyPrice": 60,
+    "sellPrice": 25,
+    "passivePower": 3
+  },
+  "growth_potion": {
+    "name": "成长药水",
+    "category": "special",
+    "description": "神秘的绿色液体，能让一株作物瞬间成熟。",
+    "buyPrice": 45,
+    "sellPrice": 18
+  },
+  "weather_stone": {
+    "name": "天气石",
+    "category": "special",
+    "description": "举起来许愿晴天，有时候真的管用。持有时战力+1。",
+    "buyPrice": 35,
+    "sellPrice": 14,
+    "passivePower": 1
+  },
+
+  "exp_book_s": {
+    "name": "经验书（小）",
+    "category": "consumable",
+    "description": "阅读后获得少量经验值。",
+    "buyPrice": 15,
+    "sellPrice": 6,
+    "useEffect": { "type": "exp", "value": 20 }
+  },
+  "exp_book_m": {
+    "name": "经验书（中）",
+    "category": "consumable",
+    "description": "内容丰富的手册，获得中等经验值。",
+    "buyPrice": 35,
+    "sellPrice": 14,
+    "useEffect": { "type": "exp", "value": 50 }
+  },
+  "exp_book_l": {
+    "name": "经验书（大）",
+    "category": "consumable",
+    "description": "传说中的百科全书，获得大量经验值。",
+    "buyPrice": null,
+    "sellPrice": 40,
+    "useEffect": { "type": "exp", "value": 150 }
+  },
+  "skill_scroll_farming": {
+    "name": "农耕秘籍",
+    "category": "consumable",
+    "description": "古老的农耕智慧，农耕技能 +3。",
+    "buyPrice": null,
+    "sellPrice": 30,
+    "useEffect": { "type": "skill", "skill": "farming", "value": 3 }
+  },
+  "skill_scroll_cooking": {
+    "name": "烹饪秘籍",
+    "category": "consumable",
+    "description": "章鱼厨师亲传食谱，烹饪技能 +3。",
+    "buyPrice": null,
+    "sellPrice": 30,
+    "useEffect": { "type": "skill", "skill": "cooking", "value": 3 }
+  },
+  "skill_scroll_exploring": {
+    "name": "探索秘籍",
+    "category": "consumable",
+    "description": "冒险家的笔记，探索技能 +3。",
+    "buyPrice": null,
+    "sellPrice": 30,
+    "useEffect": { "type": "skill", "skill": "exploring", "value": 3 }
+  },
+  "skill_scroll_social": {
+    "name": "社交秘籍",
+    "category": "consumable",
+    "description": "人际关系大师的心得，社交技能 +3。",
+    "buyPrice": null,
+    "sellPrice": 30,
+    "useEffect": { "type": "skill", "skill": "social", "value": 3 }
+  },
+  "energy_potion": {
+    "name": "精力药水",
+    "category": "consumable",
+    "description": "喝下后立即恢复50点精力。",
+    "buyPrice": 20,
+    "sellPrice": 8,
+    "useEffect": { "type": "stat", "stat": "energy", "value": 50 }
+  },
+  "mood_potion": {
+    "name": "心情药水",
+    "category": "consumable",
+    "description": "彩虹色的液体，立即提升50点心情。",
+    "buyPrice": 20,
+    "sellPrice": 8,
+    "useEffect": { "type": "stat", "stat": "mood", "value": 50 }
+  },
+  "lucky_star": {
+    "name": "幸运星",
+    "category": "consumable",
+    "description": "使用后接下来5次事件胜率 +30%。",
+    "buyPrice": null,
+    "sellPrice": 18,
+    "useEffect": { "type": "buff", "buffType": "lucky_star", "uses": 5 }
+  },
+  "exp_accelerator": {
+    "name": "成长加速符",
+    "category": "consumable",
+    "description": "使用后24小时内经验获取 ×1.5。",
+    "buyPrice": null,
+    "sellPrice": 25,
+    "useEffect": { "type": "buff", "buffType": "exp_boost", "value": 0.5, "durationMs": 86400000 }
+  },
+  "shell_necklace": {
+    "name": "小龙虾的贝壳项链",
+    "category": "souvenir",
+    "description": "龙虾亲手串的贝壳项链，每一颗都精心挑选。",
+    "buyPrice": null,
+    "sellPrice": 15
+  },
+  "sea_glass_shard": {
+    "name": "海玻璃碎片",
+    "category": "souvenir",
+    "description": "被海水打磨得圆润的玻璃碎片，在阳光下闪闪发光。",
+    "buyPrice": null,
+    "sellPrice": 5
+  },
+  "lobster_drawing": {
+    "name": "龙虾画的画",
+    "category": "souvenir",
+    "description": "龙虾用钳子画的画，虽然歪歪扭扭但充满心意。",
+    "buyPrice": null,
+    "sellPrice": 8
+  },
+  "coral_flower": {
+    "name": "珊瑚小花",
+    "category": "souvenir",
+    "description": "海底盛开的珊瑚花，颜色鲜艳而美丽。",
+    "buyPrice": null,
+    "sellPrice": 6
+  },
+  "deep_sea_pearl": {
+    "name": "深海珍珠",
+    "category": "souvenir",
+    "description": "从深海带回的珍珠，散发着柔和的光芒。",
+    "buyPrice": null,
+    "sellPrice": 20
+  }
+}

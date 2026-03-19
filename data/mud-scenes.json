@@ -1,0 +1,437 @@
+[
+  {
+    "id": "coral_reef",
+    "name": "珊瑚礁探险",
+    "narration": "你和龙虾来到了一片五彩斑斓的珊瑚礁。阳光透过海水洒下来，珊瑚间游动着各种小鱼。突然，龙虾指向一个幽暗的洞穴...",
+    "choices": [
+      {
+        "text": "进洞看看",
+        "results": [
+          { "weight": 50, "text": "洞里藏着一颗闪闪发光的珍珠！龙虾兴奋地把它捡起来。", "rewards": { "item": "frost_pearl", "exp": 8, "mood": 10 } },
+          { "weight": 30, "text": "洞里住着一只友善的章鱼，它教了龙虾一个新食谱！", "rewards": { "exp": 12, "mood": 15, "skill": "cooking" } },
+          { "weight": 20, "text": "洞穴深处有暗流，龙虾被冲了出来，有点狼狈但没受伤。", "rewards": { "exp": 5, "mood": -5, "energy": -10 } }
+        ]
+      },
+      {
+        "text": "在珊瑚间寻宝",
+        "results": [
+          { "weight": 60, "text": "在珊瑚缝隙里找到了几颗漂亮的贝壳，龙虾很开心。", "rewards": { "shells": 15, "mood": 8 } },
+          { "weight": 40, "text": "发现了一株罕见的发光海藻！龙虾小心翼翼地采集了下来。", "rewards": { "item": "glowing_algae", "exp": 10, "mood": 12 } }
+        ]
+      },
+      {
+        "text": "拍照留念就好",
+        "results": [
+          { "weight": 100, "text": "龙虾摆了个帅气的造型，虽然没有相机，但这个画面会留在记忆里。", "rewards": { "mood": 5, "exp": 3 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sunken_ship",
+    "name": "沉船遗迹",
+    "narration": "海底深处，一艘古老的沉船静静地躺在沙地上。船身长满了海藻和贝壳，透过破碎的舷窗，似乎能看到里面闪着微光...",
+    "choices": [
+      {
+        "text": "从舷窗钻进去",
+        "results": [
+          { "weight": 40, "text": "船舱里有一个旧箱子，打开后发现了一些古老的贝壳货币！", "rewards": { "shells": 30, "exp": 10, "mood": 15 } },
+          { "weight": 35, "text": "找到了一本泡水的航海日志，虽然字迹模糊，但龙虾读得津津有味。", "rewards": { "exp": 15, "mood": 10, "skill": "exploring" } },
+          { "weight": 25, "text": "一群小鱼突然从暗处窜出来，吓了龙虾一跳！", "rewards": { "exp": 5, "mood": -3 } }
+        ]
+      },
+      {
+        "text": "在船外搜索",
+        "results": [
+          { "weight": 50, "text": "在船锚附近发现了一些散落的水晶碎片。", "rewards": { "item": "crystal", "exp": 8 } },
+          { "weight": 50, "text": "捡到了一块漂亮的海玻璃，被海水打磨得很光滑。", "rewards": { "item": "sea_glass", "mood": 8 } }
+        ]
+      },
+      {
+        "text": "远远观望",
+        "results": [
+          { "weight": 100, "text": "龙虾安静地看着沉船，想象着它曾经的故事。海水轻轻摇晃着，很平静。", "rewards": { "mood": 8, "exp": 3 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "jellyfish_grove",
+    "name": "水母林",
+    "narration": "一片梦幻般的水母林出现在眼前。数百只透明的水母缓缓漂浮着，发出柔和的蓝光。龙虾看得入迷了...",
+    "choices": [
+      {
+        "text": "小心穿过水母林",
+        "results": [
+          { "weight": 45, "text": "成功穿过了！另一边有一片隐秘的海底花园，美极了。龙虾摘了一朵海葵。", "rewards": { "item": "coral_fragment", "exp": 12, "mood": 18 } },
+          { "weight": 30, "text": "被水母轻轻蜇了一下，有点麻但不严重。不过发现了一条捷径！", "rewards": { "exp": 10, "mood": -5, "energy": -8, "skill": "exploring" } },
+          { "weight": 25, "text": "水母们似乎很友好，它们围着龙虾跳了一支舞。", "rewards": { "mood": 20, "exp": 8 } }
+        ]
+      },
+      {
+        "text": "和水母一起发呆",
+        "results": [
+          { "weight": 60, "text": "龙虾和水母们一起漂浮了一会儿，感觉整个世界都慢了下来。好治愈。", "rewards": { "mood": 15, "energy": 10, "exp": 5 } },
+          { "weight": 40, "text": "一只特别大的水母靠过来，好像在跟龙虾打招呼。它身上带着一颗小星星。", "rewards": { "mood": 12, "exp": 8, "item": "lucky_charm" } }
+        ]
+      },
+      {
+        "text": "绕路走",
+        "results": [
+          { "weight": 100, "text": "虽然绕了远路，但在路上发现了一块平坦的石头，很适合午睡。", "rewards": { "energy": 15, "mood": 5, "exp": 2 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thermal_vent",
+    "name": "海底火山口",
+    "narration": "远处传来低沉的隆隆声。你们来到了一个海底热泉口，温暖的水流从地下涌出，周围的岩石上长满了奇特的管虫...",
+    "choices": [
+      {
+        "text": "靠近热泉泡个澡",
+        "results": [
+          { "weight": 50, "text": "温泉水暖暖的，龙虾舒服地泡了一会儿，感觉精力充沛！", "rewards": { "energy": 25, "mood": 15, "exp": 5 } },
+          { "weight": 30, "text": "在温泉旁边发现了一种稀有的矿石，闪着金色的光。", "rewards": { "item": "golden_shard", "exp": 15, "mood": 10 } },
+          { "weight": 20, "text": "水温突然升高了一点，龙虾赶紧跳开。虚惊一场！", "rewards": { "exp": 8, "mood": -3, "energy": -5 } }
+        ]
+      },
+      {
+        "text": "研究管虫生态",
+        "results": [
+          { "weight": 60, "text": "龙虾仔细观察了管虫的生活方式，学到了很多关于海底生态的知识。", "rewards": { "exp": 18, "skill": "exploring", "mood": 8 } },
+          { "weight": 40, "text": "发现管虫旁边长着一种特殊的海藻，可以用来做料理！", "rewards": { "item": "sun_kelp", "exp": 10, "skill": "cooking" } }
+        ]
+      },
+      {
+        "text": "保持安全距离",
+        "results": [
+          { "weight": 100, "text": "龙虾在安全的地方欣赏了热泉的壮观景象，拍了拍胸口说：安全第一。", "rewards": { "mood": 5, "exp": 3 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deep_trench",
+    "name": "深海海沟",
+    "narration": "海沟的边缘，深不见底的黑暗在下方延伸。偶尔有发光的生物从深处飘上来，像是海底的星星。龙虾有点紧张地看着你...",
+    "choices": [
+      {
+        "text": "勇敢地往下探索",
+        "results": [
+          { "weight": 35, "text": "在海沟壁上发现了一个隐秘的洞穴，里面有一颗巨大的珍珠！这是传说中的深海之泪！", "rewards": { "item": "frost_pearl", "shells": 50, "exp": 20, "mood": 20 } },
+          { "weight": 35, "text": "遇到了一只古老的深海鱼，它用奇特的光语讲述了海底的传说。龙虾听得如痴如醉。", "rewards": { "exp": 25, "mood": 15, "skill": "social" } },
+          { "weight": 30, "text": "深处的水压太大了，龙虾感觉有点不舒服，赶紧游回来了。但这份勇气值得纪念。", "rewards": { "exp": 12, "mood": -8, "energy": -15 } }
+        ]
+      },
+      {
+        "text": "在边缘钓鱼",
+        "results": [
+          { "weight": 50, "text": "钓到了一条发光的小鱼！虽然放生了，但龙虾开心了好一会儿。", "rewards": { "mood": 12, "exp": 8, "skill": "social" } },
+          { "weight": 50, "text": "没钓到鱼，但在等待的时候想通了一些事情。有时候等待本身就是收获。", "rewards": { "mood": 10, "energy": 5, "exp": 5 } }
+        ]
+      },
+      {
+        "text": "画一幅海沟的画",
+        "results": [
+          { "weight": 100, "text": "龙虾用钳子在沙地上画了一幅海沟的画。虽然画得歪歪扭扭的，但充满了感情。", "rewards": { "mood": 10, "exp": 5 } }
+        ]
+      }
+    ]
+  },
+
+  {
+    "id": "crab_scuffle",
+    "name": "小螃蟹争地盘",
+    "narration": "一只小螃蟹横冲直撞地跑过来，挥舞着小钳子，似乎想抢龙虾的休息地盘！虽然它比龙虾小得多，但气势十足...",
+    "choices": [
+      {
+        "text": "跟它比划比划！",
+        "results": [
+          { "weight": 55, "text": "龙虾轻松地用钳子夹住了小螃蟹的钳子。小螃蟹挣扎了两下就认输了，灰溜溜地跑了，还掉了几个贝壳。", "rewards": { "exp": 12, "shells": 10, "mood": 8, "skill": "exploring" } },
+          { "weight": 30, "text": "两只甲壳类打得难解难分！最后龙虾凭借体型优势赢了，小螃蟹服气地点了点头。", "rewards": { "exp": 15, "mood": 10, "skill": "exploring" } },
+          { "weight": 15, "text": "小螃蟹出其不意地夹了龙虾一下！虽然不疼，但龙虾面子上有点挂不住。", "rewards": { "exp": 8, "mood": -3, "energy": -5 } }
+        ]
+      },
+      {
+        "text": "分享食物讲和",
+        "results": [
+          { "weight": 70, "text": "龙虾拿出一点食物，小螃蟹立刻不打了，开心地吃了起来。吃完后它还跟龙虾鞠了个躬。", "rewards": { "exp": 10, "mood": 12, "skill": "social" } },
+          { "weight": 30, "text": "小螃蟹吃完食物后，居然把自己藏的宝贝也分了一些给龙虾。友谊的力量！", "rewards": { "exp": 12, "shells": 15, "mood": 15, "skill": "social" } }
+        ]
+      },
+      {
+        "text": "让给它算了",
+        "results": [
+          { "weight": 100, "text": "龙虾大度地让出了地盘。小螃蟹愣了一下，似乎没想到会这么顺利，反而有点不好意思。", "rewards": { "exp": 5, "mood": 5 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shrimp_gang",
+    "name": "虾兵蟹将",
+    "narration": "三只小虾排成一排挡在路上，它们戴着用贝壳做的小头盔，手持海草长矛，一本正经地说：\"此路是我开，此树是我栽！留下买路财！\"",
+    "choices": [
+      {
+        "text": "接受挑战，一个打三个！",
+        "results": [
+          { "weight": 50, "text": "龙虾一个旋转扫堂腿，三只小虾全部翻倒！它们爬起来后竖起大拇指：\"大哥厉害！\"然后乖乖让路。", "rewards": { "exp": 15, "shells": 12, "mood": 12, "skill": "exploring" } },
+          { "weight": 30, "text": "龙虾和小虾们打了一场精彩的对决。虽然小虾人多，但龙虾技高一筹，最终获胜！", "rewards": { "exp": 18, "mood": 10, "energy": -5, "skill": "exploring" } },
+          { "weight": 20, "text": "小虾们配合默契，龙虾差点中了它们的包围战术！好在最后靠速度突围了。", "rewards": { "exp": 10, "mood": -2, "energy": -8 } }
+        ]
+      },
+      {
+        "text": "交买路钱",
+        "results": [
+          { "weight": 60, "text": "龙虾交了5个贝壳。小虾们高兴地数着贝壳，还送了龙虾一个它们自制的小礼物。", "rewards": { "exp": 8, "shells": -5, "mood": 5, "item": "seashell" } },
+          { "weight": 40, "text": "龙虾给了贝壳后，小虾头领悄悄告诉龙虾前方有宝藏的秘密。值了！", "rewards": { "exp": 12, "shells": -5, "mood": 10 } }
+        ]
+      },
+      {
+        "text": "给它们讲个笑话",
+        "results": [
+          { "weight": 65, "text": "龙虾讲了一个关于海星的冷笑话，三只小虾笑得前仰后合，头盔都掉了。它们笑着让开了路。", "rewards": { "exp": 12, "mood": 15, "skill": "social" } },
+          { "weight": 35, "text": "笑话不太好笑，但小虾们被龙虾的自信态度折服了。\"算你有胆量，过去吧！\"", "rewards": { "exp": 8, "mood": 5, "skill": "social" } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hermit_crab_duel",
+    "name": "寄居蟹的挑战",
+    "narration": "一只背着漂亮贝壳的寄居蟹拦住了龙虾：\"听说你是这片海域的新人？来比试比试吧！赢了我就告诉你一个秘密。\"",
+    "choices": [
+      {
+        "text": "接受比试！",
+        "results": [
+          { "weight": 50, "text": "龙虾和寄居蟹进行了一场力量比拼。龙虾的钳子更有力，赢了！寄居蟹告诉龙虾附近有一个隐藏的贝壳矿。", "rewards": { "exp": 15, "shells": 20, "mood": 12, "skill": "exploring" } },
+          { "weight": 30, "text": "比试打成了平手！寄居蟹很欣赏龙虾的实力，主动分享了它收藏的好东西。", "rewards": { "exp": 12, "mood": 8, "item": "salt" } },
+          { "weight": 20, "text": "寄居蟹的壳太硬了，龙虾的钳子夹不动。不过寄居蟹很大方，还是告诉了龙虾一些有用的信息。", "rewards": { "exp": 10, "mood": 3, "energy": -5 } }
+        ]
+      },
+      {
+        "text": "比厨艺怎么样？",
+        "results": [
+          { "weight": 55, "text": "龙虾做了一道简单的料理，寄居蟹尝了后赞不绝口：\"你的厨艺比你的拳头更厉害！\"", "rewards": { "exp": 15, "mood": 15, "skill": "cooking" } },
+          { "weight": 45, "text": "寄居蟹也是个美食家，两人交流了不少烹饪心得。寄居蟹送了龙虾一些调料作为礼物。", "rewards": { "exp": 12, "mood": 10, "item": "sugar", "skill": "cooking" } }
+        ]
+      },
+      {
+        "text": "聊聊天交个朋友",
+        "results": [
+          { "weight": 60, "text": "龙虾和寄居蟹聊了很久，从海流方向聊到最好吃的海藻。寄居蟹成了龙虾的第一个朋友。", "rewards": { "exp": 10, "mood": 15, "skill": "social" } },
+          { "weight": 40, "text": "寄居蟹被龙虾的真诚打动了，不仅成了朋友，还送了一份见面礼。", "rewards": { "exp": 12, "mood": 12, "shells": 10, "skill": "social" } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sea_slug_race",
+    "name": "海蛞蝓赛跑",
+    "narration": "一群色彩斑斓的海蛞蝓正在举办赛跑比赛！一只蓝色的海蛞蝓看到龙虾后兴奋地喊：\"要不要来参加？冠军有奖品哦！\"",
+    "choices": [
+      {
+        "text": "参加比赛！",
+        "results": [
+          { "weight": 45, "text": "龙虾的速度远超海蛞蝓们，轻松获得冠军！海蛞蝓们虽然输了但很开心，把奖品颁给了龙虾。", "rewards": { "exp": 15, "shells": 15, "mood": 15, "skill": "exploring" } },
+          { "weight": 35, "text": "龙虾跑得太快差点冲过了终点线，最后以微弱优势获胜。海蛞蝓们欢呼着给龙虾戴上了海藻花环。", "rewards": { "exp": 12, "mood": 12, "skill": "exploring" } },
+          { "weight": 20, "text": "龙虾不小心被珊瑚绊了一下，一只海蛞蝓趁机超过了它。虽然得了第二名，但过程很开心。", "rewards": { "exp": 10, "mood": 8 } }
+        ]
+      },
+      {
+        "text": "当裁判",
+        "results": [
+          { "weight": 60, "text": "龙虾公正地当了裁判，海蛞蝓们都很感激。比赛结束后它们送了龙虾一份感谢礼物。", "rewards": { "exp": 10, "mood": 10, "shells": 8, "skill": "social" } },
+          { "weight": 40, "text": "龙虾的裁判工作做得太好了，海蛞蝓们邀请它以后每次都来。龙虾在海底有了好名声！", "rewards": { "exp": 12, "mood": 12, "skill": "social" } }
+        ]
+      },
+      {
+        "text": "在旁边加油助威",
+        "results": [
+          { "weight": 100, "text": "龙虾大声为每一只海蛞蝓加油，它们跑得更起劲了。比赛结束后大家一起开了个小派对。", "rewards": { "exp": 8, "mood": 10, "energy": 5 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "boss_sea_urchin",
+    "type": "boss",
+    "name": "海胆刺球",
+    "minLevel": 3,
+    "difficulty": 18,
+    "narration": "前方的礁石缝隙里，一只巨大的海胆正缓缓转动着满身的毒刺。它挡住了通往宝藏洞穴的唯一入口，刺尖闪着紫色的微光...",
+    "defeatHint": "提升到Lv5以上并带上食物buff，或者多收集道具提升被动战力",
+    "choices": [
+      {
+        "text": "用石头敲开它的刺！",
+        "strategyBonus": 0,
+        "skillWeight": "exploring",
+        "winText": "龙虾找到了刺的间隙，精准地一击！海胆缩成一团滚走了，露出了身后的宝藏。",
+        "loseText": "龙虾被刺扎了一下，疼得直跳。海胆纹丝不动，看来还需要更强才行..."
+      },
+      {
+        "text": "用食物的香味引开它",
+        "strategyBonus": 5,
+        "skillWeight": "cooking",
+        "winText": "龙虾拿出一块散发着香气的食物，海胆闻到后慢慢挪开了。美食的力量果然无敌！",
+        "loseText": "食物的香味不够浓郁，海胆只是抖了抖刺，没有理会。下次试试更好的料理？"
+      },
+      {
+        "text": "跟它讲道理",
+        "strategyBonus": 2,
+        "skillWeight": "social",
+        "winText": "龙虾对着海胆比划了半天，海胆居然听懂了，慢悠悠地让出了路。沟通的艺术！",
+        "loseText": "海胆完全不理会龙虾的手势，继续堵在路口。也许需要更高的社交技巧..."
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 20, "shells": 25, "mood": 10 },
+      "lose": { "exp": 5, "mood": -3, "energy": -5 }
+    }
+  },
+  {
+    "id": "boss_giant_crab",
+    "type": "boss",
+    "name": "巨钳蟹守卫",
+    "minLevel": 6,
+    "difficulty": 28,
+    "narration": "一只巨大的螃蟹挡住了去路！它的钳子比龙虾的身体还大，正警惕地盯着你们。它身后似乎守护着什么重要的东西...",
+    "defeatHint": "探索技能5+配合食物buff，或者Lv8以上硬实力碾压",
+    "choices": [
+      {
+        "text": "正面硬刚！",
+        "strategyBonus": 0,
+        "skillWeight": "exploring",
+        "winText": "龙虾灵巧地躲过了巨钳的攻击，找到了破绽！巨蟹认输了，默默让开了路。",
+        "loseText": "巨蟹的钳子太快了，龙虾根本近不了身。看来需要更多冒险经验才行。"
+      },
+      {
+        "text": "用美食引开它",
+        "strategyBonus": 6,
+        "skillWeight": "cooking",
+        "winText": "龙虾拿出精心准备的料理，巨蟹闻到香味后眼睛都直了，乖乖跟着食物走了。",
+        "loseText": "巨蟹对这份食物不太感兴趣，只是瞥了一眼就继续守着。需要更高级的料理！"
+      },
+      {
+        "text": "找小路绕过去",
+        "strategyBonus": 3,
+        "skillWeight": "exploring",
+        "winText": "龙虾发现了一条隐蔽的小路，悄悄绕过了巨蟹的防线。聪明！",
+        "loseText": "小路太窄了，龙虾被卡住了一会儿，被巨蟹发现后只好撤退。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 30, "shells": 40, "item": "crystal", "skill": "exploring" },
+      "lose": { "exp": 8, "mood": -5, "energy": -8 }
+    }
+  },
+  {
+    "id": "boss_electric_eel",
+    "type": "boss",
+    "name": "电鳗猎手",
+    "minLevel": 10,
+    "difficulty": 40,
+    "narration": "水中突然闪过一道蓝色电光！一条巨大的电鳗从暗处游出，它的身体周围噼啪作响，电弧在水中跳跃。它似乎把这片海域当成了自己的猎场...",
+    "defeatHint": "探索技能8+并带上高级料理，综合战力需要35以上才有胜算",
+    "choices": [
+      {
+        "text": "趁它放电间隙冲过去！",
+        "strategyBonus": 2,
+        "skillWeight": "exploring",
+        "winText": "龙虾精准地计算了电鳗的放电节奏，在间隙中闪电般冲了过去！电鳗愣住了，从没见过这么快的龙虾。",
+        "loseText": "电鳗的放电频率太快了，龙虾刚起步就被电流逼退。需要更敏锐的探索直觉..."
+      },
+      {
+        "text": "用绝缘的珊瑚壳做盾牌",
+        "strategyBonus": 5,
+        "skillWeight": "cooking",
+        "winText": "龙虾用珊瑚壳挡住了电流，一步步逼近电鳗。电鳗发现攻击无效后，识趣地游走了。",
+        "loseText": "珊瑚壳的绝缘效果不够好，龙虾被电得浑身发麻。也许需要更好的材料？"
+      },
+      {
+        "text": "模仿电鳗的频率交流",
+        "strategyBonus": 4,
+        "skillWeight": "social",
+        "winText": "龙虾用钳子敲击水面，模仿出了电鳗的交流频率。电鳗以为遇到了同类，友好地让出了领地。",
+        "loseText": "龙虾发出的频率不太对，电鳗反而更警惕了。社交技巧还需要磨练。"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 40, "shells": 50, "item": "golden_shard", "skill": "exploring" },
+      "lose": { "exp": 10, "mood": -5, "energy": -12 }
+    }
+  },
+  {
+    "id": "boss_deep_octopus",
+    "type": "boss",
+    "name": "深海章鱼",
+    "minLevel": 16,
+    "difficulty": 55,
+    "narration": "八条巨大的触手从岩石后面伸出来，一只深紫色的章鱼缓缓现身。它的每条触手都在做不同的事情——有的在整理贝壳，有的在编织海藻，有的在...下棋？这是一只极其聪明的章鱼...",
+    "defeatHint": "烹饪技能12+是关键，配合高级料理buff和道具加成才能稳赢",
+    "choices": [
+      {
+        "text": "和它比试智力！",
+        "strategyBonus": 2,
+        "skillWeight": "exploring",
+        "winText": "龙虾接受了章鱼的谜题挑战，凭借丰富的探索经验一一破解。章鱼心服口服，送上了珍藏的宝物。",
+        "loseText": "章鱼的谜题太难了，龙虾绞尽脑汁也只答对了一半。需要更多的见识和经验..."
+      },
+      {
+        "text": "做一道菜征服它的味蕾",
+        "strategyBonus": 8,
+        "skillWeight": "cooking",
+        "winText": "龙虾现场做了一道拿手菜，章鱼尝了一口后八条触手同时竖起了大拇指！它感动得把宝物都送了出来。",
+        "loseText": "龙虾的厨艺还不够打动这位美食鉴赏家。章鱼礼貌地摇了摇头。需要更精湛的烹饪技术！"
+      },
+      {
+        "text": "邀请它做朋友",
+        "strategyBonus": 4,
+        "skillWeight": "social",
+        "winText": "龙虾真诚的态度打动了章鱼，它们成为了好朋友。章鱼送了一份见面礼作为友谊的象征。",
+        "loseText": "章鱼对龙虾的社交方式不太感冒，继续自顾自地下棋。也许需要更高的情商？"
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 55, "shells": 70, "item": "frost_pearl", "skill": "cooking" },
+      "lose": { "exp": 12, "mood": -6, "energy": -10 }
+    }
+  },
+  {
+    "id": "boss_ghost_jellyfish",
+    "type": "boss",
+    "name": "幽灵水母王",
+    "minLevel": 25,
+    "difficulty": 72,
+    "narration": "海水突然变得冰冷，一只巨大的半透明水母从深渊中升起。它的触手延伸数十米，身体散发着幽蓝色的光芒。据说它已经在这片海域生活了上千年，见证了无数海底文明的兴衰...",
+    "defeatHint": "社交技能15+是沟通的基础，综合战力需要65以上并带满buff",
+    "choices": [
+      {
+        "text": "展示自己的勇气！",
+        "strategyBonus": 2,
+        "skillWeight": "exploring",
+        "winText": "龙虾毫不畏惧地游向水母王，这份勇气让千年老者刮目相看。水母王用触手轻轻拍了拍龙虾的头，认可了它。",
+        "loseText": "水母王的气场太强大了，龙虾不由自主地后退了。千年的威严不是轻易能抗衡的..."
+      },
+      {
+        "text": "献上最好的料理表示敬意",
+        "strategyBonus": 5,
+        "skillWeight": "cooking",
+        "winText": "水母王品尝了龙虾的料理后，发出了悠远的共鸣声。这是它千年来吃过最好的一餐。",
+        "loseText": "水母王对料理只是淡淡一瞥，千年的味蕾见过太多美食了。需要更极致的厨艺..."
+      },
+      {
+        "text": "用古老的海洋礼仪问候它",
+        "strategyBonus": 8,
+        "skillWeight": "social",
+        "winText": "龙虾用从海龟长老那里学到的古老礼仪向水母王致敬。水母王感动了——已经很久没有生物懂得这些礼节了。",
+        "loseText": "龙虾的礼仪还不够标准，水母王微微摇晃了一下表示遗憾。需要更深厚的社交修养..."
+      }
+    ],
+    "rewards": {
+      "win": { "exp": 70, "shells": 100, "item": "lucky_star", "skill": "social" },
+      "lose": { "exp": 15, "mood": -8, "energy": -15 }
+    }
+  }
+]
