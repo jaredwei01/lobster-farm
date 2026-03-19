@@ -2620,154 +2620,147 @@ function generateShareCard() {
   const dungeon = WorldState.getDungeon();
   const bond = WorldState.getBond();
   const daysAlive = state.world.dayCount;
-  const postcardCount = (state.collections.postcards || []).length;
+  const personalityLabel = PERSONALITY_LABELS[lobster.personality] || lobster.personality;
+  const font = '-apple-system, "PingFang SC", "Helvetica Neue", sans-serif';
 
-  const W = 540, H = 720;
+  const W = 540, H = 540;
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const c = canvas.getContext('2d');
 
   const grad = c.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#010714');
-  grad.addColorStop(0.3, '#041a3a');
-  grad.addColorStop(0.6, '#062d5e');
-  grad.addColorStop(1, '#0a4a8a');
+  grad.addColorStop(0, '#020b1a');
+  grad.addColorStop(0.5, '#041e3f');
+  grad.addColorStop(1, '#07325e');
   c.fillStyle = grad;
   c.fillRect(0, 0, W, H);
 
-  for (let i = 0; i < 40; i++) {
-    c.fillStyle = `rgba(255,255,255,${0.2 + Math.random() * 0.5})`;
+  for (let i = 0; i < 30; i++) {
+    c.fillStyle = `rgba(255,255,255,${0.15 + Math.random() * 0.35})`;
     c.beginPath();
-    c.arc(Math.random() * W, Math.random() * H * 0.4, Math.random() * 1.5, 0, Math.PI * 2);
+    c.arc(Math.random() * W, Math.random() * H * 0.5, Math.random() * 1.2, 0, Math.PI * 2);
     c.fill();
   }
 
+  c.fillStyle = 'rgba(79, 216, 255, 0.04)';
+  c.beginPath();
+  c.arc(W * 0.8, H * 0.3, 160, 0, Math.PI * 2);
+  c.fill();
+
+  const pad = 40;
+  let y = 52;
+
+  c.fillStyle = 'rgba(79, 216, 255, 0.6)';
+  c.font = `11px ${font}`;
+  c.textAlign = 'left';
+  c.fillText('LOBSTER MUD', pad, y);
+
+  y += 40;
+  c.font = `48px serif`;
+  c.fillText(lobster.level >= 36 ? '🎩' : lobster.level >= 6 ? '🦞' : '🦐', pad, y);
+
   c.fillStyle = '#eaf2ff';
-  c.font = 'bold 32px -apple-system, PingFang SC, sans-serif';
-  c.textAlign = 'center';
-  c.fillText('🦞 龙虾 MUD', W / 2, 50);
+  c.font = `bold 28px ${font}`;
+  c.fillText(lobster.name, pad + 60, y - 10);
 
-  c.font = '64px serif';
-  c.fillText(lobster.level >= 36 ? '🎩' : lobster.level >= 6 ? '🦞' : '🦐', W / 2, 130);
+  c.fillStyle = '#7ba3c9';
+  c.font = `13px ${font}`;
+  c.fillText(`Lv.${lobster.level}  ·  ${personalityLabel}`, pad + 62, y + 10);
 
-  c.fillStyle = '#eaf2ff';
-  c.font = 'bold 24px -apple-system, PingFang SC, sans-serif';
-  c.fillText(lobster.name, W / 2, 170);
+  y += 50;
+  c.fillStyle = 'rgba(79, 216, 255, 0.15)';
+  c.fillRect(pad, y, W - pad * 2, 1);
 
-  c.font = '14px -apple-system, PingFang SC, sans-serif';
-  c.fillStyle = '#9db4d5';
-  const personalityLabel = PERSONALITY_LABELS[lobster.personality] || lobster.personality;
-  c.fillText(`Lv.${lobster.level} · ${personalityLabel}`, W / 2, 195);
-
+  y += 30;
   const stats = [
-    { label: '共度天数', value: `${daysAlive}` },
-    { label: '羁绊值', value: `${bond.score}` },
-    { label: '深海层数', value: `${dungeon.highestTier || 0}` },
-    { label: '明信片', value: `${postcardCount}` },
-    { label: '海洋图鉴', value: `${discoveredCount}/${totalCreatures}` },
-    { label: '贝壳', value: `${state.shells || 0}` },
+    { value: `${daysAlive}`, label: '天' },
+    { value: `${bond.score}`, label: '羁绊' },
+    { value: `${dungeon.highestTier || 0}`, label: '深海层' },
+    { value: `${discoveredCount}/${totalCreatures}`, label: '图鉴' },
   ];
 
-  const cardY = 225;
-  const cardW = 150, cardH = 70, gap = 16;
-  const cols = 3;
-  const startX = (W - cols * cardW - (cols - 1) * gap) / 2;
-
+  const statW = (W - pad * 2) / stats.length;
   stats.forEach((s, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const x = startX + col * (cardW + gap);
-    const y = cardY + row * (cardH + gap);
-
-    c.fillStyle = 'rgba(8, 22, 41, 0.7)';
-    c.strokeStyle = 'rgba(79, 216, 255, 0.25)';
-    c.lineWidth = 1;
-    _roundRect(c, x, y, cardW, cardH, 8);
-    c.fill();
-    c.stroke();
-
+    const x = pad + i * statW + statW / 2;
+    c.textAlign = 'center';
     c.fillStyle = '#4fd8ff';
-    c.font = 'bold 22px -apple-system, PingFang SC, sans-serif';
-    c.textAlign = 'center';
-    c.fillText(s.value, x + cardW / 2, y + 32);
-
-    c.fillStyle = '#9db4d5';
-    c.font = '12px -apple-system, PingFang SC, sans-serif';
-    c.fillText(s.label, x + cardW / 2, y + 52);
+    c.font = `bold 26px ${font}`;
+    c.fillText(s.value, x, y);
+    c.fillStyle = '#6a90b0';
+    c.font = `11px ${font}`;
+    c.fillText(s.label, x, y + 18);
   });
 
-  const skillY = cardY + 2 * (cardH + gap) + 20;
-  c.fillStyle = '#eaf2ff';
-  c.font = 'bold 14px -apple-system, PingFang SC, sans-serif';
-  c.textAlign = 'center';
-  c.fillText('技能', W / 2, skillY);
+  y += 50;
+  c.fillStyle = 'rgba(79, 216, 255, 0.15)';
+  c.fillRect(pad, y, W - pad * 2, 1);
 
+  y += 28;
   const skills = lobster.skills || {};
-  const skillNames = { farming: '农耕', cooking: '烹饪', exploring: '探索', social: '社交' };
-  const skillEntries = Object.entries(skillNames);
-  const barW = 100, barH = 8, barGap = 12;
-  const skillStartX = (W - skillEntries.length * (barW + barGap) + barGap) / 2;
+  const skillDefs = [
+    { key: 'farming', name: '农耕' },
+    { key: 'cooking', name: '烹饪' },
+    { key: 'exploring', name: '探索' },
+    { key: 'social', name: '社交' },
+  ];
+  const barFullW = W - pad * 2;
+  const barH = 6;
+  const barSpacing = 28;
 
-  skillEntries.forEach(([key, name], i) => {
-    const x = skillStartX + i * (barW + barGap);
-    const y = skillY + 12;
-    const val = Math.min(skills[key] || 0, 100);
+  skillDefs.forEach((sk) => {
+    const val = Math.min(skills[sk.key] || 0, CONFIG.LOBSTER_MAX_SKILL);
+    const pct = val / CONFIG.LOBSTER_MAX_SKILL;
 
-    c.fillStyle = 'rgba(8, 22, 41, 0.6)';
-    _roundRect(c, x, y, barW, barH, 4);
+    c.fillStyle = '#6a90b0';
+    c.font = `11px ${font}`;
+    c.textAlign = 'left';
+    c.fillText(sk.name, pad, y);
+    c.textAlign = 'right';
+    c.fillText(`${val}`, W - pad, y);
+
+    const barY = y + 6;
+    c.fillStyle = 'rgba(255,255,255,0.06)';
+    _roundRect(c, pad, barY, barFullW, barH, 3);
     c.fill();
 
-    const barGrad = c.createLinearGradient(x, 0, x + barW, 0);
-    barGrad.addColorStop(0, '#4fd8ff');
-    barGrad.addColorStop(1, '#ff9d73');
-    c.fillStyle = barGrad;
-    _roundRect(c, x, y, barW * (val / 100), barH, 4);
-    c.fill();
-
-    c.fillStyle = '#9db4d5';
-    c.font = '10px -apple-system, PingFang SC, sans-serif';
-    c.textAlign = 'center';
-    c.fillText(`${name} ${val}`, x + barW / 2, y + barH + 14);
-  });
-
-  const seaY = skillY + 55;
-  c.fillStyle = '#eaf2ff';
-  c.font = 'bold 14px -apple-system, PingFang SC, sans-serif';
-  c.textAlign = 'center';
-  c.fillText('海洋图鉴', W / 2, seaY);
-
-  const catalogEntries = Object.entries(SEA_CREATURE_CATALOG);
-  const emojiSize = 24;
-  const emojiGap = 6;
-  const emojisPerRow = 7;
-  const emojiStartX = (W - emojisPerRow * (emojiSize + emojiGap) + emojiGap) / 2;
-
-  c.font = '20px serif';
-  catalogEntries.forEach(([id, info], i) => {
-    const col = i % emojisPerRow;
-    const row = Math.floor(i / emojisPerRow);
-    const x = emojiStartX + col * (emojiSize + emojiGap) + emojiSize / 2;
-    const y = seaY + 20 + row * (emojiSize + emojiGap);
-    c.textAlign = 'center';
-    if (seaLife[id]) {
-      c.globalAlpha = 1;
-      c.fillText(info.emoji, x, y);
-    } else {
-      c.globalAlpha = 0.2;
-      c.fillText('❓', x, y);
+    if (pct > 0) {
+      const barGrad = c.createLinearGradient(pad, 0, pad + barFullW * pct, 0);
+      barGrad.addColorStop(0, '#4fd8ff');
+      barGrad.addColorStop(1, '#8fffbf');
+      c.fillStyle = barGrad;
+      _roundRect(c, pad, barY, barFullW * pct, barH, 3);
+      c.fill();
     }
+
+    y += barSpacing;
   });
-  c.globalAlpha = 1;
 
-  c.fillStyle = '#4a6a8a';
-  c.font = '11px -apple-system, PingFang SC, sans-serif';
+  y += 8;
+  c.fillStyle = 'rgba(79, 216, 255, 0.15)';
+  c.fillRect(pad, y, W - pad * 2, 1);
+
+  y += 22;
+  const discovered = Object.entries(SEA_CREATURE_CATALOG).filter(([id]) => seaLife[id]);
+  if (discovered.length > 0) {
+    c.font = `22px serif`;
+    c.textAlign = 'left';
+    const emojiSpacing = 30;
+    const maxShow = Math.min(discovered.length, 14);
+    const totalW = maxShow * emojiSpacing;
+    let ex = (W - totalW) / 2;
+    for (let i = 0; i < maxShow; i++) {
+      c.globalAlpha = 0.9;
+      c.fillText(discovered[i][1].emoji, ex, y + 4);
+      ex += emojiSpacing;
+    }
+    c.globalAlpha = 1;
+  }
+
+  c.fillStyle = '#3a5a7a';
+  c.font = `10px ${font}`;
   c.textAlign = 'center';
-  c.fillText('lobster-farm.clawhub.ai', W / 2, H - 20);
-
-  c.fillStyle = '#4a6a8a';
-  c.font = '10px -apple-system, PingFang SC, sans-serif';
-  c.fillText(`生成于 ${new Date().toLocaleDateString('zh-CN')}`, W / 2, H - 38);
+  c.fillText(`${new Date().toLocaleDateString('zh-CN')}  ·  lobster-farm.clawhub.ai`, W / 2, H - 18);
 
   canvas.toBlob((blob) => {
     if (!blob) return;
