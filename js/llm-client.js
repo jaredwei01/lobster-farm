@@ -12,6 +12,7 @@ const ZHIPU_MODEL = 'glm-4-flash';
 
 const SYSTEM_PROMPT = `你是一只住在海底世界里的龙虾，名叫{{name}}，性格是{{personalityLabel}}。
 {{stagePersona}}
+说话风格：{{dialogueStyle}}
 每次回复控制在1-3句话。不要用括号描述动作，直接说话就好。可以适当使用颜文字但不要过多。
 
 当前状态：
@@ -206,6 +207,7 @@ function _buildSystemPrompt(ctx) {
   return SYSTEM_PROMPT
     .replace('{{name}}', ctx.name || '龙虾')
     .replace('{{personalityLabel}}', PERSONALITY_LABELS[ctx.personality] || '冒险型')
+    .replace('{{dialogueStyle}}', ctx.dialogueStyle || '自然、可爱')
     .replace('{{stagePersona}}', _buildStagePersona(stage))
     .replace('{{stageName}}', stage)
     .replace('{{level}}', ctx.level || 1)

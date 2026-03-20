@@ -3425,6 +3425,18 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
   margin-top: 2px;
 }
 
+.boss-mod-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(255, 180, 60, 0.18);
+  color: #e8a020;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
 /* ========== Dungeon Battle Modal ========== */
 
 .modal-dungeon-battle {

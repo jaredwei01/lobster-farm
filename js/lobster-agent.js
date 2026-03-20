@@ -16,6 +16,11 @@ export const LobsterAgent = {
     recipes = await rResp.json();
   },
 
+  getDialogueStyle(personalityKey) {
+    const p = personalities[personalityKey];
+    return p?.dialogueStyle || '';
+  },
+
   decide(ws) {
     const state = ws.getState();
     const lobster = state.lobster || {};
@@ -94,7 +99,9 @@ export const LobsterAgent = {
       case 'rest': {
         ws.modifyStat('energy', CONFIG.ENERGY_REST_GAIN);
         energyCost = 0;
-        moodDelta = 3;
+        const weather = state.world?.weather || 'sunny';
+        const napBonus = this._moodMod(profile, 'good_nap') + (weather === 'sunny' ? this._moodMod(profile, 'sunny_day') : 0) + (weather === 'rainy' ? this._moodMod(profile, 'rainy_nap') : 0);
+        moodDelta = 3 + napBonus;
         detail = '在池塘里泡澡';
         dialogue = this._restDialogue(pKey);
         ws.update('lobster.location', 'pond');
@@ -108,7 +115,7 @@ export const LobsterAgent = {
           ws.modifyStat('hunger', -hungerRestore);
           const prefCount = (lobster.preferences || {})[food.id] || 0;
           const prefBonus = prefCount >= CONFIG.PREFERENCE_THRESHOLD_FOOD ? CONFIG.PREFERENCE_MOOD_BONUS : 0;
-          moodDelta = 5 + prefBonus;
+          moodDelta = 5 + prefBonus + this._moodMod(profile, 'good_meal');
           energyCost = 5;
           detail = prefBonus > 0 ? `开心地吃了最爱的${food.name}` : `吃了${food.name}`;
           dialogue = this._eatDialogue(pKey, food.name);
@@ -116,7 +123,7 @@ export const LobsterAgent = {
         } else {
           detail = '翻了翻背包，什么吃的都没有';
           dialogue = '肚子好饿...但是什么都没有...';
-          moodDelta = -5;
+          moodDelta = -5 + this._moodMod(profile, 'hungry');
           energyCost = 3;
         }
         break;
@@ -133,7 +140,7 @@ export const LobsterAgent = {
           ws.setPlot(ripe, { crop: null, growthStage: 0, maxGrowth: 0, watered: false });
           detail = `收获了${items[cropItem]?.name || plot.crop}`;
           dialogue = this._farmDialogue(pKey, 'harvest');
-          moodDelta = isGoldenHarvest ? 12 : 8;
+          moodDelta = (isGoldenHarvest ? 12 : 8) + this._moodMod(profile, 'routine_task');
           ws.modifySkill('farming', 1);
         } else {
           const needsWater = plots.findIndex(p => p.crop && !p.watered && p.growthStage < p.maxGrowth);
@@ -184,7 +191,7 @@ export const LobsterAgent = {
           if (isDoubleCook) ws.addItem(mealId, 1);
           detail = isDoubleCook ? `做了双份${recipe.name}` : `做了一份${recipe.name}`;
           dialogue = this._cookDialogue(pKey, recipe.name);
-          moodDelta = isDoubleCook ? 8 : 6;
+          moodDelta = (isDoubleCook ? 8 : 6) + this._moodMod(profile, 'new_recipe');
           ws.modifySkill('cooking', 1);
         } else {
           detail = '翻了翻厨房，材料不够';
@@ -215,9 +222,10 @@ export const LobsterAgent = {
         }
         if (found.item) {
           ws.addItem(found.item, 1);
+          if (['crystal', 'golden_shard'].includes(found.item)) ws.addRareItem(found.item);
           detail = `探索时发现了${found.name}`;
           dialogue = this._exploreDialogue(pKey, found.name);
-          moodDelta = 7;
+          moodDelta = 7 + this._moodMod(profile, 'new_discovery');
         } else {
           detail = '四处逛了逛，什么也没找到';
           dialogue = '今天运气不太好，不过散步也不错。';
@@ -268,7 +276,7 @@ export const LobsterAgent = {
         ws.addPreference(destId);
         detail = `出发前往${destInfo.name}`;
         dialogue = `${destInfo.icon} 出发啦！${destInfo.name}，我来了！`;
-        moodDelta = 12;
+        moodDelta = 12 + this._moodMod(profile, 'travel_return');
         energyCost = 15;
         ws.modifySkill('exploring', 1);
         break;
@@ -280,6 +288,10 @@ export const LobsterAgent = {
     ws.clampStats();
 
     return { action, detail, dialogue, moodDelta, energyCost };
+  },
+
+  _moodMod(profile, key) {
+    return (profile && profile.moodModifiers && profile.moodModifiers[key]) || 0;
   },
 
   _findEdibleItem(state) {

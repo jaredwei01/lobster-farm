@@ -101,6 +101,35 @@ let selectedPersonality = null;
 let itemsData = {};
 let recipesData = {};
 let pendingSuggestion = null;
+
+function _checkRecipeUnlocks() {
+  const raw = WorldState.getRawState();
+  const level = raw.lobster.level;
+  const known = raw.collections.recipes || [];
+  const stats = raw.stats || {};
+  let newCount = 0;
+
+  for (const [id, r] of Object.entries(recipesData)) {
+    if (known.includes(id)) continue;
+    const cond = r.unlockCondition;
+    if (!cond || cond === 'default') {
+      if (!known.includes(id)) { known.push(id); newCount++; }
+    } else if (cond.startsWith('level_')) {
+      const req = parseInt(cond.split('_')[1], 10);
+      if (level >= req) { known.push(id); newCount++; }
+    } else if (cond === 'event_golden_crop' && (stats.goldenHarvests || 0) > 0) {
+      known.push(id); newCount++;
+    }
+  }
+
+  if (newCount > 0) {
+    raw.collections.recipes = known;
+    SaveSystem.save(raw);
+    const label = newCount === 1 ? '解锁了新食谱！' : `解锁了 ${newCount} 个新食谱！`;
+    UIRenderer.showNotification(`📖 ${label}`);
+    SFX.play('achievement');
+  }
+}
 let farmStrategy = FARM_STRATEGY_DEFAULT;
 
 async function boot() {
@@ -790,6 +819,7 @@ function startGame() {
   _updateFishingButton();
   renderMemoryTimeline();
   _updateBondVisuals();
+  _checkRecipeUnlocks();
 
   WorldState.subscribe((state) => {
     UIRenderer.renderAll(state);
@@ -838,6 +868,7 @@ function startGame() {
       WorldState.modifyBond(2);
       _updateFishingButton();
       _checkAchievements();
+      _checkRecipeUnlocks();
       if (l.level >= CONFIG.LOBSTER_MAX_LEVEL) _maybeShowP4CrownCeremony();
     }
 
@@ -1580,12 +1611,16 @@ function harvestPlot(plotIndex = -1) {
   WorldState.modifyStat('mood', isGoldenCrop ? 8 : 3);
   WorldState.incrementHarvest();
   WorldState.incrementStat('totalHarvests');
-  if (isGoldenCrop) WorldState.incrementStat('goldenHarvests');
+  if (isGoldenCrop) {
+    WorldState.incrementStat('goldenHarvests');
+    WorldState.addRareItem('golden_crop');
+  }
   WorldState.addCropType(plot.crop);
   WorldState.clampStats();
 
   SFX.play('harvest');
   _animHarvestPop(isGoldenCrop ? '✨' : '🌾');
+  if (isGoldenCrop) _checkRecipeUnlocks();
   const msg = isGoldenCrop
     ? `收获了${cropName} ×${gainCount}，还额外获得20贝壳！`
     : `收获了${cropName}，今天的农田很给力！`;
@@ -2284,16 +2319,25 @@ function renderCollectionTab(tab) {
       container.innerHTML = '<div style="color:var(--text-dim);font-size:13px;padding:20px;text-align:center;">食谱数据加载中...</div>';
       return;
     }
+    const _unlockHint = (cond) => {
+      if (!cond || cond === 'default') return '';
+      if (cond.startsWith('level_')) return `Lv.${cond.split('_')[1]} 解锁`;
+      if (cond === 'event_golden_crop') return '收获黄金作物解锁';
+      if (cond === 'visitor_octopus_chef') return '章鱼厨师传授';
+      return '';
+    };
+    const ings = (r) => Object.entries(r.ingredients || {}).map(([k, v]) => `${itemsData[k]?.name || k}×${v}`).join(' + ');
     container.innerHTML = '<div class="recipe-grid">' + allRecipes.map(([id, r]) => {
       const known = knownRecipes.includes(id);
       const inv = WorldState.getInventory();
-      const canCook = known && r.ingredients && r.ingredients.every(ing => (inv[ing.id] || 0) >= ing.count);
+      const canCook = known && Object.entries(r.ingredients || {}).every(([k, v]) => (inv[k] || 0) >= v);
+      const hint = _unlockHint(r.unlockCondition);
       return `<div class="recipe-slot ${known ? 'collected' : ''} ${canCook ? 'cookable' : ''}">
         <div class="recipe-name">${known ? (r.name || id) : '???'}</div>
-        ${known ? `<div class="recipe-ingredients">${r.ingredients.map(ing => `${itemsData[ing.id]?.name || ing.id}×${ing.count}`).join(' + ')}</div>
-        <div class="recipe-effect">${r.battleBonus ? `战力+${r.battleBonus}` : ''}${r.moodBonus ? ` 心情+${r.moodBonus}` : ''}${r.hungerRestore ? ` 饱腹-${r.hungerRestore}` : ''}</div>` : '<div class="recipe-ingredients">未解锁</div>'}
+        ${known ? `<div class="recipe-ingredients">${ings(r)}</div>
+        <div class="recipe-effect">${r.battleBonus ? `战力+${r.battleBonus}` : ''}${r.effects?.mood ? ` 心情+${r.effects.mood}` : ''}${r.effects?.hunger ? ` 饱腹${r.effects.hunger}` : ''}</div>` : `<div class="recipe-ingredients">${hint || '未解锁'}</div>`}
       </div>`;
-    }).join('') + '</div><div style="margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center;">已解锁：${knownRecipes.length}/${allRecipes.length}</div>';
+    }).join('') + `</div><div style="margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center;">已解锁：${knownRecipes.length}/${allRecipes.length}</div>`;
   } else if (tab === 'stamps') {
     const stamps = collections.visitorStamps || [];
     const allVisitors = [
@@ -2595,15 +2639,25 @@ function _fishCatch() {
   if (reward.items.length > 0) {
     const item = reward.items[Math.floor(Math.random() * reward.items.length)];
     WorldState.addItem(item, 1);
+    if (_RARE_ITEM_IDS.has(item)) WorldState.addRareItem(item);
     const info = itemsData[item] || {};
     itemName = info.name || item;
   }
 
   if (quality !== 'miss') {
     WorldState.modifySkill('exploring', 1);
-    const creatureTypes = ['big-fish', 'jellyfish', 'seahorse', 'pufferfish', 'clownfish', 'starfish'];
-    const discovered = creatureTypes[Math.floor(Math.random() * creatureTypes.length)];
-    WorldState.recordSeaCreature(discovered);
+    const level = WorldState.getLobster().level;
+    const fishPool = ['big-fish', 'jellyfish', 'seahorse', 'clownfish', 'starfish', 'fish-school'];
+    if (level >= 10) fishPool.push('crab', 'pufferfish');
+    if (level >= 18) fishPool.push('turtle', 'eel', 'octopus');
+    if (level >= 28) fishPool.push('manta', 'anglerfish');
+    if (level >= 38) fishPool.push('whale');
+    const discovered = fishPool[Math.floor(Math.random() * fishPool.length)];
+    const isNew = WorldState.recordSeaCreature(discovered);
+    if (isNew) {
+      const info = SEA_CREATURE_CATALOG[discovered];
+      if (info) UIRenderer.showNotification(`🔍 钓到新物种：${info.name}！`, 3000);
+    }
   }
 
   SFX.play(quality === 'miss' ? 'combat_loss' : 'harvest');
@@ -3267,6 +3321,7 @@ async function _sendChatMessage() {
     const context = {
       name: lobster.name,
       personality: lobster.personality,
+      dialogueStyle: LobsterAgent.getDialogueStyle(lobster.personality),
       level: lobster.level,
       stage: _getStageName(lobster.level),
       mood: lobster.mood,
@@ -3666,6 +3721,24 @@ async function loadMudScenes() {
   } catch { _dungeonBosses = []; }
 }
 
+const _BOSS_MODIFIERS = [
+  { id: 'enraged',   icon: '🔥', label: '狂暴',   diffMod: +15, desc: '难度+15' },
+  { id: 'weakened',  icon: '💤', label: '虚弱',   diffMod: -12, desc: '难度-12' },
+  { id: 'toxic',     icon: '☠️', label: '剧毒',   diffMod: +8,  desc: '难度+8，烹饪加成翻倍', cookMult: 2 },
+  { id: 'armored',   icon: '🛡️', label: '铁甲',   diffMod: +10, desc: '难度+10' },
+  { id: 'generous',  icon: '🎁', label: '慷慨',   diffMod: 0,   desc: '奖励贝壳翻倍', shellMult: 2 },
+  { id: 'swift',     icon: '⚡', label: '迅捷',   diffMod: +6,  desc: '难度+6，探索加成翻倍', exploreMult: 2 },
+  { id: 'ancient',   icon: '🏛️', label: '远古',   diffMod: +20, desc: '难度+20，经验翻倍', expMult: 2 },
+  { id: 'friendly',  icon: '😊', label: '友善',   diffMod: -8,  desc: '难度-8，社交加成翻倍', socialMult: 2 },
+];
+
+function _getDailyBossModifier(bossId) {
+  const day = WorldState.getWorld().dayCount || 1;
+  const seed = day * 31 + bossId.length * 7;
+  const idx = seed % _BOSS_MODIFIERS.length;
+  return _BOSS_MODIFIERS[idx];
+}
+
 function _calcCombatPower(rawState, strategyBonus = 0, foodBonus = 0) {
   const l = rawState.lobster;
   const sk = l.skills || {};
@@ -3934,10 +4007,13 @@ function _resolveBossChoice(boss, choice, container, foodId = '') {
   container.scrollTop = container.scrollHeight;
 }
 
+const _RARE_ITEM_IDS = new Set(['frost_pearl', 'crystal', 'glowing_algae', 'pearl_dust', 'golden_shard', 'rainbow_anemone_seed', 'lucky_star', 'deep_sea_pearl', 'golden_crop']);
+
 function _applyAndShowRewards(rewards, container) {
   const rewardParts = [];
   if (rewards.item) {
     WorldState.addItem(rewards.item, 1);
+    if (_RARE_ITEM_IDS.has(rewards.item)) WorldState.addRareItem(rewards.item);
     const name = rewards.item.replace(/_/g, ' ');
     rewardParts.push(`获得 ${name}`);
   }
@@ -4310,14 +4386,18 @@ function openDungeonModal() {
     const card = document.createElement('div');
     card.className = `dungeon-boss-card ${defeated ? 'defeated' : ''} ${!unlocked ? 'locked' : ''} ${canAttempt ? 'available' : ''}`;
 
+    const mod = !defeated && unlocked ? _getDailyBossModifier(boss.id) : null;
+    const effectiveDiff = boss.difficulty + (mod ? mod.diffMod : 0);
+
     let statusText = '';
     if (defeated) statusText = '🏆 已征服';
     else if (!unlocked) statusText = '🔒 未解锁';
     else if (levelLocked) statusText = `🔒 需要 Lv.${boss.minLevel}`;
     else if (attemptedToday) statusText = '⏳ 今日已挑战';
-    else statusText = `推荐战力: ${boss.difficulty}+`;
+    else statusText = `推荐战力: ${effectiveDiff}+`;
 
-    card.innerHTML = `<div class="boss-card-left"><span class="boss-card-icon">${boss.icon}</span><div class="boss-card-info"><div class="boss-card-name">${boss.name}</div><div class="boss-card-desc">${defeated || unlocked ? boss.description : '???'}</div></div></div><div class="boss-card-right"><div class="boss-card-tier">第${tier}层</div><div class="boss-card-status">${statusText}</div></div>`;
+    const modTag = mod ? `<span class="boss-mod-tag" title="${mod.desc}">${mod.icon} ${mod.label}</span>` : '';
+    card.innerHTML = `<div class="boss-card-left"><span class="boss-card-icon">${boss.icon}</span><div class="boss-card-info"><div class="boss-card-name">${boss.name} ${modTag}</div><div class="boss-card-desc">${defeated || unlocked ? boss.description : '???'}</div></div></div><div class="boss-card-right"><div class="boss-card-tier">第${tier}层</div><div class="boss-card-status">${statusText}</div></div>`;
 
     if (canAttempt) {
       card.addEventListener('click', () => openDungeonBattle(boss));
@@ -4333,13 +4413,16 @@ function openDungeonModal() {
 function openDungeonBattle(boss) {
   closeModal('dungeon-modal');
 
+  const mod = _getDailyBossModifier(boss.id);
+  const effectiveDiff = boss.difficulty + mod.diffMod;
+
   const rawState = WorldState.getRawState();
   const inv = rawState.inventory || {};
   const collections = rawState.collections || {};
   const knownRecipes = collections.recipes || [];
 
   const headerEl = document.getElementById('dungeon-battle-header');
-  headerEl.innerHTML = `<span class="boss-battle-icon">${boss.icon}</span><div><div class="boss-battle-name">${boss.name}</div><div class="boss-battle-tier">第${boss.tier}层 | 难度 ${boss.difficulty}</div></div>`;
+  headerEl.innerHTML = `<span class="boss-battle-icon">${boss.icon}</span><div><div class="boss-battle-name">${boss.name}</div><div class="boss-battle-tier">第${boss.tier}层 | 难度 ${effectiveDiff} <span class="boss-mod-tag">${mod.icon} ${mod.label}</span></div></div>`;
 
   document.getElementById('dungeon-battle-narration').textContent = boss.narration;
 
@@ -4354,12 +4437,15 @@ function openDungeonBattle(boss) {
     foodSelect.innerHTML += `<option value="${recipeId}">${recipe.name} (战力+${bonus}) x${mealCount}</option>`;
   }
 
+  boss._mod = mod;
+  boss._effectiveDiff = effectiveDiff;
+
   const _updatePrepPower = () => {
     const foodId = foodSelect.value;
     const foodBonus = foodId && recipesData[foodId] ? (recipesData[foodId].battleBonus || 0) : 0;
     const raw = WorldState.getRawState();
     const power = _calcCombatPower(raw, 0, foodBonus);
-    const winChance = _calcWinChance(power, boss.difficulty);
+    const winChance = _calcWinChance(power, effectiveDiff);
     const itemInfo = _calcItemPowerBonus(raw.inventory);
     const bLabels = _getActiveBuffLabels(raw);
     let html = `预估战力: <strong>${power}</strong> | 胜率: <strong>${Math.round(winChance * 100)}%</strong>`;
@@ -4369,6 +4455,7 @@ function openDungeonBattle(boss) {
     if (bLabels.length > 0) {
       html += `<br><span style="font-size:11px;opacity:0.7">状态效果: ${bLabels.map(b => b.text).join(', ')}</span>`;
     }
+    html += `<br><span style="font-size:11px;opacity:0.7">${mod.icon} ${mod.label}: ${mod.desc}</span>`;
     document.getElementById('dungeon-prep-power').innerHTML = html;
   };
 
@@ -4419,9 +4506,13 @@ function _executeDungeonBattle(boss, choice, foodId) {
   choicesEl.innerHTML = '';
   document.getElementById('dungeon-battle-prep').classList.add('hidden');
 
+  const mod = boss._mod || _getDailyBossModifier(boss.id);
+  const effectiveDiff = boss._effectiveDiff || (boss.difficulty + mod.diffMod);
+
   let foodBonus = 0;
   if (foodId && recipesData[foodId]) {
     foodBonus = recipesData[foodId].battleBonus || 0;
+    if (mod.cookMult) foodBonus *= mod.cookMult;
     WorldState.removeItem(foodId, 1);
   }
 
@@ -4437,9 +4528,11 @@ function _executeDungeonBattle(boss, choice, foodId) {
 
   const rawState = WorldState.getRawState();
   const sk = rawState.lobster.skills || {};
-  const skillExtra = choice.skillWeight ? Math.round((sk[choice.skillWeight] || 0) * 0.5) : 0;
+  let skillExtra = choice.skillWeight ? Math.round((sk[choice.skillWeight] || 0) * 0.5) : 0;
+  if (mod.exploreMult && choice.skillWeight === 'exploring') skillExtra *= mod.exploreMult;
+  if (mod.socialMult && choice.skillWeight === 'social') skillExtra *= mod.socialMult;
   const combatPower = _calcCombatPower(rawState, (choice.strategyBonus || 0) + skillExtra + strategyPowerMod, foodBonus);
-  let winChance = _calcWinChance(combatPower, boss.difficulty);
+  let winChance = _calcWinChance(combatPower, effectiveDiff);
   winChance = Math.max(0.01, Math.min(0.99, winChance + strategyChanceMod));
   const won = Math.random() < winChance;
 
@@ -4456,12 +4549,18 @@ function _executeDungeonBattle(boss, choice, foodId) {
     WorldState.recordBossWin(boss.id, boss.tier);
     const rewards = boss.rewards.win || {};
     const rewardParts = [];
-    if (rewards.item) { WorldState.addItem(rewards.item, 1); rewardParts.push(`获得 ${itemsData[rewards.item]?.name || rewards.item}`); }
-    if (rewards.shells) { WorldState.addShells(rewards.shells); rewardParts.push(`+${rewards.shells} 贝壳`); }
-    if (rewards.exp) { WorldState.addExp(rewards.exp); rewardParts.push(`+${rewards.exp} 经验`); }
+    if (rewards.item) {
+      WorldState.addItem(rewards.item, 1);
+      if (_RARE_ITEM_IDS.has(rewards.item)) WorldState.addRareItem(rewards.item);
+      rewardParts.push(`获得 ${itemsData[rewards.item]?.name || rewards.item}`);
+    }
+    const shellReward = (rewards.shells || 0) * (mod.shellMult || 1);
+    const expReward = (rewards.exp || 0) * (mod.expMult || 1);
+    if (shellReward) { WorldState.addShells(shellReward); rewardParts.push(`+${shellReward} 贝壳`); }
+    if (expReward) { WorldState.addExp(expReward); rewardParts.push(`+${expReward} 经验`); }
     if (rewards.skill) { WorldState.modifySkill(rewards.skill, 1); rewardParts.push(`${rewards.skill} +1`); }
 
-    resultEl.innerHTML = `<div class="dungeon-result-win"><div class="dungeon-result-title">🏆 胜利！</div><div class="dungeon-result-text">${choice.winText}</div><div class="dungeon-result-rewards">${rewardParts.join(' | ')}</div><div class="dungeon-result-stats">战力 ${combatPower} vs 难度 ${boss.difficulty} | 胜率 ${Math.round(winChance * 100)}%</div></div>`;
+    resultEl.innerHTML = `<div class="dungeon-result-win"><div class="dungeon-result-title">🏆 胜利！</div><div class="dungeon-result-text">${choice.winText}</div><div class="dungeon-result-rewards">${rewardParts.join(' | ')}</div><div class="dungeon-result-stats">战力 ${combatPower} vs 难度 ${effectiveDiff} (${mod.icon}${mod.label}) | 胜率 ${Math.round(winChance * 100)}%</div></div>`;
   } else {
     WorldState.recordBossLoss();
     const rewards = boss.rewards.lose || {};
@@ -4469,7 +4568,7 @@ function _executeDungeonBattle(boss, choice, foodId) {
     if (rewards.mood) WorldState.modifyStat('mood', rewards.mood);
     if (rewards.energy) WorldState.modifyStat('energy', rewards.energy);
 
-    resultEl.innerHTML = `<div class="dungeon-result-lose"><div class="dungeon-result-title">💔 惜败</div><div class="dungeon-result-text">${choice.loseText}</div><div class="dungeon-result-stats">战力 ${combatPower} vs 难度 ${boss.difficulty} | 胜率 ${Math.round(winChance * 100)}%</div></div>`;
+    resultEl.innerHTML = `<div class="dungeon-result-lose"><div class="dungeon-result-title">💔 惜败</div><div class="dungeon-result-text">${choice.loseText}</div><div class="dungeon-result-stats">战力 ${combatPower} vs 难度 ${effectiveDiff} (${mod.icon}${mod.label}) | 胜率 ${Math.round(winChance * 100)}%</div></div>`;
   }
 
   WorldState.updateAdaptiveDifficulty(won);

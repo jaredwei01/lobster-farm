@@ -433,5 +433,146 @@
       "win": { "exp": 70, "shells": 100, "item": "lucky_star", "skill": "social" },
       "lose": { "exp": 15, "mood": -8, "energy": -15 }
     }
+  },
+  {
+    "id": "moonlit_garden",
+    "name": "月光花园",
+    "narration": "海底深处有一片奇异的花园，这里的海葵只在月光穿透海面时才会绽放。此刻正值满月，花园里散发着柔和的银色光芒...",
+    "choices": [
+      {
+        "text": "采集月光花蜜",
+        "results": [
+          { "weight": 50, "text": "龙虾小心翼翼地收集了一瓶月光花蜜，据说这是最好的烹饪原料之一。", "rewards": { "item": "sugar", "exp": 12, "mood": 15, "skill": "farming" } },
+          { "weight": 30, "text": "花蜜散发着奇异的香气，龙虾忍不住尝了一口——全身都暖洋洋的！", "rewards": { "exp": 10, "mood": 20, "energy": 15 } },
+          { "weight": 20, "text": "一朵海葵突然合拢，差点夹住龙虾的钳子！虚惊一场。", "rewards": { "exp": 8, "mood": -3 } }
+        ]
+      },
+      {
+        "text": "在花园中冥想",
+        "results": [
+          { "weight": 60, "text": "龙虾闭上眼睛，感受月光的能量。一股温暖的力量涌入体内，精力充沛！", "rewards": { "energy": 25, "mood": 15, "exp": 8, "skill": "social" } },
+          { "weight": 40, "text": "冥想中龙虾看到了一个奇异的幻象——远方有一片未知的海域在召唤。", "rewards": { "exp": 15, "mood": 12, "skill": "exploring" } }
+        ]
+      },
+      {
+        "text": "画下这片美景",
+        "results": [
+          { "weight": 100, "text": "龙虾用钳子在沙地上画下了月光花园的样子。虽然画技一般，但记忆是珍贵的。", "rewards": { "mood": 10, "exp": 5 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "whale_song",
+    "name": "鲸鱼之歌",
+    "narration": "远处传来低沉而悠远的歌声。循着声音游去，龙虾发现了一头独自歌唱的蓝鲸。它的歌声让整片海域都安静了下来...",
+    "choices": [
+      {
+        "text": "靠近聆听",
+        "results": [
+          { "weight": 50, "text": "蓝鲸的歌声讲述了一个关于海洋起源的古老传说。龙虾听得如痴如醉，感觉自己变聪明了。", "rewards": { "exp": 20, "mood": 18, "skill": "social" } },
+          { "weight": 30, "text": "蓝鲸注意到了龙虾，温柔地用尾巴卷起一颗珍珠送给了它。", "rewards": { "item": "pearl_dust", "exp": 15, "mood": 20 } },
+          { "weight": 20, "text": "歌声太催眠了，龙虾不知不觉睡着了。醒来时蓝鲸已经离开，但感觉精力充沛。", "rewards": { "energy": 30, "mood": 10, "exp": 5 } }
+        ]
+      },
+      {
+        "text": "尝试和声",
+        "results": [
+          { "weight": 45, "text": "龙虾用钳子敲击贝壳，发出清脆的节拍。蓝鲸似乎很高兴有人伴奏，唱得更起劲了！", "rewards": { "exp": 18, "mood": 20, "skill": "social" } },
+          { "weight": 55, "text": "龙虾的节奏有点乱，蓝鲸礼貌地停了一下。不过这份勇气值得鼓励。", "rewards": { "exp": 10, "mood": 8 } }
+        ]
+      },
+      {
+        "text": "安静地陪伴",
+        "results": [
+          { "weight": 100, "text": "龙虾安静地漂浮在蓝鲸身旁，两个生物在广阔的海洋中共享这份宁静。", "rewards": { "mood": 15, "energy": 10, "exp": 8 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pirate_treasure",
+    "name": "海盗藏宝图",
+    "narration": "龙虾在一块礁石下发现了一张破旧的藏宝图！上面画着弯弯曲曲的路线，终点标着一个大大的X。看起来是真的...",
+    "choices": [
+      {
+        "text": "按图索骥！",
+        "results": [
+          { "weight": 35, "text": "经过一番寻找，龙虾真的找到了宝藏——一个装满贝壳的小箱子！海盗的品味不错。", "rewards": { "shells": 40, "exp": 20, "mood": 20, "skill": "exploring" } },
+          { "weight": 35, "text": "藏宝图指向了一个洞穴，里面有一颗发着微光的水晶。虽然不是金币，但更珍贵！", "rewards": { "item": "crystal", "exp": 15, "mood": 15, "skill": "exploring" } },
+          { "weight": 30, "text": "找了半天发现X标记的地方只有一块写着\"哈哈骗你的\"的石头。海盗的幽默感...真差。", "rewards": { "exp": 10, "mood": -5 } }
+        ]
+      },
+      {
+        "text": "把藏宝图卖掉",
+        "results": [
+          { "weight": 60, "text": "路过的商人花了20贝壳买下了藏宝图。虽然可能亏了，但稳赚不赔。", "rewards": { "shells": 20, "exp": 5, "mood": 5 } },
+          { "weight": 40, "text": "没人愿意买...看来大家都不信海盗藏宝图了。", "rewards": { "exp": 3, "mood": -2 } }
+        ]
+      },
+      {
+        "text": "收藏起来以后再说",
+        "results": [
+          { "weight": 100, "text": "龙虾把藏宝图小心翼翼地折好收起来。也许某天心血来潮的时候再去找吧。", "rewards": { "mood": 5, "exp": 3 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cooking_contest",
+    "name": "海底厨艺大赛",
+    "narration": "一群海洋生物正在举办厨艺大赛！评委是一只挑剔的海龟长老。一只章鱼看到龙虾后热情地招手：\"来参加吧！奖品很丰厚！\"",
+    "choices": [
+      {
+        "text": "参赛！",
+        "results": [
+          { "weight": 40, "text": "龙虾做了一道拿手菜，海龟长老品尝后连连点头：\"冠军就是你了！\"奖品是一袋珍贵的调料。", "rewards": { "item": "salt", "shells": 25, "exp": 18, "mood": 20, "skill": "cooking" } },
+          { "weight": 35, "text": "龙虾的料理获得了第二名。虽然没拿冠军，但海龟长老传授了一个烹饪技巧。", "rewards": { "exp": 15, "mood": 12, "skill": "cooking" } },
+          { "weight": 25, "text": "龙虾太紧张了，盐放多了...海龟长老礼貌地微笑着说\"有进步空间\"。", "rewards": { "exp": 10, "mood": -3, "skill": "cooking" } }
+        ]
+      },
+      {
+        "text": "当美食评论家",
+        "results": [
+          { "weight": 55, "text": "龙虾对每道菜都发表了精彩的点评，参赛者们都很佩服。海龟长老邀请龙虾下次当副评委。", "rewards": { "exp": 12, "mood": 15, "skill": "social" } },
+          { "weight": 45, "text": "龙虾边评论边偷吃，被章鱼发现了。不过大家都笑了，气氛很好。", "rewards": { "exp": 8, "mood": 10 } }
+        ]
+      },
+      {
+        "text": "帮忙洗碗",
+        "results": [
+          { "weight": 100, "text": "龙虾默默帮大家收拾了餐具。虽然不起眼，但所有参赛者都感激地送了小礼物。", "rewards": { "shells": 10, "mood": 10, "exp": 5 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ancient_ruins",
+    "name": "海底遗迹",
+    "narration": "一座被海藻覆盖的古老建筑出现在眼前。石柱上刻着奇怪的符文，中央有一个发着微光的祭坛。这里曾经是什么地方？",
+    "choices": [
+      {
+        "text": "研究符文",
+        "results": [
+          { "weight": 40, "text": "龙虾仔细辨认了符文，发现这是古代海洋文明的图书馆！虽然书都泡烂了，但学到了很多。", "rewards": { "exp": 25, "mood": 15, "skill": "exploring" } },
+          { "weight": 35, "text": "符文记录了一种古老的食谱配方。虽然看不太懂，但龙虾的烹饪直觉被激发了。", "rewards": { "exp": 18, "mood": 10, "skill": "cooking" } },
+          { "weight": 25, "text": "看了半天完全看不懂。龙虾怀疑这只是古人的涂鸦。", "rewards": { "exp": 8, "mood": 3 } }
+        ]
+      },
+      {
+        "text": "触碰祭坛",
+        "results": [
+          { "weight": 45, "text": "祭坛发出温暖的光芒，龙虾感到一股神秘的力量注入体内。所有疲劳一扫而空！", "rewards": { "energy": 30, "mood": 20, "exp": 15 } },
+          { "weight": 30, "text": "祭坛弹出了一颗被封印的宝石。虽然封印已经很弱了，但宝石依然闪闪发光。", "rewards": { "item": "glowing_algae", "exp": 12, "mood": 15 } },
+          { "weight": 25, "text": "祭坛发出一声巨响，把龙虾吓了一跳。什么也没发生...大概是机关失灵了。", "rewards": { "exp": 5, "mood": -5, "energy": -5 } }
+        ]
+      },
+      {
+        "text": "拍照留念就走",
+        "results": [
+          { "weight": 100, "text": "龙虾在遗迹前摆了个探险家的造型。虽然没有相机，但这份记忆比照片更珍贵。", "rewards": { "mood": 8, "exp": 5 } }
+        ]
+      }
+    ]
   }
 ]
