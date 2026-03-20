@@ -15,6 +15,7 @@ let actionTimer = null;
 let _seaCloudTimer = null;
 let _seaShipTimer = null;
 let _seaSnowTimer = null;
+const _isMobile = /Mobi|Android/i.test(navigator.userAgent) || (window.matchMedia && matchMedia('(pointer:coarse)').matches);
 const ACTION_CLASSES = ['action-rest', 'action-eat', 'action-farm', 'action-cook', 'action-explore', 'action-shop', 'action-travel', 'action-socialize'];
 const DIARY_FILTER_ORDER = ['all', 'story', 'weather', 'wisdom', 'horoscope', 'funny'];
 const FARM_STRATEGIES = {
@@ -236,8 +237,9 @@ export const UIRenderer = {
     const container = document.getElementById('sea-bubbles');
     if (!container) return;
 
+    const maxBubbles = _isMobile ? 8 : 18;
     const spawnOne = (baseLeft, baseBottom) => {
-      if (container.childElementCount > 18) return;
+      if (container.childElementCount > maxBubbles) return;
       const b = document.createElement('div');
       b.className = 'sea-bubble';
       const size = 2 + Math.random() * 6;
@@ -266,8 +268,9 @@ export const UIRenderer = {
       }
     };
 
-    for (let i = 0; i < 5; i++) setTimeout(spawn, i * 600);
-    this._seaBubbleTimer = setInterval(spawn, 1200 + Math.random() * 1500);
+    const initCount = _isMobile ? 2 : 5;
+    for (let i = 0; i < initCount; i++) setTimeout(spawn, i * 600);
+    this._seaBubbleTimer = setInterval(spawn, _isMobile ? 3000 + Math.random() * 2000 : 1200 + Math.random() * 1500);
   },
 
   _seaCreatureTimer: null,
@@ -402,11 +405,11 @@ export const UIRenderer = {
       const depthFactor = 0.6 + (depthY / 100) * 0.4;
       if (depthY < 30) {
         el.style.opacity = `${0.35 + Math.random() * 0.15}`;
-        el.style.filter = `blur(0.5px) brightness(1.1)`;
+        if (!_isMobile) el.style.filter = `blur(0.5px) brightness(1.1)`;
         el.style.transform = `scale(${0.7 + Math.random() * 0.1})`;
       } else if (depthY > 65) {
         el.style.opacity = `${0.5 + Math.random() * 0.2}`;
-        el.style.filter = `brightness(${0.8 + depthFactor * 0.1})`;
+        if (!_isMobile) el.style.filter = `brightness(${0.8 + depthFactor * 0.1})`;
       }
 
       el.addEventListener('click', (e) => {
@@ -422,7 +425,7 @@ export const UIRenderer = {
     };
 
     setTimeout(spawn, 1500);
-    this._seaCreatureTimer = setInterval(spawn, 4000 + Math.random() * 4000);
+    this._seaCreatureTimer = setInterval(spawn, _isMobile ? 8000 + Math.random() * 6000 : 4000 + Math.random() * 4000);
   },
 
   _lastEmotionState: '',
@@ -445,24 +448,25 @@ export const UIRenderer = {
     if (this._emotionTimer) clearInterval(this._emotionTimer);
     this._emotionTimer = null;
 
+    const em = _isMobile ? 1.8 : 1;
     if (emotionKey === 'ecstatic') {
       const glow = document.createElement('div');
       glow.className = 'lobster-glow lobster-glow-happy';
       el.appendChild(glow);
-      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💕'), 4000);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💕'), 4000 * em);
     } else if (emotionKey === 'happy') {
       this._emotionTimer = setInterval(() => {
         if (Math.random() < 0.5) this._spawnEmotionParticle(el, ['♪', '♫', '~'][Math.floor(Math.random() * 3)]);
-      }, 5000);
+      }, 5000 * em);
     } else if (emotionKey === 'hungry') {
-      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💭'), 4500);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💭'), 4500 * em);
     } else if (emotionKey === 'tired') {
       const glow = document.createElement('div');
       glow.className = 'lobster-glow lobster-glow-tired';
       el.appendChild(glow);
-      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💤'), 3500);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '💤'), 3500 * em);
     } else if (emotionKey === 'sad') {
-      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '😢'), 5000);
+      this._emotionTimer = setInterval(() => this._spawnEmotionParticle(el, '😢'), 5000 * em);
     }
   },
 
@@ -560,7 +564,7 @@ export const UIRenderer = {
     };
 
     const schedule = () => {
-      const delay = 8000 + Math.random() * 7000;
+      const delay = _isMobile ? 14000 + Math.random() * 10000 : 8000 + Math.random() * 7000;
       this._microActionTimer = setTimeout(() => { doAction(); schedule(); }, delay);
     };
     schedule();
@@ -579,7 +583,7 @@ export const UIRenderer = {
       else if (roll < 0.24) this._rareRainbow();
     };
 
-    this._rareEventTimer = setInterval(tryEvent, 30000 + Math.random() * 30000);
+    this._rareEventTimer = setInterval(tryEvent, _isMobile ? 50000 + Math.random() * 40000 : 30000 + Math.random() * 30000);
   },
 
   _rareWhalePass(container) {
@@ -685,7 +689,7 @@ export const UIRenderer = {
   _startNightPlankton() {
     const container = document.getElementById('sea-bio-plankton');
     if (!container) return;
-    const count = 20;
+    const count = _isMobile ? 8 : 20;
     for (let i = 0; i < count; i++) {
       const dot = document.createElement('div');
       dot.className = 'sea-plankton-dot';
@@ -729,7 +733,7 @@ export const UIRenderer = {
     };
 
     setTimeout(spawn, 8000);
-    this._farCreatureTimer = setInterval(spawn, 25000 + Math.random() * 20000);
+    this._farCreatureTimer = setInterval(spawn, _isMobile ? 40000 + Math.random() * 30000 : 25000 + Math.random() * 20000);
   },
 
   _positionMoonPath() {
@@ -744,13 +748,14 @@ export const UIRenderer = {
       moonPath.style.left = `${moonRect.left - waterRect.left + moonRect.width / 2 - 20}px`;
     };
     updatePos();
-    setInterval(updatePos, 5000);
+    setInterval(updatePos, _isMobile ? 15000 : 5000);
   },
 
   _startSurfaceGlints() {
     const container = document.getElementById('sea-surface-glints');
     if (!container) return;
-    for (let i = 0; i < 12; i++) {
+    const glintCount = _isMobile ? 5 : 12;
+    for (let i = 0; i < glintCount; i++) {
       const g = document.createElement('div');
       g.className = 'sea-glint';
       g.style.left = `${2 + Math.random() * 96}%`;
@@ -767,6 +772,7 @@ export const UIRenderer = {
   },
 
   _startUnderwaterCurrents() {
+    if (_isMobile) return;
     const waterEl = document.querySelector('.sea-water');
     if (!waterEl) return;
     const container = document.createElement('div');
@@ -854,7 +860,8 @@ export const UIRenderer = {
     _seaSnowTimer = setInterval(() => {
       const weather = document.body.dataset.weather || 'sunny';
       if (weather !== 'snowy') return;
-      if (container.querySelectorAll('.sea-snowflake').length >= 10) return;
+      const maxSnow = _isMobile ? 5 : 10;
+      if (container.querySelectorAll('.sea-snowflake').length >= maxSnow) return;
 
       const flake = document.createElement('div');
       flake.className = 'sea-snowflake';
