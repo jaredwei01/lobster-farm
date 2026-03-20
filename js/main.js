@@ -10,7 +10,6 @@ import { LLMClient } from './llm-client.js';
 import { EmpathyTracker } from './empathy-tracker.js';
 import { AutoPilot } from './autopilot.js';
 import { SFX } from './sfx.js';
-import { Onboarding, shouldSuppressWelcomeGuide } from './onboarding.js';
 
 const PERSONALITIES_INFO = {
   adventurous: { emoji: '🧭', label: '冒险型', desc: '好奇心旺盛，热爱探索' },
@@ -814,13 +813,11 @@ function startGame() {
   GameLoop.start();
   bindInteractions();
   bindTabs();
-  _bindOnboardingSea();
   initChat();
   initRename();
   initKeyBindBar();
   initDungeon();
   initAutoPilot();
-  Onboarding.init();
 
   const catchUpReport = GameLoop.lastCatchUpReport;
   if (catchUpReport && catchUpReport.missedTicks > 0) {
@@ -840,13 +837,6 @@ function startGame() {
   _renderCoopQuestProgress();
 }
 
-function _bindOnboardingSea() {
-  const water = document.querySelector('.sea-water');
-  const lobster = document.getElementById('sea-lobster');
-  const handler = () => Onboarding.onSeaInteract();
-  water?.addEventListener('click', handler);
-  lobster?.addEventListener('click', handler);
-}
 
 function bindTabs() {
   const tabs = document.querySelectorAll('.main-tab');
@@ -864,7 +854,6 @@ function bindTabs() {
         if (el) el.classList.toggle('hidden', id !== target);
       });
       if (target === 'memory-section') renderMemoryTimeline();
-      if (target === 'farm-section') Onboarding.notify('farm_tab');
     });
   });
 
@@ -1327,7 +1316,6 @@ function openSuggestModal() {
 
   document.getElementById('suggest-modal').classList.remove('hidden');
   _playModalOpen();
-  Onboarding.notify('open_suggest');
 }
 
 function applySuggestion(action) {
@@ -1480,7 +1468,6 @@ function feedLobster(itemId, info) {
 // --- Plant: manually plant a seed ---
 
 function openPlantModal() {
-  Onboarding.notify('open_plant');
   const container = document.getElementById('plant-options');
   container.innerHTML = '';
   const inv = WorldState.getInventory();
@@ -1755,7 +1742,6 @@ function plantBestSeedAt(plotIndex, mode = 'balanced') {
 
 function petLobster() {
   SFX.play('pet');
-  Onboarding.notify('pet');
   WorldState.modifyStat('mood', 5);
   WorldState.clampStats();
   WorldState.incrementStat('totalPets');
@@ -1817,7 +1803,6 @@ function closeModal(id) {
 // --- Guide helpers ---
 
 function showWelcomeGuide() {
-  if (shouldSuppressWelcomeGuide()) return;
   const state = WorldState.getState();
   if (state.world.tickCount <= 1) {
     UIRenderer.showNotification(`👋 欢迎！试试下面的按钮和${state.lobster.name}互动吧`, 4000);
