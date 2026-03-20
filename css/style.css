@@ -51,6 +51,9 @@ body {
   max-width: 520px;
   margin: 0 auto;
   padding: 0 14px 18px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
   -webkit-font-smoothing: antialiased;
   position: relative;
   transition: background 0.8s ease;
@@ -4849,4 +4852,85 @@ body[data-weather="stormy"] .sea-sand::before {
   font-size: 9px;
   color: var(--text-muted);
   margin-top: 1px;
+}
+
+/* ===== Onboarding (P1) ===== */
+.onboarding-root {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  pointer-events: none;
+}
+.onboarding-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 5, 12, 0.35);
+  pointer-events: auto;
+}
+.onboarding-bubble {
+  position: absolute;
+  max-width: min(320px, 92vw);
+  padding: 12px 14px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  pointer-events: auto;
+  z-index: 1;
+}
+.onboarding-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.onboarding-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.onboarding-highlight {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+  animation: glowPulse 2.2s ease-in-out infinite;
+  z-index: 2;
+  position: relative;
+}
+
+/* ===== Mobile / touch polish (P4) ===== */
+.action-bar .action-btn:active,
+.main-tab:active,
+.main-tabs button:active,
+.inv-filter:active,
+.inspector-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .action-bar .action-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .sea-window {
+    height: min(220px, 42vh);
+  }
+  .lobster-chat {
+    max-height: min(140px, 28vh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-highlight {
+    animation: none;
+    outline: 2px solid var(--accent);
+  }
+  .sea-lobster.lobster-suggest-nod,
+  .sea-lobster.lobster-suggest-shake {
+    animation: none !important;
+  }
 }

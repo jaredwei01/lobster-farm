@@ -1,6 +1,7 @@
 import { CONFIG, PERSONALITY_LABELS, GROWTH_STAGES } from './config.js';
 import { WorldState } from './world-state.js';
 import { SaveSystem } from './save-system.js';
+import { SFX } from './sfx.js';
 
 let itemsData = {};
 let inventoryFilter = 'all';
@@ -1362,6 +1363,7 @@ export const UIRenderer = {
   },
 
   showNotification(text, duration = 3000) {
+    SFX.playNotificationDebounced();
     const el = document.getElementById('notification');
     el.textContent = text;
     el.classList.remove('hidden');

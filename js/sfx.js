@@ -119,6 +119,117 @@ const SOUNDS = {
     const t = ac.currentTime;
     tone(ac, 1200, 'sine', t, 0.04, 0.06);
   },
+
+  /** Seed hitting soil */
+  plant(ac) {
+    const t = ac.currentTime;
+    tone(ac, 90, 'triangle', t, 0.05, 0.12);
+    tone(ac, 140, 'triangle', t + 0.04, 0.06, 0.08);
+    tone(ac, 220, 'sine', t + 0.1, 0.12, 0.06);
+  },
+
+  /** Water droplets */
+  water(ac) {
+    const t = ac.currentTime;
+    tone(ac, 600, 'sine', t, 0.04, 0.08);
+    tone(ac, 750, 'sine', t + 0.05, 0.05, 0.06);
+    tone(ac, 900, 'sine', t + 0.1, 0.08, 0.05);
+  },
+
+  modal_open(ac) {
+    const t = ac.currentTime;
+    tone(ac, 400, 'sine', t, 0.06, 0.07);
+    tone(ac, 600, 'sine', t + 0.05, 0.08, 0.06);
+  },
+
+  modal_close(ac) {
+    const t = ac.currentTime;
+    tone(ac, 600, 'sine', t, 0.05, 0.05);
+    tone(ac, 350, 'sine', t + 0.04, 0.06, 0.05);
+  },
+
+  tab_switch(ac) {
+    const t = ac.currentTime;
+    tone(ac, 880, 'sine', t, 0.03, 0.05);
+  },
+
+  use_item(ac) {
+    const t = ac.currentTime;
+    tone(ac, 523, 'sine', t, 0.08, 0.1);
+    tone(ac, 784, 'sine', t + 0.08, 0.12, 0.08);
+  },
+
+  golden_drop(ac) {
+    const t = ac.currentTime;
+    tone(ac, 1047, 'sine', t, 0.1, 0.1);
+    tone(ac, 1319, 'sine', t + 0.08, 0.12, 0.09);
+    tone(ac, 1568, 'sine', t + 0.18, 0.2, 0.08);
+  },
+
+  visitor_arrive(ac) {
+    const t = ac.currentTime;
+    tone(ac, 330, 'sine', t, 0.12, 0.1);
+    tone(ac, 440, 'sine', t + 0.1, 0.15, 0.09);
+    tone(ac, 523, 'sine', t + 0.22, 0.2, 0.08);
+  },
+
+  travel_return(ac) {
+    const t = ac.currentTime;
+    tone(ac, 392, 'sine', t, 0.1, 0.09);
+    tone(ac, 494, 'sine', t + 0.12, 0.12, 0.08);
+    tone(ac, 587, 'sine', t + 0.24, 0.18, 0.09);
+  },
+
+  suggest_accept(ac) {
+    const t = ac.currentTime;
+    tone(ac, 523, 'sine', t, 0.08, 0.1);
+    tone(ac, 659, 'sine', t + 0.08, 0.1, 0.09);
+  },
+
+  suggest_refuse(ac) {
+    const t = ac.currentTime;
+    tone(ac, 220, 'sine', t, 0.12, 0.08);
+    tone(ac, 180, 'sine', t + 0.1, 0.15, 0.07);
+  },
+
+  checkin(ac) {
+    const t = ac.currentTime;
+    tone(ac, 784, 'sine', t, 0.08, 0.1);
+    tone(ac, 988, 'sine', t + 0.08, 0.1, 0.09);
+    tone(ac, 1175, 'sine', t + 0.16, 0.15, 0.08);
+  },
+
+  achievement(ac) {
+    const t = ac.currentTime;
+    tone(ac, 523, 'square', t, 0.1, 0.08);
+    tone(ac, 659, 'square', t + 0.1, 0.1, 0.08);
+    tone(ac, 784, 'sine', t + 0.2, 0.25, 0.1);
+  },
+
+  error(ac) {
+    const t = ac.currentTime;
+    tone(ac, 150, 'sawtooth', t, 0.12, 0.06);
+    tone(ac, 120, 'sawtooth', t + 0.1, 0.12, 0.05);
+  },
+
+  notification(ac) {
+    const t = ac.currentTime;
+    tone(ac, 660, 'sine', t, 0.04, 0.04);
+  },
 };
 
-export const SFX = { play, setMuted, isMuted, ensureCtx };
+let _lastNotificationSfx = 0;
+
+export const SFX = {
+  play,
+  setMuted,
+  isMuted,
+  ensureCtx,
+  /** Debounced soft ping for toast spam */
+  playNotificationDebounced() {
+    const now = Date.now();
+    if (now - _lastNotificationSfx < 400) return;
+    _lastNotificationSfx = now;
+    play('notification');
+  },
+};

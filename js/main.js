@@ -10,6 +10,7 @@ import { LLMClient } from './llm-client.js';
 import { EmpathyTracker } from './empathy-tracker.js';
 import { AutoPilot } from './autopilot.js';
 import { SFX } from './sfx.js';
+import { Onboarding, shouldSuppressWelcomeGuide } from './onboarding.js';
 
 const PERSONALITIES_INFO = {
   adventurous: { emoji: '🧭', label: '冒险型', desc: '好奇心旺盛，热爱探索' },
@@ -763,6 +764,7 @@ function startGame() {
 
     if (travelReturn) {
       const destName = CONFIG.DESTINATIONS[travelReturn.destination]?.name || '远方';
+      SFX.play('travel_return');
       _spawnEventCreatures('travel_return');
       UIRenderer.showNotification(`🧳 旅行归来！从${destName}带回了纪念品`, 4000);
       _sendMilestoneToChat(`🧳 从${destName}回来了！带了纪念品，路上的风景真好~`);
@@ -772,6 +774,7 @@ function startGame() {
       UIRenderer.showNotification(`📮 收到一张明信片：${postcardGenerated.greeting}`, 3500);
     }
     if (visitorResult?.type === 'arrive') {
+      SFX.play('visitor_arrive');
       UIRenderer.showNotification(`${visitorResult.visitor.icon} ${visitorResult.visitor.name}来访了！`, 3500);
       _sendMilestoneToChat(`${visitorResult.visitor.icon} ${visitorResult.visitor.name}来做客了！`);
     }
@@ -811,11 +814,13 @@ function startGame() {
   GameLoop.start();
   bindInteractions();
   bindTabs();
+  _bindOnboardingSea();
   initChat();
   initRename();
   initKeyBindBar();
   initDungeon();
   initAutoPilot();
+  Onboarding.init();
 
   const catchUpReport = GameLoop.lastCatchUpReport;
   if (catchUpReport && catchUpReport.missedTicks > 0) {
@@ -835,12 +840,22 @@ function startGame() {
   _renderCoopQuestProgress();
 }
 
+function _bindOnboardingSea() {
+  const water = document.querySelector('.sea-water');
+  const lobster = document.getElementById('sea-lobster');
+  const handler = () => Onboarding.onSeaInteract();
+  water?.addEventListener('click', handler);
+  lobster?.addEventListener('click', handler);
+}
+
 function bindTabs() {
   const tabs = document.querySelectorAll('.main-tab');
   const sections = ['diary-section', 'memory-section', 'farm-section', 'inventory-section'];
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
+      SFX.ensureCtx();
+      SFX.play('tab_switch');
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       const target = tab.dataset.target;
@@ -849,6 +864,7 @@ function bindTabs() {
         if (el) el.classList.toggle('hidden', id !== target);
       });
       if (target === 'memory-section') renderMemoryTimeline();
+      if (target === 'farm-section') Onboarding.notify('farm_tab');
     });
   });
 
@@ -1148,6 +1164,8 @@ function maybeGrantGoldenDrop(trigger, bonusChance = 0) {
   const suffix = guaranteed ? '（保底触发）' : '';
   const message = `✨ 金色掉落：${itemName} ×${count}${suffix}`;
 
+  SFX.play('golden_drop');
+  _animGoldenFlash();
   UIRenderer.showNotification(message, 3200);
   WorldState.addEvent({
     id: `gold_drop_${Date.now()}`,
@@ -1184,6 +1202,7 @@ function canRedeemGoldenRecipe(recipe) {
 function openGoldenModal() {
   renderGoldenWorkshopOptions();
   document.getElementById('golden-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function renderGoldenWorkshopOptions() {
@@ -1218,10 +1237,12 @@ function renderGoldenWorkshopOptions() {
 
 function redeemGoldenRecipe(recipe) {
   if (!canRedeemGoldenRecipe(recipe)) {
+    SFX.play('error');
     UIRenderer.showNotification('兑换材料不足，继续互动获取更多金色碎片。');
     return;
   }
 
+  SFX.play('buy');
   WorldState.removeItem('golden_shard', recipe.shards);
   WorldState.addShells(-recipe.shells);
   WorldState.addItem(recipe.itemId, 1);
@@ -1249,9 +1270,13 @@ function useConsumable(itemId) {
   const item = itemsData[itemId];
   if (!item || !item.useEffect) return;
   if ((WorldState.getInventory()[itemId] || 0) <= 0) {
+    SFX.play('error');
     UIRenderer.showNotification('物品不足。');
     return;
   }
+
+  SFX.play('use_item');
+  _animItemUseFly('💊');
 
   const fx = item.useEffect;
   WorldState.removeItem(itemId, 1);
@@ -1301,6 +1326,8 @@ function openSuggestModal() {
   }
 
   document.getElementById('suggest-modal').classList.remove('hidden');
+  _playModalOpen();
+  Onboarding.notify('open_suggest');
 }
 
 function applySuggestion(action) {
@@ -1310,6 +1337,8 @@ function applySuggestion(action) {
   const name = WorldState.getLobster().name;
 
   if (accepted) {
+    SFX.play('suggest_accept');
+    _lobsterSuggestFeedback(true);
     pendingSuggestion = action;
     const label = SUGGEST_ACTIONS.find(s => s.action === action)?.label || action;
     UIRenderer.updateSpeech(`🦞 好的！我这就${label}！`);
@@ -1318,6 +1347,8 @@ function applySuggestion(action) {
     GameLoop.tick();
     pendingSuggestion = null;
   } else {
+    SFX.play('suggest_refuse');
+    _lobsterSuggestFeedback(false);
     const refusals = [
       `${name}摇了摇头："我现在不太想..."`,
       `${name}假装没听见你说话。`,
@@ -1382,6 +1413,7 @@ function openFeedModal() {
   }
 
   document.getElementById('feed-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 const FAVORITE_FOODS = {
@@ -1448,6 +1480,7 @@ function feedLobster(itemId, info) {
 // --- Plant: manually plant a seed ---
 
 function openPlantModal() {
+  Onboarding.notify('open_plant');
   const container = document.getElementById('plant-options');
   container.innerHTML = '';
   const inv = WorldState.getInventory();
@@ -1457,6 +1490,7 @@ function openPlantModal() {
   if (emptyPlot < 0) {
     container.innerHTML = '<div style="color:var(--text-dim);font-size:13px;padding:12px;text-align:center;">没有空地了</div>';
     document.getElementById('plant-modal').classList.remove('hidden');
+    _playModalOpen();
     return;
   }
 
@@ -1464,6 +1498,7 @@ function openPlantModal() {
   if (seeds.length === 0) {
     container.innerHTML = '<div style="color:var(--text-dim);font-size:13px;padding:12px;text-align:center;">没有种子了</div>';
     document.getElementById('plant-modal').classList.remove('hidden');
+    _playModalOpen();
     return;
   }
 
@@ -1482,12 +1517,16 @@ function openPlantModal() {
   }
 
   document.getElementById('plant-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function plantSeed(seedId, plotIndex) {
   const info = itemsData[seedId];
   const cropName = seedId === 'golden_seed' ? 'golden_crop' : seedId.replace('_seed', '');
   const growthTicks = info?.growthTicks || 5;
+
+  SFX.play('plant');
+  _animSeedDrop(plotIndex);
 
   WorldState.removeItem(seedId, 1);
   WorldState.setPlot(plotIndex, { crop: cropName, growthStage: 0, maxGrowth: growthTicks, watered: false });
@@ -1573,6 +1612,10 @@ function waterPlot(plotIndex = -1) {
   const plot = farm.plots[target];
   const hasGoldenCan = hasGoldenItem('golden_watering_can');
   const boostGrowth = hasGoldenCan ? 1 : 0;
+
+  SFX.play('water');
+  _animWaterSplash(target);
+
   WorldState.setPlot(target, { watered: true });
   if (boostGrowth > 0) {
     WorldState.setPlot(target, {
@@ -1712,6 +1755,7 @@ function plantBestSeedAt(plotIndex, mode = 'balanced') {
 
 function petLobster() {
   SFX.play('pet');
+  Onboarding.notify('pet');
   WorldState.modifyStat('mood', 5);
   WorldState.clampStats();
   WorldState.incrementStat('totalPets');
@@ -1759,13 +1803,21 @@ function resetGame() {
 
 // --- Modal helpers ---
 
+function _playModalOpen() {
+  SFX.ensureCtx();
+  SFX.play('modal_open');
+}
+
 function closeModal(id) {
+  SFX.ensureCtx();
+  SFX.play('modal_close');
   document.getElementById(id).classList.add('hidden');
 }
 
 // --- Guide helpers ---
 
 function showWelcomeGuide() {
+  if (shouldSuppressWelcomeGuide()) return;
   const state = WorldState.getState();
   if (state.world.tickCount <= 1) {
     UIRenderer.showNotification(`👋 欢迎！试试下面的按钮和${state.lobster.name}互动吧`, 4000);
@@ -1983,6 +2035,7 @@ function showInteractiveEvent(evt) {
 
   container.classList.remove('hidden');
   container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  _playModalOpen();
 }
 
 // --- Shop System ---
@@ -2003,6 +2056,7 @@ function openShopModal() {
   if (!shop.dailyStock || shop.dailyStock.length === 0) {
     container.innerHTML = '<div style="color:var(--text-dim);font-size:13px;padding:12px;text-align:center;">今日商品还在准备中...</div>';
     document.getElementById('shop-modal').classList.remove('hidden');
+    _playModalOpen();
     return;
   }
 
@@ -2045,6 +2099,7 @@ function openShopModal() {
   }
 
   document.getElementById('shop-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 // --- Visitor Interaction ---
@@ -2166,6 +2221,7 @@ function openVisitorModal() {
   }
 
   document.getElementById('visitor-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 // --- Collection System ---
@@ -2190,6 +2246,7 @@ function openCollectionModal(initialTab = 'postcards') {
   });
   renderCollectionTab(tabToOpen);
   document.getElementById('collection-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function renderCollectionTab(tab) {
@@ -2414,6 +2471,7 @@ function _showWelcomeBack(report) {
   }
 
   document.getElementById('welcome-back-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 // --- Fishing Mini-Game ---
@@ -2444,6 +2502,7 @@ function openFishingModal() {
 
   _startFishTargetOscillation();
   document.getElementById('fishing-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function _startFishTargetOscillation() {
@@ -2616,7 +2675,7 @@ function _checkAchievements() {
     const progress = _getAchievementProgress(def);
     const justUnlocked = WorldState.checkAchievement(def.id, progress, def.target);
     if (justUnlocked) {
-      SFX.play('levelUp');
+      SFX.play('achievement');
       UIRenderer.showNotification(`🏆 成就解锁：${def.name}`);
     }
   }
@@ -2861,6 +2920,7 @@ function showCheckinModal() {
   }
 
   document.getElementById('checkin-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function doCheckin() {
@@ -2872,7 +2932,7 @@ function doCheckin() {
   if (reward.items) {
     for (const item of reward.items) WorldState.addItem(item.id, item.count);
   }
-  SFX.play('harvest');
+  SFX.play('checkin');
   UIRenderer.showNotification(`📅 签到成功！${reward.label}`, 3000);
   _checkAchievements();
   SaveSystem.save(WorldState.getRawState());
@@ -2900,6 +2960,7 @@ function _openP4CrownModal() {
     <p class="p4-crown-desc">海洋记住了你们的羁绊。收下这份纪念，故事仍可继续；若将来举行「退休仪式」，传承规则不变。</p>
   `;
   modal.classList.remove('hidden');
+  _playModalOpen();
   SFX.play('levelUp');
   _animConfetti();
 }
@@ -2948,6 +3009,7 @@ function openRetireModal() {
     <div style="margin-top:10px;font-size:12px;color:#9ed8f5;">退休后，新龙虾将继承 50% 贝壳。旧龙虾的记忆将永远留在日记里。</div>
   `;
   document.getElementById('retire-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function executeRetire() {
@@ -3336,6 +3398,7 @@ function initRename() {
     }
     input.value = WorldState.getLobster().name;
     modal.classList.remove('hidden');
+    _playModalOpen();
     input.focus();
     input.select();
   });
@@ -3815,6 +3878,87 @@ function _onSeaCreatureInteract(e) {
 
 // --- Micro-interaction Animations ---
 
+function _lobsterSuggestFeedback(accepted) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.getElementById('sea-lobster');
+  if (!el) return;
+  el.classList.remove('lobster-suggest-nod', 'lobster-suggest-shake');
+  void el.offsetWidth;
+  el.classList.add(accepted ? 'lobster-suggest-nod' : 'lobster-suggest-shake');
+  setTimeout(() => el.classList.remove('lobster-suggest-nod', 'lobster-suggest-shake'), 520);
+}
+
+function _animSeedDrop(plotIndex) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const plot = document.querySelector(`.farm-plot[data-plot-index="${plotIndex}"]`);
+  const el = document.createElement('div');
+  el.className = 'seed-drop-anim';
+  el.textContent = '🌱';
+  const farmSection = document.getElementById('farm-section');
+  const rect = plot?.getBoundingClientRect() || farmSection?.getBoundingClientRect();
+  if (rect) {
+    el.style.left = `${rect.left + rect.width / 2 - 12}px`;
+    el.style.top = `${rect.top}px`;
+  } else {
+    el.style.left = '50%';
+    el.style.top = '40%';
+  }
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+function _animWaterSplash(plotIndex) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const plot = document.querySelector(`.farm-plot[data-plot-index="${plotIndex}"]`);
+  const el = document.createElement('div');
+  el.className = 'water-splash-anim';
+  el.textContent = '💧';
+  const rect = plot?.getBoundingClientRect();
+  if (rect) {
+    el.style.left = `${rect.left + rect.width / 2 - 14}px`;
+    el.style.top = `${rect.top + rect.height / 2 - 14}px`;
+  } else {
+    el.style.left = '50%';
+    el.style.top = '40%';
+  }
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+function _animItemUseFly(emoji) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.createElement('div');
+  el.className = 'item-use-fly-anim';
+  el.textContent = emoji || '💊';
+  const start = document.getElementById('inventory-toolbar') || document.getElementById('inventory-section');
+  const rect = start?.getBoundingClientRect();
+  const target = document.getElementById('lobster-avatar');
+  const tr = target?.getBoundingClientRect();
+  if (rect && tr) {
+    el.style.left = `${rect.left + rect.width / 2}px`;
+    el.style.top = `${rect.top + 10}px`;
+    const dx = tr.left + tr.width / 2 - (rect.left + rect.width / 2);
+    const dy = tr.top + tr.height / 2 - (rect.top + 10);
+    el.style.setProperty('--iux', `${dx}px`);
+    el.style.setProperty('--iuy', `${dy}px`);
+  } else {
+    el.style.left = '50%';
+    el.style.bottom = '120px';
+    el.style.setProperty('--iux', '40px');
+    el.style.setProperty('--iuy', '-100px');
+  }
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+function _animGoldenFlash() {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.createElement('div');
+  el.className = 'golden-flash-overlay';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
 function _animFoodFly(emoji, startEl) {
   const el = document.createElement('div');
   el.className = 'food-fly-anim';
@@ -4066,6 +4210,7 @@ function openDungeonModal() {
   }
 
   document.getElementById('dungeon-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function openDungeonBattle(boss) {
@@ -4149,6 +4294,7 @@ function openDungeonBattle(boss) {
 
   document.getElementById('dungeon-battle-prep').classList.remove('hidden');
   document.getElementById('dungeon-battle-modal').classList.remove('hidden');
+  _playModalOpen();
 }
 
 function _executeDungeonBattle(boss, choice, foodId) {

@@ -1148,3 +1148,83 @@ body[data-time="night"] .sea-lobster::after {
   75% { transform: translateX(25vw) scaleX(-1) translateY(4px); }
   100% { transform: translateX(-60px) scaleX(-1) translateY(0); }
 }
+
+/* --- Farm / feedback (P3 polish) --- */
+@keyframes seedDropAnim {
+  0% { transform: translateY(-28px) scale(0.85); opacity: 1; }
+  55% { transform: translateY(6px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(14px) scale(0.9); opacity: 0; }
+}
+.seed-drop-anim {
+  position: fixed;
+  font-size: 22px;
+  pointer-events: none;
+  z-index: 300;
+  animation: seedDropAnim 0.55s ease-out forwards;
+}
+
+@keyframes waterSplashAnim {
+  0% { transform: scale(0.4); opacity: 0.95; }
+  45% { transform: scale(1.15); opacity: 0.75; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.water-splash-anim {
+  position: fixed;
+  font-size: 26px;
+  pointer-events: none;
+  z-index: 300;
+  animation: waterSplashAnim 0.45s ease-out forwards;
+}
+
+@keyframes itemUseFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--iux, 60px), var(--iuy, -90px)) scale(0.45); opacity: 0; }
+}
+.item-use-fly-anim {
+  position: fixed;
+  font-size: 22px;
+  pointer-events: none;
+  z-index: 300;
+  animation: itemUseFly 0.65s ease-in forwards;
+}
+
+@keyframes goldenFlashOverlay {
+  0% { opacity: 0; }
+  25% { opacity: 0.35; }
+  100% { opacity: 0; }
+}
+.golden-flash-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 240;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 220, 120, 0.45) 0%, transparent 55%);
+  animation: goldenFlashOverlay 0.55s ease-out forwards;
+}
+
+@keyframes lobsterSuggestNod {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  35% { transform: translateX(-50%) rotate(-12deg); }
+  70% { transform: translateX(-50%) rotate(10deg); }
+}
+@keyframes lobsterSuggestShake {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  25% { transform: translateX(-50%) translateX(-6px); }
+  75% { transform: translateX(-50%) translateX(6px); }
+}
+.sea-lobster.lobster-suggest-nod {
+  animation: lobsterSuggestNod 0.48s ease;
+}
+.sea-lobster.lobster-suggest-shake {
+  animation: lobsterSuggestShake 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seed-drop-anim,
+  .water-splash-anim,
+  .item-use-fly-anim,
+  .golden-flash-overlay {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
