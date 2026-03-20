@@ -62,6 +62,7 @@ export const UIRenderer = {
     this.renderFarm(state.farm);
     this.renderInventory(state.inventory);
     this.renderDiary(state.eventLog);
+    this.renderLobsterDiary(state.lobsterDiary);
     this.renderFooter(state.world);
   },
 
@@ -1245,6 +1246,19 @@ export const UIRenderer = {
       `;
       container.appendChild(div);
     }
+  },
+
+  renderLobsterDiary(diaryEntries) {
+    const container = document.getElementById('lobster-diary-entries');
+    if (!container) return;
+    if (!diaryEntries || diaryEntries.length === 0) {
+      container.classList.add('hidden');
+      return;
+    }
+    container.classList.remove('hidden');
+    const recent = diaryEntries.slice(0, 5);
+    container.innerHTML = `<div class="ld-header"><span class="ld-icon">📔</span> 小虾手记</div>` +
+      recent.map(e => `<div class="ld-entry"><div class="ld-date">${e.dateLabel || ''}</div><div class="ld-text">${e.text}</div></div>`).join('');
   },
 
   renderFooter(world) {

@@ -61,6 +61,7 @@ export const GameLoop = {
     const beforeLevel = before.lobster.level;
     const beforeShells = before.shells || 0;
     const beforeEventCount = (before.eventLog || []).length;
+    const beforeMemoryCount = (before.lobster.memory || []).length;
 
     for (let i = 0; i < toProcess; i++) this.tick(true);
 
@@ -88,6 +89,8 @@ export const GameLoop = {
       bonusShells,
       eventsByType,
       eventCount: newEvents.length,
+      recentEvents: newEvents.slice(0, 20),
+      recentActions: (after.lobster.memory || []).slice(0, (after.lobster.memory || []).length - beforeMemoryCount).slice(0, 15),
     };
   },
 

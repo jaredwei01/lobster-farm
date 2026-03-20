@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>龙虾 MUD</title>
-  <link rel="stylesheet" href="css/style.css?v=20260322z">
-  <link rel="stylesheet" href="css/animations.css?v=20260322z">
+  <link rel="stylesheet" href="css/style.css?v=20260317a">
+  <link rel="stylesheet" href="css/animations.css?v=20260317a">
 </head>
 <body>
   <!-- 建议弹窗 -->
@@ -181,6 +181,7 @@
       <p class="modal-desc" id="wb-duration"></p>
       <div id="wb-report" class="wb-report"></div>
       <div id="wb-event-chart" class="wb-event-chart"></div>
+      <div id="wb-diary" class="wb-diary hidden"></div>
       <div id="wb-quote" class="wb-quote"></div>
       <button id="btn-wb-close" class="btn-primary" style="width:100%;margin-top:10px;">继续冒险</button>
     </div>
@@ -434,6 +435,7 @@
     <!-- 日记/事件 -->
     <section id="diary-section" class="tab-pane">
       <h2>📖 日记 <span class="new-badge hidden" id="diary-new-badge">新</span></h2>
+      <div id="lobster-diary-entries" class="lobster-diary-entries hidden"></div>
       <div id="diary-filters" class="diary-filters">
         <button class="diary-filter active" data-diary-filter="all">全部</button>
         <button class="diary-filter" data-diary-filter="story">冒险</button>
@@ -543,6 +545,6 @@
   <!-- 通知弹出 -->
   <div id="notification" class="notification hidden"></div>
 
-  <script type="module" src="js/main.js?v=20260322z"></script>
+  <script type="module" src="js/main.js?v=20260317a"></script>
 </body>
 </html>

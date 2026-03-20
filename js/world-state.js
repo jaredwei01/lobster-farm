@@ -65,6 +65,7 @@ function defaultState() {
     bond: { score: 50, lastDecay: null },
     coopQuest: null,
     eventLog: [],
+    lobsterDiary: [],
     settings: {
       tickSpeedMultiplier: 1,
       farmStrategy: 'balanced',
@@ -123,6 +124,7 @@ function ensureCompat() {
   if (!Array.isArray(state.collections.rareItems)) state.collections.rareItems = [];
   if (!Array.isArray(state.milestones)) state.milestones = [];
   if (!state.bond) state.bond = { score: 50, lastDecay: null };
+  if (!Array.isArray(state.lobsterDiary)) state.lobsterDiary = [];
   if (!state.lobster.favoriteFood) state.lobster.favoriteFood = '';
   if (!state.lobster.adoptedAt) state.lobster.adoptedAt = state.createdAt || new Date().toISOString();
   if (!state.lobster.personalityDrift) state.lobster.personalityDrift = {};
@@ -155,6 +157,7 @@ export const WorldState = {
   getInventory() { return { ...state.inventory }; },
   getShells() { return state.shells; },
   getEventLog() { return [...state.eventLog]; },
+  getDiary() { return [...(state.lobsterDiary || [])]; },
   getCollections() { return JSON.parse(JSON.stringify(state.collections)); },
 
   expForLevel,
@@ -476,6 +479,12 @@ export const WorldState = {
     state.eventLog.unshift(event);
     if (state.eventLog.length > CONFIG.EVENT_LOG_MAX) state.eventLog.length = CONFIG.EVENT_LOG_MAX;
     this._notify();
+  },
+
+  addDiaryEntry(entry) {
+    if (!Array.isArray(state.lobsterDiary)) state.lobsterDiary = [];
+    state.lobsterDiary.unshift(entry);
+    if (state.lobsterDiary.length > 30) state.lobsterDiary.length = 30;
   },
 
   addMemory(summary) {

@@ -2431,6 +2431,158 @@ function renderCollectionTab(tab) {
   }
 }
 
+// --- Lobster Diary Generator ---
+
+function _generateDiaryEntry(report) {
+  const lobster = WorldState.getLobster();
+  const name = lobster.name || '小虾';
+  const personality = lobster.personality || 'adventurous';
+  const world = WorldState.getWorld();
+  const hours = Math.floor(report.durationMs / 3600000);
+
+  const actions = (report.recentActions || []).map(a => a.action);
+  const events = report.recentEvents || [];
+  const eventTypes = report.eventsByType || {};
+
+  const actionCounts = {};
+  for (const a of actions) actionCounts[a] = (actionCounts[a] || 0) + 1;
+  const topAction = Object.entries(actionCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  const eventTitles = events.slice(0, 5).map(e => e.title).filter(Boolean);
+  const hadVisitor = (eventTypes.visitor || 0) > 0;
+  const hadDiscovery = (eventTypes.discovery || 0) > 0;
+  const hadCombat = (eventTypes.combat || 0) > 0;
+  const hadFestival = (eventTypes.festival || 0) > 0;
+  const hadWeather = (eventTypes.weather || 0) > 0;
+  const hadFarm = (eventTypes.farm || 0) > 0;
+
+  const seasonLabels = { spring: '春天', summer: '夏天', autumn: '秋天', winter: '冬天' };
+  const seasonLabel = seasonLabels[world.season] || '今天';
+  const weatherLabels = { sunny: '晴朗', rainy: '下雨', stormy: '暴风雨', foggy: '雾蒙蒙' };
+  const weatherLabel = weatherLabels[world.weather] || '';
+
+  const personalityFlavors = {
+    adventurous: {
+      openers: ['今天超刺激！', '又是充满冒险的一天！', '探索永不停歇！'],
+      closers: ['明天还要去更远的地方！', '世界好大，我好想看看~', '冒险才刚刚开始呢！'],
+      restNote: '虽然休息了一会儿，但心里想着下次冒险的路线。',
+      farmNote: '种地的时候发现了一只奇怪的小虫子，好有趣！',
+      cookNote: '试着做了新菜，味道像是冒险的味道！',
+    },
+    lazy: {
+      openers: ['今天好困...', '打了好几个哈欠...', '慵懒的一天~'],
+      closers: ['好了，该睡觉了...zzz', '明天继续躺平~', '最幸福的事就是什么都不做。'],
+      restNote: '找到了一个超级舒服的角落，睡了好久好久。',
+      farmNote: '浇水的时候差点睡着...花洒都歪了。',
+      cookNote: '做了简单的料理，能吃就行嘛~',
+    },
+    gluttonous: {
+      openers: ['今天吃了好多好吃的！', '肚子好满足~', '又是被美食包围的一天！'],
+      closers: ['明天想吃什么呢...', '梦里都是食物的香味~', '吃饱了就是幸福！'],
+      restNote: '吃太饱了，只好躺着消化一下。',
+      farmNote: '种了新的食材，想想就流口水！',
+      cookNote: '在厨房忙了好久，做出了超棒的料理！',
+    },
+    scholarly: {
+      openers: ['记录一下今天的观察。', '有趣的一天，值得记录。', '今日笔记：'],
+      closers: ['需要更多数据来验证这个假设。', '知识就是力量。', '明天继续研究。'],
+      restNote: '休息时翻了翻之前的笔记，发现了一些新线索。',
+      farmNote: '仔细观察了作物的生长规律，记录了详细数据。',
+      cookNote: '按照精确的配比做了料理，味道刚刚好。',
+    },
+    social: {
+      openers: ['今天和好多朋友聊天了！', '热闹的一天~', '大家都来找我玩！'],
+      closers: ['希望明天也有朋友来~', '一个人的时候有点想大家。', '友情是最好的宝藏！'],
+      restNote: '和朋友聊累了，休息一下。',
+      farmNote: '一边种地一边和隔壁的海参聊天。',
+      cookNote: '做了很多料理，想分给大家尝尝！',
+    },
+    mischievous: {
+      openers: ['嘿嘿，今天又搞了点小动作~', '今天的恶作剧计划：成功！', '嘻嘻，好好玩~'],
+      closers: ['明天要想个更厉害的恶作剧！', '嘿嘿嘿~', '不要告诉主人哦~'],
+      restNote: '假装睡觉，其实在偷偷计划下一个恶作剧。',
+      farmNote: '把种子种成了奇怪的图案，嘿嘿~',
+      cookNote: '在料理里偷偷加了一点辣椒，想看谁会中招！',
+    },
+  };
+
+  const flavor = personalityFlavors[personality] || personalityFlavors.adventurous;
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const parts = [];
+  parts.push(pick(flavor.openers));
+
+  if (weatherLabel) {
+    const weatherPhrases = [
+      `${seasonLabel}的天气${weatherLabel}的。`,
+      `外面${weatherLabel}，`,
+      `${weatherLabel}的${seasonLabel}，`,
+    ];
+    parts.push(pick(weatherPhrases));
+  }
+
+  if (topAction) {
+    const actionPhrases = {
+      rest: flavor.restNote,
+      eat: '吃了好几顿，肚子圆滚滚的。',
+      farm: flavor.farmNote,
+      cook: flavor.cookNote,
+      explore: '到处逛了逛，看到了很多新奇的东西。',
+      shop: '去商店逛了逛，买了一些小玩意。',
+      socialize: '和海底的朋友们聊了好久的天。',
+      travel: '出门旅行了一趟，风景真美！',
+    };
+    parts.push(actionPhrases[topAction] || '忙忙碌碌的。');
+  }
+
+  if (hadVisitor) {
+    parts.push(pick(['有客人来访，聊得很开心！', '来了一位有趣的访客~', '今天有朋友来串门。']));
+  }
+  if (hadDiscovery) {
+    parts.push(pick(['还发现了一些新东西！', '探索中有了新发现~', '意外收获了好东西。']));
+  }
+  if (hadCombat) {
+    parts.push(pick(['还打了一场架！', '在地牢里冒险了一番。', '和怪物战斗了，好紧张！']));
+  }
+  if (hadFestival) {
+    parts.push(pick(['赶上了节日活动，好热闹！', '节日气氛真棒~']));
+  }
+  if (hadFarm) {
+    parts.push(pick(['农田里的作物长得不错。', '田里有新的收获~']));
+  }
+
+  if (report.levelsGained > 0) {
+    parts.push(`而且我升级了${report.levelsGained > 1 ? report.levelsGained + '次' : ''}！感觉自己变强了~`);
+  }
+
+  if (eventTitles.length > 0 && Math.random() > 0.5) {
+    const evt = pick(eventTitles);
+    parts.push(`印象最深的是"${evt}"。`);
+  }
+
+  parts.push(pick(flavor.closers));
+
+  const text = parts.join('');
+
+  const dateStr = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+  const timeOfDay = new Date().getHours() < 12 ? '早上' : new Date().getHours() < 18 ? '下午' : '晚上';
+
+  const entry = {
+    id: `diary_${Date.now()}`,
+    date: new Date().toISOString(),
+    dateLabel: `${dateStr} ${timeOfDay}`,
+    text,
+    personality,
+    season: world.season,
+    weather: world.weather,
+    offlineHours: hours,
+  };
+
+  WorldState.addDiaryEntry(entry);
+  SaveSystem.save(WorldState.getRawState());
+  return entry;
+}
+
 // --- Welcome Back Report ---
 
 function _showWelcomeBack(report) {
@@ -2504,6 +2656,18 @@ function _showWelcomeBack(report) {
     const stage = WorldState.getGrowthStage(WorldState.getLobster().level);
     lobsterReaction.textContent = stage ? stage.emoji : '🦞';
     lobsterReaction.classList.add('wb-bounce');
+  }
+
+  const diaryEl = document.getElementById('wb-diary');
+  if (diaryEl) {
+    const entry = _generateDiaryEntry(report);
+    if (entry && entry.text) {
+      const name = WorldState.getLobster().name;
+      diaryEl.innerHTML = `<div class="wb-diary-header"><span class="wb-diary-icon">📔</span><span class="wb-diary-title">${name}的日记</span><span class="wb-diary-date">${entry.dateLabel}</span></div><div class="wb-diary-text">${entry.text}</div>`;
+      diaryEl.classList.remove('hidden');
+    } else {
+      diaryEl.classList.add('hidden');
+    }
   }
 
   const quoteEl = document.getElementById('wb-quote');

@@ -954,6 +954,38 @@ h2 {
   font-size: 11px;
 }
 
+/* --- Lobster Diary Entries (手记) --- */
+.lobster-diary-entries {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(255, 220, 140, 0.06) 0%, rgba(255, 200, 100, 0.03) 100%);
+  border: 1px solid rgba(255, 200, 100, 0.12);
+  border-radius: var(--radius-sm);
+}
+.ld-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-warm);
+  margin-bottom: 8px;
+}
+.ld-icon { font-size: 14px; }
+.ld-entry {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 200, 100, 0.08);
+}
+.ld-entry:last-child { border-bottom: none; }
+.ld-date {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.ld-text {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 /* --- Diary --- */
 .diary-log {
   max-height: 390px;
@@ -4481,6 +4513,42 @@ body[data-weather="stormy"] .sea-sand::before {
   margin: 8px 0;
   background: rgba(255, 157, 115, 0.06);
   border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+}
+
+.wb-diary {
+  margin: 10px 0 6px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(255, 248, 230, 0.08) 0%, rgba(255, 220, 160, 0.05) 100%);
+  border: 1px solid rgba(255, 200, 100, 0.15);
+  border-radius: var(--radius-sm);
+  animation: wbDiaryFadeIn 0.6s ease-out 0.3s both;
+}
+.wb-diary-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+.wb-diary-icon { font-size: 14px; }
+.wb-diary-title {
+  font-weight: 600;
+  color: var(--accent-warm);
+  flex: 1;
+}
+.wb-diary-date {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+.wb-diary-text {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+@keyframes wbDiaryFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .wb-stat-enter {
