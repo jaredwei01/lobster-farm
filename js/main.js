@@ -3181,6 +3181,8 @@ async function _sendChatMessage() {
   try {
     const lobster = WorldState.getLobster();
     const state = WorldState.getState();
+    const _h = new Date().getHours();
+    const realTime = _h >= 5 && _h < 12 ? 'morning' : _h >= 12 && _h < 18 ? 'afternoon' : _h >= 18 && _h < 22 ? 'evening' : 'night';
     const context = {
       name: lobster.name,
       personality: lobster.personality,
@@ -3190,7 +3192,7 @@ async function _sendChatMessage() {
       hunger: lobster.hunger,
       season: state.world.season,
       weather: state.world.weather,
-      timeOfDay: state.world.timeOfDay,
+      timeOfDay: realTime,
       day: state.world.dayCount,
       traveling: Boolean(lobster.traveling),
       empathy: EmpathyTracker.getSummary(),
