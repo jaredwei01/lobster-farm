@@ -1061,3 +1061,42 @@ body[data-time="night"] .sea-lobster::after {
   0% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-20px); }
 }
+
+/* ========== Texture V2 Animations ========== */
+
+@keyframes lobsterBreathe {
+  0%, 100% { transform: scaleX(1) scaleY(1); }
+  50% { transform: scaleX(1.02) scaleY(0.98); }
+}
+
+@keyframes clickRipple {
+  0% { width: 0; height: 0; opacity: 0.8; }
+  40% { opacity: 0.5; }
+  100% { width: 80px; height: 80px; opacity: 0; }
+}
+
+@keyframes planktonFloat {
+  0% { transform: translate(0, 0); opacity: 0.2; }
+  15% { opacity: 0.6; }
+  30% { transform: translate(var(--px1, 6px), var(--py1, -8px)); opacity: 0.8; }
+  50% { transform: translate(var(--px2, -4px), var(--py2, 4px)); opacity: 0.4; }
+  70% { transform: translate(var(--px3, 8px), var(--py3, -3px)); opacity: 0.7; }
+  85% { opacity: 0.3; }
+  100% { transform: translate(0, 0); opacity: 0.2; }
+}
+
+@keyframes farCreatureSwim {
+  0% { transform: translateX(-60px) translateY(0); }
+  25% { transform: translateX(25vw) translateY(-4px); }
+  50% { transform: translateX(50vw) translateY(2px); }
+  75% { transform: translateX(75vw) translateY(-3px); }
+  100% { transform: translateX(calc(100vw + 60px)) translateY(0); }
+}
+
+@keyframes farCreatureSwimReverse {
+  0% { transform: translateX(calc(100vw + 60px)) scaleX(-1) translateY(0); }
+  25% { transform: translateX(75vw) scaleX(-1) translateY(3px); }
+  50% { transform: translateX(50vw) scaleX(-1) translateY(-2px); }
+  75% { transform: translateX(25vw) scaleX(-1) translateY(4px); }
+  100% { transform: translateX(-60px) scaleX(-1) translateY(0); }
+}

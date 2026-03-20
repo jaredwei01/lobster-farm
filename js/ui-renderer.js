@@ -52,10 +52,10 @@ export const UIRenderer = {
   },
 
   destroy() {
-    [this._seaBubbleTimer, this._seaCreatureTimer, _seaCloudTimer, _seaShipTimer, _seaSnowTimer, this._microActionTimer, this._rareEventTimer, this._emotionTimer].forEach(id => {
+    [this._seaBubbleTimer, this._seaCreatureTimer, _seaCloudTimer, _seaShipTimer, _seaSnowTimer, this._microActionTimer, this._rareEventTimer, this._emotionTimer, this._farCreatureTimer].forEach(id => {
       if (id) clearInterval(id);
     });
-    this._seaBubbleTimer = this._seaCreatureTimer = this._microActionTimer = this._rareEventTimer = this._emotionTimer = null;
+    this._seaBubbleTimer = this._seaCreatureTimer = this._microActionTimer = this._rareEventTimer = this._emotionTimer = this._farCreatureTimer = null;
     _seaCloudTimer = _seaShipTimer = _seaSnowTimer = null;
     this._seaBubblesInited = false;
   },
@@ -144,6 +144,10 @@ export const UIRenderer = {
       this._startSnowflakes();
       this._startMicroActions(state.lobster.personality);
       this._startRareEvents();
+      this._startWaterClickRipples();
+      this._startNightPlankton();
+      this._startFarCreatures();
+      this._positionMoonPath();
     }
   },
 
@@ -628,6 +632,90 @@ export const UIRenderer = {
     surface.appendChild(el);
     setTimeout(() => el.remove(), 9000);
     this.showNotification('🌈 彩虹出现了！', 3000);
+  },
+
+  _startWaterClickRipples() {
+    const waterEl = document.querySelector('.sea-water');
+    if (!waterEl) return;
+    waterEl.addEventListener('click', (e) => {
+      const rect = waterEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (waterEl.querySelectorAll('.sea-click-ripple').length >= 4) return;
+      const ripple = document.createElement('div');
+      ripple.className = 'sea-click-ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.marginLeft = '-40px';
+      ripple.style.marginTop = '-40px';
+      waterEl.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  },
+
+  _startNightPlankton() {
+    const container = document.getElementById('sea-bio-plankton');
+    if (!container) return;
+    const count = 20;
+    for (let i = 0; i < count; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'sea-plankton-dot';
+      dot.style.left = `${3 + Math.random() * 94}%`;
+      dot.style.top = `${5 + Math.random() * 85}%`;
+      const size = 1.5 + Math.random() * 2;
+      dot.style.setProperty('--ps', `${size}px`);
+      dot.style.setProperty('--pdur', `${10 + Math.random() * 12}s`);
+      dot.style.setProperty('--pdelay', `${-Math.random() * 15}s`);
+      dot.style.setProperty('--px1', `${(Math.random() - 0.5) * 16}px`);
+      dot.style.setProperty('--py1', `${(Math.random() - 0.5) * 12}px`);
+      dot.style.setProperty('--px2', `${(Math.random() - 0.5) * 14}px`);
+      dot.style.setProperty('--py2', `${(Math.random() - 0.5) * 10}px`);
+      dot.style.setProperty('--px3', `${(Math.random() - 0.5) * 18}px`);
+      dot.style.setProperty('--py3', `${(Math.random() - 0.5) * 14}px`);
+      container.appendChild(dot);
+    }
+  },
+
+  _farCreatureTimer: null,
+  _FAR_CREATURES: ['🐋', '🦈', '🐙', '🐢', '🐬'],
+  _startFarCreatures() {
+    const container = document.getElementById('sea-creatures-far');
+    if (!container) return;
+
+    const spawn = () => {
+      if (container.childElementCount >= 2) return;
+      const emoji = this._FAR_CREATURES[Math.floor(Math.random() * this._FAR_CREATURES.length)];
+      const el = document.createElement('div');
+      el.className = 'sea-far-creature';
+      el.textContent = emoji;
+      const goRight = Math.random() > 0.5;
+      const dur = 35 + Math.random() * 20;
+      const y = 15 + Math.random() * 50;
+      el.style.top = `${y}%`;
+      el.style.animation = `${goRight ? 'farCreatureSwim' : 'farCreatureSwimReverse'} ${dur}s linear forwards`;
+      el.style.opacity = `${0.06 + Math.random() * 0.06}`;
+      container.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+      setTimeout(() => { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+    };
+
+    setTimeout(spawn, 8000);
+    this._farCreatureTimer = setInterval(spawn, 25000 + Math.random() * 20000);
+  },
+
+  _positionMoonPath() {
+    const moonPath = document.getElementById('sea-moon-path');
+    const moon = document.getElementById('sea-moon');
+    if (!moonPath || !moon) return;
+    const updatePos = () => {
+      const moonRect = moon.getBoundingClientRect();
+      const waterEl = document.querySelector('.sea-water');
+      if (!waterEl) return;
+      const waterRect = waterEl.getBoundingClientRect();
+      moonPath.style.left = `${moonRect.left - waterRect.left + moonRect.width / 2 - 20}px`;
+    };
+    updatePos();
+    setInterval(updatePos, 5000);
   },
 
   _onCreatureClick(eventType, el) {

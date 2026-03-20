@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>龙虾 MUD</title>
-  <link rel="stylesheet" href="css/style.css?v=20260322k">
-  <link rel="stylesheet" href="css/animations.css?v=20260322k">
+  <link rel="stylesheet" href="css/style.css?v=20260322m">
+  <link rel="stylesheet" href="css/animations.css?v=20260322m">
 </head>
 <body>
   <!-- 建议弹窗 -->
@@ -279,13 +279,17 @@
         <div class="sea-foam"></div>
       </div>
       <div class="sea-water">
+        <div class="sea-water-line"></div>
         <div class="sea-caustics"></div>
         <div class="sea-surface-ripple"></div>
         <div class="sea-light-rays" id="sea-light-rays"></div>
         <div class="sea-god-rays"></div>
+        <div class="sea-moon-path" id="sea-moon-path"></div>
         <div class="sea-depth-haze"></div>
+        <div class="sea-creatures-far" id="sea-creatures-far"></div>
         <div class="sea-bubbles" id="sea-bubbles"></div>
         <div class="sea-creatures" id="sea-creatures"></div>
+        <div class="sea-bio-plankton" id="sea-bio-plankton"></div>
         <div class="sea-dust-motes" id="sea-dust-motes">
           <div class="sea-dust-mote" style="left:12%;top:18%;--dur:16s;--delay:0s;--dx:10px;--dy:-6px;--dx2:-8px;--dy2:4px"></div>
           <div class="sea-dust-mote" style="left:35%;top:30%;--dur:20s;--delay:-4s;--dx:-8px;--dy:10px;--dx2:6px;--dy2:-5px"></div>
@@ -314,7 +318,13 @@
         <div class="sea-rock sea-rock-right" id="sea-rock-right"></div>
         <div class="sea-golden hidden" id="sea-golden">✨</div>
         <div class="sea-decorations" id="sea-decorations"></div>
-        <div class="sea-sand"></div>
+        <div class="sea-sand">
+          <span class="sea-sand-deco" style="left:8%;bottom:8px">🐚</span>
+          <span class="sea-sand-deco" style="left:32%;bottom:5px;font-size:6px">🐚</span>
+          <span class="sea-sand-deco" style="left:52%;bottom:10px;font-size:7px">⭐</span>
+          <span class="sea-sand-deco" style="left:72%;bottom:6px">🐚</span>
+          <span class="sea-sand-deco" style="left:90%;bottom:9px;font-size:6px">⭐</span>
+        </div>
         <div class="sea-lobster" id="sea-lobster">
           <img src="assets/sprites/lobster.svg" alt="龙虾" class="sea-lobster-img" id="sea-lobster-img">
         </div>
@@ -520,6 +530,6 @@
   <!-- 通知弹出 -->
   <div id="notification" class="notification hidden"></div>
 
-  <script type="module" src="js/main.js?v=20260322k"></script>
+  <script type="module" src="js/main.js?v=20260322m"></script>
 </body>
 </html>
