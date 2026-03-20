@@ -42,6 +42,7 @@ let lastActiveCheck = Date.now();
 export const Analytics = {
   init() {
     this.track('session_start', getSessionMeta());
+    setTimeout(() => this._flush(), 2000);
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
@@ -64,6 +65,7 @@ export const Analytics = {
     heartbeatTimer = setInterval(() => {
       this._accumulateActive();
       this.track('heartbeat', { activeSeconds, duration: Math.round((Date.now() - sessionStart) / 1000) });
+      this._flush();
     }, HEARTBEAT_INTERVAL);
 
     flushTimer = setInterval(() => this._flush(), FLUSH_INTERVAL);
