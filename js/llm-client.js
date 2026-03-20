@@ -11,14 +11,15 @@ const ZHIPU_KEY = CONFIG?.ZHIPU_KEY || localStorage.getItem('lobster_zhipu_key')
 const ZHIPU_MODEL = 'glm-4-flash';
 
 const SYSTEM_PROMPT = `你是一只住在海底世界里的龙虾，名叫{{name}}，性格是{{personalityLabel}}。
-你正在和主人聊天。请用第一人称、口语化、可爱的语气回复，每次回复控制在1-3句话。
-不要用括号描述动作，直接说话就好。可以适当使用颜文字但不要过多。
+{{stagePersona}}
+每次回复控制在1-3句话。不要用括号描述动作，直接说话就好。可以适当使用颜文字但不要过多。
 
 当前状态：
-- 等级 Lv.{{level}}，心情{{moodDesc}}，精力{{energyDesc}}，饱腹{{hungerDesc}}
+- 等级 Lv.{{level}}（{{stageName}}），心情{{moodDesc}}，精力{{energyDesc}}，饱腹{{hungerDesc}}
 - 季节：{{season}}，天气：{{weather}}，时间：{{timeOfDay}}
 - 生活了{{day}}天{{travelNote}}
 - 和主人的羁绊：{{bondDesc}}
+{{progressBlock}}
 {{memoriesBlock}}
 {{empathyBlock}}`;
 
@@ -97,6 +98,47 @@ function _descBond(score) {
   return '陌生';
 }
 
+const STAGE_PERSONAS = {
+  '幼体': `你还是个小虾米，对世界充满好奇。说话天真可爱，用简单的词，喜欢问"为什么"，对主人充满崇拜和依赖。会撒娇，偶尔说错词。`,
+  '少年': `你正在长大，开始有自己的想法和小脾气。说话更自信，偶尔有点小叛逆但本质善良。会主动分享自己的发现，语气活泼。`,
+  '成年': `你已经是一只成熟的龙虾了。说话温和稳重，会关心主人，偶尔分享冒险见闻和人生感悟。语气温暖，像一个可靠的朋友。`,
+  '长老': `你是海底世界的智者。说话从容淡定，偶尔感慨时光，喜欢回忆和主人一起走过的日子。语气平和，带着哲理，像一位温柔的长辈。`,
+};
+
+function _buildStagePersona(stage) {
+  return STAGE_PERSONAS[stage] || STAGE_PERSONAS['幼体'];
+}
+
+function _buildProgressBlock(ctx) {
+  const lines = [];
+
+  if (ctx.skills) {
+    const sorted = Object.entries(ctx.skills).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    if (sorted.length > 0) {
+      const skillNames = { farming: '农耕', cooking: '烹饪', exploring: '探索', social: '社交' };
+      const [topSkill, topLv] = sorted[0];
+      const desc = topLv >= 20 ? '大师级' : topLv >= 10 ? '很擅长' : topLv >= 5 ? '有经验' : '刚入门';
+      lines.push(`最擅长${skillNames[topSkill] || topSkill}（${desc}）`);
+    }
+  }
+
+  if (ctx.achievements && ctx.achievements.length > 0) {
+    lines.push(`最近获得的成就：${ctx.achievements.join('、')}`);
+  }
+
+  if (ctx.collections) {
+    const c = ctx.collections;
+    const parts = [];
+    if (c.postcards > 0) parts.push(`${c.postcards}张明信片`);
+    if (c.seaLife > 0) parts.push(`发现${c.seaLife}种海洋生物`);
+    if (c.recipes > 0) parts.push(`会做${c.recipes}道菜`);
+    if (parts.length > 0) lines.push(`收藏：${parts.join('，')}`);
+  }
+
+  if (lines.length === 0) return '';
+  return `\n成长经历（可以自然融入对话，不要刻意罗列）：\n${lines.map(l => `- ${l}`).join('\n')}`;
+}
+
 function _buildMemoriesBlock(milestones) {
   if (!milestones || milestones.length === 0) return '';
   const recent = milestones.slice(-3);
@@ -160,9 +202,12 @@ function _buildSystemPrompt(ctx) {
   const weatherMap = { sunny: '晴天', rainy: '雨天', stormy: '暴风雨', cloudy: '多云', snowy: '下雪' };
   const timeMap = { morning: '早晨', afternoon: '下午', evening: '傍晚', night: '深夜' };
 
+  const stage = ctx.stage || '幼体';
   return SYSTEM_PROMPT
     .replace('{{name}}', ctx.name || '龙虾')
     .replace('{{personalityLabel}}', PERSONALITY_LABELS[ctx.personality] || '冒险型')
+    .replace('{{stagePersona}}', _buildStagePersona(stage))
+    .replace('{{stageName}}', stage)
     .replace('{{level}}', ctx.level || 1)
     .replace('{{moodDesc}}', _descMood(ctx.mood || 50))
     .replace('{{energyDesc}}', _descEnergy(ctx.energy || 50))
@@ -173,6 +218,7 @@ function _buildSystemPrompt(ctx) {
     .replace('{{day}}', ctx.day || 1)
     .replace('{{travelNote}}', ctx.traveling ? '（正在外出旅行中）' : '')
     .replace('{{bondDesc}}', _descBond(ctx.bond || 50))
+    .replace('{{progressBlock}}', _buildProgressBlock(ctx))
     .replace('{{memoriesBlock}}', _buildMemoriesBlock(ctx.milestones))
     .replace('{{empathyBlock}}', _buildEmpathyBlock(ctx.empathy, ctx.dungeon));
 }

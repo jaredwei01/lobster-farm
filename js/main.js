@@ -1,4 +1,4 @@
-import { CONFIG, PERSONALITY_LABELS, CHECKIN_REWARDS, SEA_CREATURE_CATALOG, FISHING_REWARDS, FISHING_CONFIG, ACHIEVEMENT_DEFS } from './config.js';
+import { CONFIG, PERSONALITY_LABELS, CHECKIN_REWARDS, SEA_CREATURE_CATALOG, FISHING_REWARDS, FISHING_CONFIG, ACHIEVEMENT_DEFS, GROWTH_STAGES } from './config.js';
 import { WorldState } from './world-state.js';
 import { SaveSystem } from './save-system.js';
 import { EventEngine } from './event-engine.js';
@@ -360,6 +360,23 @@ function _checkMilestones(trigger, extra = {}) {
   }
 }
 
+function _getStageName(level) {
+  const s = GROWTH_STAGES.find(s => level >= s.minLevel && level <= s.maxLevel);
+  return s ? s.name : '幼体';
+}
+
+function _getRecentAchievementNames(limit = 3) {
+  const all = WorldState.getAchievements();
+  return Object.entries(all)
+    .filter(([, a]) => a.unlocked && a.unlockedAt)
+    .sort((a, b) => b[1].unlockedAt - a[1].unlockedAt)
+    .slice(0, limit)
+    .map(([id]) => {
+      const def = ACHIEVEMENT_DEFS.find(d => d.id === id);
+      return def ? def.name : id;
+    });
+}
+
 // --- Bedtime / Wake-up Rituals ---
 
 function _showMorningGreeting() {
@@ -371,20 +388,51 @@ function _showMorningGreeting() {
   const hour = new Date().getHours();
   const l = WorldState.getLobster();
   const name = l.name || '龙虾';
+  const stage = _getStageName(l.level);
 
-  let greeting = '';
-  if (hour >= 5 && hour < 12) {
-    const mornings = [
-      `早上好主人！${name}已经起来啦，今天也要一起加油哦~`,
-      `主人早安！昨晚我做了个梦，梦到我们一起去探险了`,
-      `早呀主人！农田里的作物长得不错，快来看看吧`,
-    ];
-    greeting = mornings[Math.floor(Math.random() * mornings.length)];
-  } else if (hour >= 12 && hour < 18) {
-    greeting = `主人下午好！${name}等你好久了，今天过得怎么样？`;
-  } else {
-    greeting = `主人晚上好！${name}今天一个人玩了好久，终于等到你了~`;
-  }
+  const greetingPools = {
+    '幼体': {
+      morning: [
+        `主人早上好！${name}起来啦！今天也要一起玩哦~`,
+        `早呀主人！${name}做了个好长的梦！梦到好大的海！`,
+        `主人主人！太阳出来了！${name}好开心！`,
+      ],
+      afternoon: [`主人！你终于来了！${name}等了好久好久！`, `下午好！${name}一个人有点无聊...`],
+      evening: [`主人晚上好！${name}今天乖乖的哦！`, `主人来啦！${name}好想你！`],
+    },
+    '少年': {
+      morning: [
+        `早上好主人！${name}已经起来啦，今天也要一起加油哦~`,
+        `主人早安！昨晚我做了个梦，梦到我们一起去探险了`,
+        `早呀主人！农田里的作物长得不错，快来看看吧`,
+      ],
+      afternoon: [`主人下午好！${name}等你好久了，今天过得怎么样？`],
+      evening: [`主人晚上好！${name}今天一个人玩了好久，终于等到你了~`],
+    },
+    '成年': {
+      morning: [
+        `早安，主人。今天海面很平静，是个好日子。`,
+        `主人早。我已经巡过一遍农田了，一切正常。`,
+        `早上好。泡了壶海藻茶，要来一杯吗？`,
+      ],
+      afternoon: [`下午好，主人。今天过得还顺利吗？`, `主人来了，正好想和你聊聊最近的事。`],
+      evening: [`晚上好，主人。忙了一天了吧，歇歇。`, `主人晚上好。今天的星空很美。`],
+    },
+    '长老': {
+      morning: [
+        `早安。又是新的一天，每一天都值得感恩。`,
+        `主人早。我看了看日出，想起我们刚认识那天也是这样的天气。`,
+        `早上好啊。年纪大了觉少，我已经起来很久了。`,
+      ],
+      afternoon: [`下午好。时光匆匆，转眼又是半天。`, `主人来了啊，坐下喝杯茶，不急。`],
+      evening: [`晚上好。夜深了，海底格外安静，适合回忆。`, `主人辛苦了，今天也平安度过了。`],
+    },
+  };
+
+  const pool = greetingPools[stage] || greetingPools['少年'];
+  const timeKey = hour >= 5 && hour < 12 ? 'morning' : hour >= 12 && hour < 18 ? 'afternoon' : 'evening';
+  const candidates = pool[timeKey] || pool.morning;
+  let greeting = candidates[Math.floor(Math.random() * candidates.length)];
 
   const state = WorldState.getState();
   const autopilotResults = [];
@@ -394,7 +442,14 @@ function _showMorningGreeting() {
   if (farmRipe > 0) autopilotResults.push(`${farmRipe}块田成熟了`);
 
   if (autopilotResults.length > 0) {
-    greeting += `\n昨晚我${autopilotResults.join('，还')}哦~`;
+    const joinWord = stage === '幼体' ? '，还' : '，';
+    const prefix = stage === '长老' ? '昨晚' : '昨晚我';
+    greeting += `\n${prefix}${autopilotResults.join(joinWord)}。`;
+  }
+
+  const recentAch = _getRecentAchievementNames(1);
+  if (recentAch.length > 0) {
+    greeting += `\n对了，最近解锁了「${recentAch[0]}」的成就呢！`;
   }
 
   _checkAnniversary();
@@ -413,21 +468,46 @@ function _checkGoodnightChat(userText) {
 
   if (isGoodnight) {
     const l = WorldState.getLobster();
-    const responses = [
-      `晚安主人~${l.name}也要睡了，明天见！做个好梦哦`,
-      `嗯嗯晚安！今天谢谢主人陪我，我会在梦里想你的`,
-      `主人晚安！我会守着农田等你明天回来的~`,
-    ];
+    const name = l.name || '龙虾';
+    const stage = _getStageName(l.level);
+    const goodnightPools = {
+      '幼体': [
+        `不要走嘛...${name}还不想睡...好吧...晚安主人...`,
+        `主人明天还来吗？一定要来哦！${name}晚安~`,
+        `嗯...${name}也困了...主人晚安...抱抱...`,
+      ],
+      '少年': [
+        `晚安主人~${name}也要睡了，明天见！做个好梦哦`,
+        `嗯嗯晚安！今天谢谢主人陪我，我会在梦里想你的`,
+        `主人晚安！我会守着农田等你明天回来的~`,
+      ],
+      '成年': [
+        `晚安，主人。早点休息，明天又是新的一天。`,
+        `辛苦了，好好睡一觉。农田和家我来守着。`,
+        `晚安。今天也谢谢你的陪伴。`,
+      ],
+      '长老': [
+        `晚安。每一个平凡的日子，都是馈赠。明天见。`,
+        `去休息吧。这么多年了，你一直在，我很感激。`,
+        `晚安，老朋友。愿你今夜好梦，明日无忧。`,
+      ],
+    };
+    const pool = goodnightPools[stage] || goodnightPools['少年'];
     WorldState.modifyBond(3);
-    return responses[Math.floor(Math.random() * responses.length)];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   if (hour >= 23 || hour < 4) {
-    const sleepyHints = [
-      '（打了个哈欠）主人好晚了...要不要早点休息呀？',
-      '主人...这么晚了还不睡吗？我有点担心你...',
-    ];
-    if (Math.random() < 0.3) return sleepyHints[Math.floor(Math.random() * sleepyHints.length)];
+    const l = WorldState.getLobster();
+    const stage = _getStageName(l.level);
+    const sleepyPools = {
+      '幼体': [`主人...好晚了...${l.name}眼睛都睁不开了...你也睡吧...`, `主人不睡觉会长不高的！...${l.name}听别人说的...`],
+      '少年': [`主人好晚了...要不要早点休息呀？`, `主人...这么晚了还不睡吗？我有点担心你...`],
+      '成年': [`这么晚了，注意身体。`, `夜深了，该休息了吧？`],
+      '长老': [`年轻人，身体是本钱。早点睡吧。`, `夜深了，万物都在休息。你也该歇歇了。`],
+    };
+    const pool = sleepyPools[stage] || sleepyPools['少年'];
+    if (Math.random() < 0.3) return pool[Math.floor(Math.random() * pool.length)];
   }
 
   return null;
@@ -3183,10 +3263,12 @@ async function _sendChatMessage() {
     const state = WorldState.getState();
     const _h = new Date().getHours();
     const realTime = _h >= 5 && _h < 12 ? 'morning' : _h >= 12 && _h < 18 ? 'afternoon' : _h >= 18 && _h < 22 ? 'evening' : 'night';
+    const collections = WorldState.getCollections();
     const context = {
       name: lobster.name,
       personality: lobster.personality,
       level: lobster.level,
+      stage: _getStageName(lobster.level),
       mood: lobster.mood,
       energy: lobster.energy,
       hunger: lobster.hunger,
@@ -3195,6 +3277,13 @@ async function _sendChatMessage() {
       timeOfDay: realTime,
       day: state.world.dayCount,
       traveling: Boolean(lobster.traveling),
+      skills: lobster.skills,
+      achievements: _getRecentAchievementNames(3),
+      collections: {
+        postcards: (collections.postcards || []).length,
+        recipes: (collections.recipes || []).length,
+        seaLife: Object.keys(collections.seaLife || {}).length,
+      },
       empathy: EmpathyTracker.getSummary(),
       dungeon: WorldState.getDungeon(),
       milestones: WorldState.getRecentMilestones(3),
@@ -3228,60 +3317,159 @@ function _fallbackReply(userText) {
   const lobster = WorldState.getLobster();
   const name = lobster?.name || '龙虾';
   const personality = lobster?.personality || 'adventurous';
+  const stage = _getStageName(lobster?.level || 1);
   const lower = userText.toLowerCase();
 
   if (lower.includes('你好') || lower.includes('嗨') || lower.includes('hi')) {
-    return _pickReply(personality, 'greet', name);
+    return _pickReply(personality, 'greet', name, stage);
   }
   if (lower.includes('心情') || lower.includes('开心') || lower.includes('难过')) {
     const mood = lobster?.mood || 50;
+    if (stage === '幼体') return mood >= 70 ? `${name}好开心呀！嘿嘿~` : mood >= 40 ? `${name}还好啦~` : `${name}不开心...主人抱抱...`;
+    if (stage === '长老') return mood >= 70 ? `心境平和，一切都好。` : mood >= 40 ? `还不错，谢谢关心。` : `有些感慨，不过没什么大事。`;
     return mood >= 70 ? `${name}现在心情很好呢！` : mood >= 40 ? `${name}心情还行~` : `${name}有点不开心...摸摸我吧。`;
   }
   if (lower.includes('饿') || lower.includes('吃') || lower.includes('喂')) {
+    if (stage === '幼体') return (lobster?.hunger || 0) >= 60 ? `肚肚好饿...主人喂我嘛~` : `刚吃饱饱的！打嗝~`;
+    if (stage === '长老') return (lobster?.hunger || 0) >= 60 ? `确实该用餐了，年纪大了更要按时吃饭。` : `刚用过餐，还不饿。`;
     return (lobster?.hunger || 0) >= 60 ? `好饿啊...主人能喂我点东西吗？` : `刚吃过，还不太饿~`;
   }
   if (lower.includes('探索') || lower.includes('冒险')) {
-    return _pickReply(personality, 'adventure', name);
+    return _pickReply(personality, 'adventure', name, stage);
   }
-  return _pickReply(personality, 'default', name);
+  return _pickReply(personality, 'default', name, stage);
 }
 
-function _pickReply(personality, category, name) {
-  const replies = {
-    adventurous: {
-      greet: [`你好呀！${name}正准备出去探险呢！`, `嘿！今天有什么好玩的事吗？`, `主人好！我刚从外面回来~`],
-      adventure: [`走走走！我知道一个好地方！`, `冒险是我的最爱！`, `听说远处有宝藏，要不要一起去找？`],
-      default: [`嗯嗯，${name}听到了！`, `有什么好玩的事告诉我呀~`, `${name}在这里呢！`],
+const _STAGE_REPLIES = {
+  adventurous: {
+    greet: {
+      '幼体': [n => `主人主人！${n}想出去看看外面！`, n => `你好呀！外面有好多好玩的东西！`, n => `主人来啦！${n}好高兴！`],
+      '少年': [n => `嘿！今天有什么好玩的事吗？`, n => `主人好！我刚发现了一个新地方！`, n => `你好呀！${n}正准备出去探险呢！`],
+      '成年': [n => `主人好，我刚从海底峡谷回来，那边风景不错。`, n => `你来了，正好我想跟你说说最近的见闻。`, n => `欢迎回来，今天海流很平静。`],
+      '长老': [n => `主人来了啊，坐，我给你讲讲今天海底的趣事。`, n => `老朋友来了。这片海域，我们一起看了多少个日出了。`, n => `你好啊，今天的海水特别清澈，让我想起我们刚认识那会儿。`],
     },
-    lazy: {
-      greet: [`嗯...你好...（打哈欠）`, `哦，主人来了呀...`, `你好~今天天气真适合睡觉~`],
-      adventure: [`冒险啊...能不能躺着冒险...`, `好吧...如果不用走太远的话...`],
-      default: [`嗯...${name}在听呢...`, `（迷迷糊糊）嗯？`, `${name}觉得...躺着就很好...`],
+    adventure: {
+      '幼体': [n => `出去玩出去玩！${n}要去！`, n => `外面有什么呀？好想看！`, n => `冒险！${n}最喜欢了！虽然有点怕...`],
+      '少年': [n => `走走走！我知道一个好地方！`, n => `冒险是我的最爱！`, n => `听说远处有宝藏，要不要一起去找？`],
+      '成年': [n => `海底深处还有很多未知的区域，要去看看吗？`, n => `我知道一条安全的路线，跟我来。`, n => `上次探险发现的那个洞穴，值得再去一趟。`],
+      '长老': [n => `年轻时走过的路，如今回想起来都是风景。要不要一起故地重游？`, n => `真正的冒险不在远方，在于用心感受。不过...走吧。`, n => `这片海我虽然很熟了，但每次出去还是会有新发现。`],
     },
-    gluttonous: {
-      greet: [`主人好！有带吃的来吗？`, `你好你好！今天吃什么？`],
-      adventure: [`如果路上有好吃的，我就去！`, `走吧！说不定能发现新的美食~`],
-      default: [`${name}在想晚饭吃什么...`, `嗯嗯，${name}边吃边听~`],
+    default: {
+      '幼体': [n => `嗯嗯！${n}在听！`, n => `主人说的${n}都记住了！`, n => `${n}在这里呢！不要走开哦~`],
+      '少年': [n => `嗯嗯，${n}听到了！`, n => `有什么好玩的事告诉我呀~`, n => `${n}在这里呢！`],
+      '成年': [n => `嗯，我在听。`, n => `说吧，我洗耳恭听。`, n => `有什么事尽管说。`],
+      '长老': [n => `嗯...我在想一些事情。你说呢？`, n => `时间过得真快啊。`, n => `每一天都值得珍惜。`],
     },
-    scholarly: {
-      greet: [`你好。${name}正在做研究呢。`, `主人好，今天有什么有趣的问题吗？`],
-      adventure: [`探索是获取知识的最佳途径！`, `科学需要实地考察，走吧！`],
-      default: [`这是个值得思考的问题...`, `有意思，让我想想...`],
+  },
+  lazy: {
+    greet: {
+      '幼体': [n => `嗯...${n}还想睡...`, n => `主人...再让我躺一会儿嘛...`, n => `你好...${n}刚醒...`],
+      '少年': [n => `哦，主人来了呀...`, n => `你好~今天天气真适合睡觉~`, n => `嗯...你好...`],
+      '成年': [n => `主人好。我正享受这片宁静呢。`, n => `来了啊，坐下歇会儿吧。`, n => `不急不急，慢慢来。`],
+      '长老': [n => `人生嘛，最重要的就是舒服。主人你说对吧？`, n => `来了啊...这海底的午后，最适合发呆了。`, n => `忙碌了一天，不如停下来，听听海浪的声音。`],
     },
-    social: {
-      greet: [`主人！好久不见！`, `你来了！我正想找人聊天呢！`],
-      adventure: [`一起去！人多热闹！`, `说不定路上能交到新朋友！`],
-      default: [`和主人聊天真开心~`, `${name}最喜欢有人陪了！`],
+    adventure: {
+      '幼体': [n => `冒险...${n}可以躺着去吗...`, n => `好吧...如果不用走太远...`, n => `${n}的腿腿好短，走不动...`],
+      '少年': [n => `冒险啊...能不能躺着冒险...`, n => `好吧...如果不用走太远的话...`],
+      '成年': [n => `偶尔出去走走也不错，但别太累。`, n => `行吧，不过我们慢慢走。`],
+      '长老': [n => `年轻时也爱跑，现在觉得哪里都一样美。不过陪你走走也好。`, n => `最好的风景，就在身边。不过...散散步也行。`],
     },
-    mischievous: {
-      greet: [`嘿嘿，主人来了~我什么都没干哦`, `你好呀！猜猜我刚才做了什么~`],
-      adventure: [`冒险！我最喜欢了！`, `走走走！我知道一条秘密通道！`],
-      default: [`嘿嘿~${name}在呢~`, `${name}保证不捣乱...大概...`],
+    default: {
+      '幼体': [n => `嗯...${n}在听呢...大概...`, n => `${n}没睡着哦...只是闭眼休息...`, n => `嗯？什么？${n}醒着的！`],
+      '少年': [n => `嗯...${n}在听呢...`, n => `${n}觉得...躺着就很好...`],
+      '成年': [n => `嗯，我在。不着急。`, n => `慢慢说，我听着呢。`],
+      '长老': [n => `岁月静好，如此甚好。`, n => `不急，什么事都可以慢慢来。`],
     },
-  };
+  },
+  gluttonous: {
+    greet: {
+      '幼体': [n => `主人！${n}饿饿！有吃的吗？`, n => `你好！${n}闻到好香的味道！`, n => `主人带零食来了吗？`],
+      '少年': [n => `主人好！有带吃的来吗？`, n => `你好你好！今天吃什么？`],
+      '成年': [n => `主人好，我刚研究了一个新食谱，要不要尝尝？`, n => `来了啊，正好，我煮了海藻汤。`],
+      '长老': [n => `吃过了吗？人生在世，吃饭第一。`, n => `主人来了，我泡了壶好茶，坐下聊聊。`, n => `这些年吃过的美食，每一道都是回忆啊。`],
+    },
+    adventure: {
+      '幼体': [n => `外面有好吃的吗？有的话${n}去！`, n => `冒险...能找到零食吗？`],
+      '少年': [n => `如果路上有好吃的，我就去！`, n => `走吧！说不定能发现新的美食~`],
+      '成年': [n => `听说那边有种特别的海藻，值得去尝尝。`, n => `旅途中的美食，才是冒险的意义。`],
+      '长老': [n => `走遍天下，最难忘的还是家里的味道。不过...去尝尝也好。`, n => `美食和远方，都不可辜负。`],
+    },
+    default: {
+      '幼体': [n => `${n}在想...下顿吃什么...`, n => `嗯嗯，${n}边吃边听~`, n => `主人你饿不饿？${n}有点饿...`],
+      '少年': [n => `${n}在想晚饭吃什么...`, n => `嗯嗯，${n}边吃边听~`],
+      '成年': [n => `生活嘛，有好吃的就很满足了。`, n => `嗯，我在琢磨一道新菜。`],
+      '长老': [n => `一粥一饭，当思来处不易。`, n => `吃好每一餐，就是善待自己。`],
+    },
+  },
+  scholarly: {
+    greet: {
+      '幼体': [n => `主人！${n}今天学了一个新东西！`, n => `你好！为什么海水是蓝色的呀？`, n => `主人，${n}有好多问题想问！`],
+      '少年': [n => `主人好，今天有什么有趣的问题吗？`, n => `你好。${n}正在做研究呢。`],
+      '成年': [n => `主人好。我最近在研究深海洋流的规律，很有意思。`, n => `来了啊，正好想和你讨论一个发现。`],
+      '长老': [n => `知识越多，越觉得自己渺小。主人，你觉得呢？`, n => `主人来了。我刚在回顾这些年的研究笔记，感慨良多。`, n => `学无止境啊。活到老，学到老。`],
+    },
+    adventure: {
+      '幼体': [n => `出去看看！${n}想知道外面长什么样！`, n => `探索！${n}要做笔记！`],
+      '少年': [n => `探索是获取知识的最佳途径！`, n => `科学需要实地考察，走吧！`],
+      '成年': [n => `那片区域的地质构造很特别，值得深入研究。`, n => `实践出真知，我们去看看。`],
+      '长老': [n => `这片海域的每一寸，都藏着故事。要不要听我讲讲？`, n => `真正的智慧，来自对世界的敬畏。走吧，去看看。`],
+    },
+    default: {
+      '幼体': [n => `为什么呀？${n}不懂...`, n => `${n}在想一个很难的问题！`, n => `主人教教${n}嘛~`],
+      '少年': [n => `这是个值得思考的问题...`, n => `有意思，让我想想...`],
+      '成年': [n => `嗯，这个问题我也思考过。`, n => `有道理，值得深入探讨。`],
+      '长老': [n => `万物皆有其理，慢慢来。`, n => `这让我想起一个古老的海底传说...`],
+    },
+  },
+  social: {
+    greet: {
+      '幼体': [n => `主人！${n}好想你！`, n => `你来啦！${n}一个人好无聊...`, n => `主人主人！今天有人来找${n}玩吗？`],
+      '少年': [n => `主人！好久不见！`, n => `你来了！我正想找人聊天呢！`],
+      '成年': [n => `主人好，今天过得怎么样？`, n => `来了啊，最近有什么新鲜事吗？`],
+      '长老': [n => `老朋友来了，真好。这些年有你陪伴，很幸福。`, n => `主人来了啊。人与人之间的缘分，最是珍贵。`],
+    },
+    adventure: {
+      '幼体': [n => `一起去！${n}不要一个人！`, n => `有朋友一起就不怕了！`],
+      '少年': [n => `一起去！人多热闹！`, n => `说不定路上能交到新朋友！`],
+      '成年': [n => `路上说不定能遇到有趣的旅伴。`, n => `一起走吧，有伴的旅程更有意义。`],
+      '长老': [n => `和你一起走过的路，都是最好的风景。`, n => `结伴同行，才是旅途的真谛。`],
+    },
+    default: {
+      '幼体': [n => `${n}最喜欢主人了！`, n => `不要走开嘛~陪${n}玩~`, n => `主人在就好开心！`],
+      '少年': [n => `和主人聊天真开心~`, n => `${name}最喜欢有人陪了！`],
+      '成年': [n => `有你在真好。`, n => `聊天是最好的消遣。`],
+      '长老': [n => `陪伴是最长情的告白，谢谢你。`, n => `这么多年了，还是和你聊天最舒服。`],
+    },
+  },
+  mischievous: {
+    greet: {
+      '幼体': [n => `嘿嘿！主人来啦！${n}什么都没干哦！`, n => `你好！${n}刚才绝对没有偷吃！`, n => `主人！快来看${n}发现了什么！`],
+      '少年': [n => `嘿嘿，主人来了~我什么都没干哦`, n => `你好呀！猜猜我刚才做了什么~`],
+      '成年': [n => `主人好~我可没捣乱，这次是真的。`, n => `来了啊，我给你准备了个小惊喜。`],
+      '长老': [n => `嘿嘿，老了老了，还是改不了这调皮的性子。`, n => `主人来了。我刚给邻居的海葵开了个小玩笑。`, n => `人生嘛，不开心的时候就捣捣乱，立刻就好了。`],
+    },
+    adventure: {
+      '幼体': [n => `冒险！${n}要去捣乱！不对，是探索！`, n => `走走走！${n}知道哪里有好玩的！`],
+      '少年': [n => `冒险！我最喜欢了！`, n => `走走走！我知道一条秘密通道！`],
+      '成年': [n => `我发现了一个有趣的地方，保证你没去过。`, n => `跟我来，我知道一条别人不知道的路。`],
+      '长老': [n => `这把年纪了还想搞事情...走吧走吧。`, n => `最刺激的冒险，往往就在不经意间。嘿嘿。`],
+    },
+    default: {
+      '幼体': [n => `嘿嘿~${n}在呢~`, n => `${n}保证不捣乱！...大概...`, n => `主人你看那边！...嘿嘿骗你的~`],
+      '少年': [n => `嘿嘿~${n}在呢~`, n => `${n}保证不捣乱...大概...`],
+      '成年': [n => `嘿，生活需要一点小乐趣。`, n => `放心，我有分寸的。大概。`],
+      '长老': [n => `嘿嘿，活到这把年纪，最重要的就是开心。`, n => `调皮是保持年轻的秘诀，你信不信？`],
+    },
+  },
+};
 
-  const pool = replies[personality]?.[category] || replies.adventurous?.[category] || [`${name}在这里呢~`];
-  return pool[Math.floor(Math.random() * pool.length)];
+function _pickReply(personality, category, name, stage) {
+  const stageReplies = _STAGE_REPLIES[personality]?.[category]?.[stage]
+    || _STAGE_REPLIES[personality]?.[category]?.['少年']
+    || _STAGE_REPLIES.adventurous?.[category]?.['少年'];
+  if (!stageReplies || stageReplies.length === 0) return `${name}在这里呢~`;
+  const fn = stageReplies[Math.floor(Math.random() * stageReplies.length)];
+  return fn(name);
 }
 
 // --- Rename ---
