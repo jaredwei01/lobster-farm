@@ -1,4 +1,6 @@
 import { CONFIG, PERSONALITY_LABELS, GROWTH_STAGES } from './config.js';
+import { WorldState } from './world-state.js';
+import { SaveSystem } from './save-system.js';
 
 let itemsData = {};
 let inventoryFilter = 'all';
@@ -155,7 +157,7 @@ export const UIRenderer = {
 
   _lastDecoHash: '',
   _renderDecorations(decorations) {
-    const hash = decorations.map(d => d.id).join(',');
+    const hash = JSON.stringify(decorations.map(d => ({ id: d.id, x: d.x, y: d.y })));
     if (hash === this._lastDecoHash) return;
     this._lastDecoHash = hash;
 
@@ -181,28 +183,84 @@ export const UIRenderer = {
       shell_necklace: { sfx: 'click', text: '贝壳项链闪闪发光' },
     };
 
+    const getPosStyle = (deco) => {
+      const vis = DECO_VISUALS[deco.id];
+      if (!vis) return { left: '50%', bottom: '40%' };
+      if (typeof deco.x === 'number' && typeof deco.y === 'number') {
+        return { left: `${deco.x}%`, bottom: `${deco.y}%` };
+      }
+      return { left: vis.left, bottom: vis.bottom };
+    };
+
     for (const deco of decorations) {
       const vis = DECO_VISUALS[deco.id];
       if (!vis) continue;
       const el = document.createElement('div');
       el.className = 'sea-deco-item';
+      el.dataset.decoId = deco.id;
       el.textContent = vis.emoji;
-      el.style.bottom = vis.bottom;
-      el.style.left = vis.left;
-      el.style.cursor = 'pointer';
+      const pos = getPosStyle(deco);
+      el.style.left = pos.left;
+      el.style.bottom = pos.bottom;
+      el.style.cursor = 'grab';
+      el.title = '拖动调整位置；轻点互动';
 
       const interact = DECO_INTERACT[deco.id];
-      if (interact) {
-        el.addEventListener('click', () => {
+      let drag = null;
+
+      const finishDrag = (e, pointerId) => {
+        if (!drag || drag.id !== deco.id) return;
+        try { el.releasePointerCapture(pointerId); } catch (_) { /* noop */ }
+        const didMove = drag.moved;
+        drag = null;
+        el.classList.remove('sea-deco-dragging');
+        if (didMove) {
+          const r = container.getBoundingClientRect();
+          const er = el.getBoundingClientRect();
+          const centerX = (er.left + er.width / 2 - r.left) / r.width * 100;
+          const bottomPct = (r.bottom - er.bottom) / r.height * 100;
+          const decos = WorldState.getFarm().decorations.map((d) => {
+            if (d.id !== deco.id) return d;
+            return {
+              ...d,
+              x: Math.round(Math.max(3, Math.min(97, centerX)) * 10) / 10,
+              y: Math.round(Math.max(5, Math.min(92, bottomPct)) * 10) / 10,
+            };
+          });
+          WorldState.setDecorations(decos);
+          SaveSystem.save(WorldState.getRawState());
+        } else if (interact) {
           if (el.classList.contains('deco-click-anim')) return;
           el.classList.add('deco-click-anim');
           setTimeout(() => el.classList.remove('deco-click-anim'), 500);
-
           window.dispatchEvent(new CustomEvent('sea:deco-interact', {
             detail: { id: deco.id, text: interact.text, sfx: interact.sfx, reward: interact.reward },
           }));
-        });
-      }
+        }
+      };
+
+      el.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        drag = { id: deco.id, sx: e.clientX, sy: e.clientY, moved: false };
+        el.setPointerCapture(e.pointerId);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!drag || drag.id !== deco.id) return;
+        const dx = e.clientX - drag.sx;
+        const dy = e.clientY - drag.sy;
+        if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
+        if (!drag.moved) return;
+        el.classList.add('sea-deco-dragging');
+        const r = container.getBoundingClientRect();
+        const cx = e.clientX - r.left;
+        const bottomPx = r.bottom - e.clientY;
+        const xPct = (cx / r.width) * 100;
+        const yPct = (bottomPx / r.height) * 100;
+        el.style.left = `${Math.max(3, Math.min(97, xPct))}%`;
+        el.style.bottom = `${Math.max(5, Math.min(92, yPct))}%`;
+      });
+      el.addEventListener('pointerup', (e) => finishDrag(e, e.pointerId));
+      el.addEventListener('pointercancel', (e) => finishDrag(e, e.pointerId));
 
       container.appendChild(el);
     }

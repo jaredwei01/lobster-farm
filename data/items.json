@@ -533,5 +533,13 @@
     "description": "从深海带回的珍珠，散发着柔和的光芒。",
     "buyPrice": null,
     "sellPrice": 20
+  },
+  "legacy_medal": {
+    "name": "满级荣耀勋章",
+    "category": "souvenir",
+    "description": "龙虾抵达传说之巅的见证。持有时战力+5。",
+    "buyPrice": null,
+    "sellPrice": 88,
+    "passivePower": 5
   }
 }

@@ -112,7 +112,7 @@ export const CONFIG = {
 
   ZHIPU_KEY: '0785add4f2784f809fb3e59d70715d18.Iw7DrHDc2GKVxdh0',
   SAVE_KEY: 'lobster_farm_save',
-  VERSION: '0.5.0',
+  VERSION: '0.5.1',
 };
 
 export const ACTION_LABELS = {

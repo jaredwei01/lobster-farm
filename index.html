@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>龙虾 MUD</title>
-  <link rel="stylesheet" href="css/style.css?v=20260322p">
-  <link rel="stylesheet" href="css/animations.css?v=20260322p">
+  <link rel="stylesheet" href="css/style.css?v=20260322q">
+  <link rel="stylesheet" href="css/animations.css?v=20260322q">
 </head>
 <body>
   <!-- 建议弹窗 -->
@@ -114,6 +114,15 @@
       <div id="dungeon-battle-choices" class="dungeon-battle-choices"></div>
       <div id="dungeon-battle-result" class="dungeon-battle-result hidden"></div>
       <button id="btn-dungeon-battle-close" class="btn-small hidden modal-cancel-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- P4 满级荣耀加冕 -->
+  <div id="p4-crown-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal p4-crown-modal">
+      <h3>👑 荣耀加冕</h3>
+      <div id="p4-crown-summary"></div>
+      <button id="btn-p4-crown-accept" class="btn-primary" style="width:100%;margin-top:12px;">收下纪念</button>
     </div>
   </div>
 
@@ -267,6 +276,7 @@
     </section>
 
     <!-- 海底龙虾动态窗口 -->
+    <p class="sea-deco-hint" title="已购买的海底装饰可拖动">🪸 海底装饰可拖动摆放</p>
     <section id="sea-window" class="sea-window">
       <div class="sea-surface" id="sea-surface">
         <div class="sea-sun" id="sea-sun"></div>
@@ -534,6 +544,6 @@
   <!-- 通知弹出 -->
   <div id="notification" class="notification hidden"></div>
 
-  <script type="module" src="js/main.js?v=20260322p"></script>
+  <script type="module" src="js/main.js?v=20260322q"></script>
 </body>
 </html>

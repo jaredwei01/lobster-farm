@@ -61,6 +61,7 @@ function defaultState() {
     achievements: {},
     stats: { totalFeeds: 0, totalPets: 0, totalHarvests: 0, totalFishCatches: 0, totalMudScenes: 0, combatWins: 0, coopCompleted: 0, goldenHarvests: 0, cropTypes: [] },
     milestones: [],
+    p4: { crownCeremonyShown: false },
     bond: { score: 50, lastDecay: null },
     coopQuest: null,
     eventLog: [],
@@ -133,6 +134,8 @@ function ensureCompat() {
   if (!state.achievements) state.achievements = {};
   if (!state.stats) state.stats = { totalFeeds: 0, totalPets: 0, totalHarvests: 0, totalFishCatches: 0, totalMudScenes: 0, combatWins: 0, coopCompleted: 0, goldenHarvests: 0, cropTypes: [] };
   if (!Array.isArray(state.stats.cropTypes)) state.stats.cropTypes = [];
+  if (!state.p4) state.p4 = { crownCeremonyShown: false };
+  if (typeof state.p4.crownCeremonyShown !== 'boolean') state.p4.crownCeremonyShown = false;
 }
 
 function syncFarmPlots() {
@@ -573,6 +576,16 @@ export const WorldState = {
 
   setDecorations(decos) {
     state.farm.decorations = decos;
+    this._notify();
+  },
+
+  isP4CrownCeremonyShown() {
+    return Boolean(state.p4?.crownCeremonyShown);
+  },
+
+  markP4CrownCeremonyShown() {
+    state.p4 = state.p4 || { crownCeremonyShown: false };
+    state.p4.crownCeremonyShown = true;
     this._notify();
   },
 

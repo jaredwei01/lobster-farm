@@ -758,6 +758,7 @@ function startGame() {
       WorldState.modifyBond(2);
       _updateFishingButton();
       _checkAchievements();
+      if (l.level >= CONFIG.LOBSTER_MAX_LEVEL) _maybeShowP4CrownCeremony();
     }
 
     if (travelReturn) {
@@ -830,6 +831,7 @@ function startGame() {
   setTimeout(showWelcomeGuide, 800);
   setTimeout(_showMorningGreeting, 2000);
   setTimeout(_maybeGenerateCoopQuest, 5000);
+  setTimeout(() => _maybeShowP4CrownCeremony(), 1600);
   _renderCoopQuestProgress();
 }
 
@@ -888,6 +890,8 @@ function bindInteractions() {
   document.getElementById('btn-retire').addEventListener('click', () => openRetireModal());
   document.getElementById('btn-retire-confirm').addEventListener('click', () => executeRetire());
   document.getElementById('btn-retire-cancel').addEventListener('click', () => closeModal('retire-modal'));
+  const btnP4Crown = document.getElementById('btn-p4-crown-accept');
+  if (btnP4Crown) btnP4Crown.addEventListener('click', () => _acceptP4CrownCeremony());
   window.addEventListener('lobster:pet-request', onPetGesture);
   window.addEventListener('farm:panel-action', onFarmPanelAction);
   window.addEventListener('farm:strategy-change', onFarmStrategyChange);
@@ -956,7 +960,7 @@ function bindInteractions() {
   document.getElementById('btn-checkin-close').addEventListener('click', () => closeModal('checkin-modal'));
   document.getElementById('btn-wb-close').addEventListener('click', () => closeModal('welcome-back-modal'));
 
-  for (const id of ['suggest-modal', 'feed-modal', 'plant-modal', 'golden-modal', 'shop-modal', 'visitor-modal', 'collection-modal', 'retire-modal', 'checkin-modal', 'welcome-back-modal']) {
+  for (const id of ['suggest-modal', 'feed-modal', 'plant-modal', 'golden-modal', 'shop-modal', 'visitor-modal', 'collection-modal', 'retire-modal', 'p4-crown-modal', 'checkin-modal', 'welcome-back-modal']) {
     document.getElementById(id).addEventListener('click', (e) => {
       if (e.target.classList.contains('modal-overlay')) closeModal(id);
     });
@@ -2873,6 +2877,47 @@ function doCheckin() {
   _checkAchievements();
   SaveSystem.save(WorldState.getRawState());
   showCheckinModal();
+}
+
+// --- P4: 满级荣耀加冕（与退休传承独立；退休见下方） ---
+
+function _maybeShowP4CrownCeremony() {
+  const lobster = WorldState.getLobster();
+  if (lobster.level < CONFIG.LOBSTER_MAX_LEVEL) return;
+  if (WorldState.isP4CrownCeremonyShown()) return;
+  _openP4CrownModal();
+}
+
+function _openP4CrownModal() {
+  const modal = document.getElementById('p4-crown-modal');
+  const summary = document.getElementById('p4-crown-summary');
+  if (!modal || !summary) return;
+  if (!modal.classList.contains('hidden')) return;
+  const lobster = WorldState.getLobster();
+  summary.innerHTML = `
+    <div class="p4-crown-hero">👑</div>
+    <p class="p4-crown-lead"><strong>${lobster.name}</strong> 已达 <strong>Lv.${lobster.level}</strong> — 传说之巅</p>
+    <p class="p4-crown-desc">海洋记住了你们的羁绊。收下这份纪念，故事仍可继续；若将来举行「退休仪式」，传承规则不变。</p>
+  `;
+  modal.classList.remove('hidden');
+  SFX.play('levelUp');
+  _animConfetti();
+}
+
+function _acceptP4CrownCeremony() {
+  if (WorldState.isP4CrownCeremonyShown()) {
+    closeModal('p4-crown-modal');
+    return;
+  }
+  WorldState.markP4CrownCeremonyShown();
+  WorldState.addItem('legacy_medal', 1);
+  WorldState.addShells(200);
+  WorldState.modifyBond(5);
+  WorldState.addMilestone('p4_crown', '达到满级，荣耀加冕');
+  UIRenderer.showNotification('👑 获得「满级荣耀勋章」与 200 贝壳！');
+  closeModal('p4-crown-modal');
+  SaveSystem.save(WorldState.getRawState());
+  _checkAchievements();
 }
 
 // --- Retire System ---
