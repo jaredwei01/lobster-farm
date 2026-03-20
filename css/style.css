@@ -2467,6 +2467,7 @@ body[data-time="night"] .sea-light-rays { opacity: 0.04; }
   left: 0;
   right: 0;
   height: 38px;
+  pointer-events: none;
   background:
     radial-gradient(ellipse at 20% 15%, rgba(255,220,150,0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 65% 20%, rgba(255,220,150,0.1) 0%, transparent 40%),
@@ -3726,7 +3727,12 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
 }
 
 /* ===== Sea Decorations ===== */
-.sea-decorations { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.sea-decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+}
 .sea-deco-hint {
   font-size: 10px;
   color: rgba(120, 180, 220, 0.65);
@@ -3743,7 +3749,7 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
   pointer-events: auto;
   touch-action: none;
   user-select: none;
-  z-index: 3;
+  z-index: 1;
 }
 .sea-deco-item.sea-deco-dragging {
   animation: none;
