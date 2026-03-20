@@ -225,20 +225,34 @@ export const UIRenderer = {
     const container = document.getElementById('sea-bubbles');
     if (!container) return;
 
-    const spawn = () => {
-      if (container.childElementCount > 12) return;
+    const spawnOne = (baseLeft, baseBottom) => {
+      if (container.childElementCount > 18) return;
       const b = document.createElement('div');
       b.className = 'sea-bubble';
-      const size = 3 + Math.random() * 5;
+      const size = 2 + Math.random() * 6;
       b.style.width = `${size}px`;
       b.style.height = `${size}px`;
-      b.style.left = `${8 + Math.random() * 84}%`;
-      b.style.bottom = `${Math.random() * 30}%`;
-      b.style.setProperty('--dur', `${2.5 + Math.random() * 3}s`);
+      b.style.left = `${baseLeft + (Math.random() - 0.5) * 6}%`;
+      b.style.bottom = `${baseBottom + Math.random() * 15}%`;
+      const dur = 3 + Math.random() * 4;
+      b.style.setProperty('--dur', `${dur}s`);
       b.style.setProperty('--delay', '0s');
+      if (size > 5) b.style.opacity = '0.35';
       container.appendChild(b);
       b.addEventListener('animationiteration', () => b.remove());
-      setTimeout(() => { if (b.parentNode) b.remove(); }, 8000);
+      setTimeout(() => { if (b.parentNode) b.remove(); }, (dur + 2) * 1000);
+    };
+
+    const spawn = () => {
+      const left = 8 + Math.random() * 84;
+      const bottom = Math.random() * 25;
+      spawnOne(left, bottom);
+      if (Math.random() < 0.35) {
+        const count = 2 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => spawnOne(left, bottom), i * 200);
+        }
+      }
     };
 
     for (let i = 0; i < 5; i++) setTimeout(spawn, i * 600);
@@ -372,6 +386,17 @@ export const UIRenderer = {
       el.style.animation = `${chosen.anim} ${dur}s linear forwards`;
       el.style.pointerEvents = 'auto';
       el.style.cursor = 'pointer';
+
+      const depthY = parseFloat(el.style.top) || (100 - parseFloat(el.style.bottom || '30'));
+      const depthFactor = 0.6 + (depthY / 100) * 0.4;
+      if (depthY < 30) {
+        el.style.opacity = `${0.35 + Math.random() * 0.15}`;
+        el.style.filter = `blur(0.5px) brightness(1.1)`;
+        el.style.transform = `scale(${0.7 + Math.random() * 0.1})`;
+      } else if (depthY > 65) {
+        el.style.opacity = `${0.5 + Math.random() * 0.2}`;
+        el.style.filter = `brightness(${0.8 + depthFactor * 0.1})`;
+      }
 
       el.addEventListener('click', (e) => {
         e.stopPropagation();
