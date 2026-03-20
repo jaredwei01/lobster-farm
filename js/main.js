@@ -1,4 +1,4 @@
-import { CONFIG, PERSONALITY_LABELS, ACTION_LABELS, CHECKIN_REWARDS, SEA_CREATURE_CATALOG, FISHING_REWARDS, FISHING_CONFIG, ACHIEVEMENT_DEFS } from './config.js';
+import { CONFIG, PERSONALITY_LABELS, CHECKIN_REWARDS, SEA_CREATURE_CATALOG, FISHING_REWARDS, FISHING_CONFIG, ACHIEVEMENT_DEFS } from './config.js';
 import { WorldState } from './world-state.js';
 import { SaveSystem } from './save-system.js';
 import { EventEngine } from './event-engine.js';
@@ -900,7 +900,6 @@ function bindInteractions() {
   window.addEventListener('lobster:pet-request', onPetGesture);
   window.addEventListener('farm:panel-action', onFarmPanelAction);
   window.addEventListener('farm:strategy-change', onFarmStrategyChange);
-  window.addEventListener('house:interact', onHouseInteract);
   window.addEventListener('sea:golden-click', () => { Analytics.trackInteraction('sea_golden'); openGoldenModal(); });
   window.addEventListener('mud:trigger', () => { Analytics.trackInteraction('mud_trigger'); triggerMudScene(); });
   window.addEventListener('sea:creature-interact', _onSeaCreatureInteract);
@@ -1006,63 +1005,6 @@ function onFarmStrategyChange(event) {
   UIRenderer.showNotification(`已切换建议策略：${FARM_STRATEGIES[farmStrategy].label}`);
   UIRenderer.updateSpeech(`🦞 好的，农田策略切换为「${FARM_STRATEGIES[farmStrategy].label}」。`);
   Analytics.track('farm_strategy_change', { strategy: farmStrategy });
-}
-
-function onHouseInteract(event) {
-  const hotspot = event?.detail?.hotspot;
-  if (!hotspot) return;
-
-  Analytics.trackInteraction('house_hotspot', { hotspot });
-  const state = WorldState.getState();
-  const traveling = Boolean(state.lobster.traveling);
-
-  if (hotspot === 'lobster') {
-    if (traveling) {
-      UIRenderer.showNotification('龙虾外出中，等它回家再摸摸它吧。');
-      UIRenderer.updateSpeech('🦞 我出门啦，回来给你讲路上的故事。');
-      return;
-    }
-    petLobster();
-    return;
-  }
-
-  if (hotspot === 'garden' || hotspot === 'harvest') {
-    document.getElementById('farm-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    UIRenderer.showNotification('已定位到农田，点地块可快速互动。', 2200);
-    return;
-  }
-
-  if (hotspot === 'fireplace') {
-    UIRenderer.showNotification('壁炉噼啪作响，屋里暖暖的。');
-    UIRenderer.updateSpeech('🦞 火光真舒服，我想再待一会儿。');
-    return;
-  }
-
-  if (hotspot === 'bookshelf') {
-    openCollectionModal('postcards');
-    return;
-  }
-
-  if (hotspot === 'trophies') {
-    openCollectionModal('stamps');
-    return;
-  }
-
-  if (hotspot === 'skills') {
-    openCollectionModal('rare');
-    return;
-  }
-
-  if (hotspot === 'table' || hotspot === 'decor') {
-    openShopModal();
-    return;
-  }
-
-  if (hotspot === 'roof') {
-    const level = state.lobster.level;
-    const stage = level >= 36 ? '长老' : level >= 16 ? '成年' : level >= 6 ? '少年' : '幼体';
-    UIRenderer.showNotification(`小屋等级随成长提升：当前 Lv.${level}（${stage}）`, 2600);
-  }
 }
 
 function initFarmStrategy() {

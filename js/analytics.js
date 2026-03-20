@@ -1,7 +1,6 @@
 const ANALYTICS_ENDPOINT = '/lobster-farm/api/collect';
 const HEARTBEAT_INTERVAL = 30_000;
 const FLUSH_INTERVAL = 60_000;
-const STORAGE_KEY = 'lobster_analytics';
 
 function generateId() {
   const a = new Uint8Array(16);

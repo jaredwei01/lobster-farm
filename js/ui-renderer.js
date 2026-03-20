@@ -32,16 +32,6 @@ const FARM_STRATEGIES = {
     desc: '优先照料已有作物，谨慎补种，尽量消耗低成本种子。',
   },
 };
-const HOUSE_HOTSPOT_IDS = [
-  'slot-bookshelf',
-  'slot-decor',
-  'slot-table',
-  'slot-fireplace',
-  'house-lobster',
-  'trophy-shelf',
-  'skill-wall',
-];
-
 export const UIRenderer = {
   async init() {
     const resp = await fetch('./data/items.json');
@@ -51,7 +41,6 @@ export const UIRenderer = {
     this._bindDiarySwipeGesture();
     this._bindMobileGestures();
     this._bindFarmStrategyControls();
-    this._bindHouseHotspots();
     this._bindSeaInteractions();
   },
 
@@ -70,7 +59,6 @@ export const UIRenderer = {
     this.renderStatusStrip(state);
     this.renderLobsterCard(state.lobster);
     this.renderSeaWindow(state);
-    this.renderHouse(state);
     this.renderFarm(state.farm);
     this.renderInventory(state.inventory);
     this.renderDiary(state.eventLog);
@@ -928,106 +916,6 @@ export const UIRenderer = {
     document.getElementById('badge-farm').textContent = `${plantedCount}/${farm.plots.length} 已种`;
   },
 
-  renderHouse(state) {
-    const lobster = state.lobster;
-    const house = state.house || {};
-
-    const lastAction = (lobster.memory && lobster.memory[0]?.action) || 'rest';
-    const awayActions = new Set(['explore', 'shop', 'socialize', 'travel']);
-    const isAway = Boolean(lobster.traveling) || awayActions.has(lastAction);
-
-    const stageMap = { 1: 'stage-juvenile', 6: 'stage-teen', 16: 'stage-adult', 36: 'stage-elder' };
-    let stageClass = 'stage-juvenile';
-    for (const [minLv, cls] of Object.entries(stageMap)) {
-      if (lobster.level >= Number(minLv)) stageClass = cls;
-    }
-
-    const sprite = document.getElementById('house-lobster-sprite');
-    if (sprite) {
-      const poseClass = this._resolveHousePose(lastAction, lobster, state.world.tickCount, isAway);
-      sprite.className = `ph-lobster-sprite ${stageClass} ${poseClass} ${isAway ? 'is-away' : ''}`;
-    }
-
-    const foodTray = document.getElementById('house-food-tray');
-    if (foodTray) {
-      if (lastAction === 'eat' && !isAway) foodTray.textContent = '🍽️';
-      else if (lastAction === 'cook' && !isAway) foodTray.textContent = '🍳';
-      else foodTray.textContent = '';
-    }
-
-    const awayNote = document.getElementById('house-away-note');
-    const noteText = document.getElementById('away-note-text');
-    const noteItem = document.getElementById('away-note-item');
-    const awayFootprints = document.getElementById('away-footprints');
-    const awayPostcard = document.getElementById('away-postcard');
-    if (awayNote) {
-      if (isAway) {
-        awayNote.classList.remove('hidden');
-        const notes = {
-          explore: ['出去探索了~', '去冒险了，别担心', '寻宝去了！'],
-          shop: ['去逛街了~', '出门购物中', '去集市了！'],
-          socialize: ['找朋友玩去了', '出门串门了~', '去聊天了！'],
-          travel: ['去远方旅行了', '寄明信片中…', '已踏上旅途！'],
-        };
-        const pool = notes[lastAction] || ['出门了~'];
-        if (noteText) noteText.textContent = pool[Math.floor(state.world.tickCount * 7 % pool.length)];
-        const leftItems = ['🍵', '🍪', '📖', '🧣', '🪶'];
-        if (noteItem) noteItem.textContent = leftItems[state.world.tickCount % leftItems.length];
-        if (awayFootprints) {
-          const trails = ['👣 👣', '👣  🫧  👣', '🐾 👣'];
-          awayFootprints.textContent = trails[state.world.tickCount % trails.length];
-        }
-        if (awayPostcard) awayPostcard.textContent = this._latestPostcardPreview(state);
-      } else {
-        awayNote.classList.add('hidden');
-        if (awayPostcard) awayPostcard.textContent = '';
-      }
-    }
-
-    const labelEl = document.getElementById('house-action-label');
-    const actionLabels = { rest: '💤 休息中', eat: '🍽️ 进食中', cook: '🍳 做饭中', farm: '🌱 务农中', explore: '🔍 探索中', shop: '🏪 逛街中', socialize: '💬 聊天中', travel: '🧳 旅行中' };
-    if (labelEl) labelEl.textContent = isAway ? '🚪 外出中' : (actionLabels[lastAction] || '');
-
-    const statusBar = document.getElementById('house-status-bar');
-    if (statusBar) {
-      const day = state.world.dayCount || 1;
-      const tCount = (house.trophies || []).length;
-      const roofNames = ['茅草', '木板', '石板', '水晶'];
-      const roofLv = lobster.level >= 36 ? 3 : lobster.level >= 16 ? 2 : lobster.level >= 6 ? 1 : 0;
-      const topSkill = Object.entries(lobster.skills || {}).sort((a, b) => b[1] - a[1])[0];
-      const skillText = topSkill ? `${this._skillLabel(topSkill[0])} Lv.${topSkill[1]}` : '';
-      statusBar.textContent = `第${day}天 | 纪念品 ${tCount}件 | ${skillText} | 屋顶：${roofNames[roofLv]}`;
-    }
-  },
-
-  _skillLabel(skill) {
-    const map = { farming: '农耕', cooking: '烹饪', exploring: '探索', social: '社交' };
-    return map[skill] || skill;
-  },
-
-  _resolveHousePose(action, lobster, tickCount, isAway) {
-    if (isAway) return 'pose-away';
-    if (lobster.energy <= 18) return 'pose-sleep';
-    if (lobster.hunger >= 78) return 'pose-prone';
-    const cycle = tickCount % 4;
-    if (action === 'farm') return cycle <= 1 ? 'pose-work' : 'pose-walk';
-    if (action === 'explore' || action === 'travel') return 'pose-walk';
-    if (action === 'socialize') return cycle % 2 === 0 ? 'pose-look' : 'pose-sit';
-    if (action === 'eat') return 'pose-prone';
-    if (action === 'cook') return cycle % 2 === 0 ? 'pose-look' : 'pose-sit';
-    if (action === 'shop') return 'pose-walk';
-    return cycle === 0 ? 'pose-look' : cycle === 1 ? 'pose-sit' : cycle === 2 ? 'pose-prone' : 'pose-sit';
-  },
-
-  _latestPostcardPreview(state) {
-    const postcards = state.collections?.postcards || [];
-    if (!postcards.length) return '📮 暂无新明信片，等它回家带故事。';
-    const latest = postcards[postcards.length - 1];
-    const icon = latest.destinationIcon || '🏝️';
-    const name = latest.destinationName || latest.destination || '远方';
-    return `📮 ${icon} 来自${name}的明信片`;
-  },
-
   setFarmStrategy(strategy) {
     if (!FARM_STRATEGIES[strategy]) return;
     farmStrategy = strategy;
@@ -1479,33 +1367,6 @@ export const UIRenderer = {
     });
 
     this._syncFarmStrategyUI();
-  },
-
-  _bindHouseHotspots() {
-    HOUSE_HOTSPOT_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el || el.dataset.houseBound === '1') return;
-      el.dataset.houseBound = '1';
-      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
-
-      const emit = () => {
-        el.classList.remove('hotspot-pressed');
-        // Restart small click feedback animation on repeated clicks.
-        void el.offsetWidth;
-        el.classList.add('hotspot-pressed');
-        setTimeout(() => el.classList.remove('hotspot-pressed'), 240);
-        window.dispatchEvent(new CustomEvent('house:interact', {
-          detail: { hotspot: el.dataset.hotspot || id },
-        }));
-      };
-
-      el.addEventListener('click', emit);
-      el.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        emit();
-      });
-    });
   },
 
   _emitFarmStrategyChange(strategy) {
