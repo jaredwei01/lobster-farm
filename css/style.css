@@ -3731,36 +3731,18 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  touch-action: none;
   z-index: 12;
 }
-.sea-deco-hint {
-  font-size: 10px;
-  color: rgba(120, 180, 220, 0.65);
-  margin: 4px 0 2px;
-  text-align: center;
-  letter-spacing: 0.02em;
-}
+
 
 .sea-deco-item {
   position: absolute;
-  font-size: 18px;
-  padding: 6px;
-  margin: -6px;
+  font-size: 16px;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
   animation: decoFloat 4s ease-in-out infinite;
   pointer-events: auto;
-  touch-action: none;
   user-select: none;
-  cursor: grab;
   z-index: 1;
-}
-.sea-deco-item.sea-deco-dragging {
-  animation: none;
-  cursor: grabbing !important;
-  opacity: 0.92;
-  z-index: 18;
-  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.45));
 }
 
 .p4-crown-modal .p4-crown-hero {
