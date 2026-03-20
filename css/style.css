@@ -3731,6 +3731,7 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
   position: absolute;
   inset: 0;
   pointer-events: none;
+  touch-action: none;
   z-index: 12;
 }
 .sea-deco-hint {
@@ -3743,12 +3744,15 @@ body[data-time="evening"] .sea-anemone { opacity: 0.5; }
 
 .sea-deco-item {
   position: absolute;
-  font-size: 16px;
+  font-size: 18px;
+  padding: 6px;
+  margin: -6px;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
   animation: decoFloat 4s ease-in-out infinite;
   pointer-events: auto;
   touch-action: none;
   user-select: none;
+  cursor: grab;
   z-index: 1;
 }
 .sea-deco-item.sea-deco-dragging {

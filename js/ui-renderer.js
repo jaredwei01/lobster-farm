@@ -241,11 +241,14 @@ export const UIRenderer = {
 
       el.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
         drag = { id: deco.id, sx: e.clientX, sy: e.clientY, moved: false };
         el.setPointerCapture(e.pointerId);
       });
       el.addEventListener('pointermove', (e) => {
         if (!drag || drag.id !== deco.id) return;
+        e.preventDefault();
         const dx = e.clientX - drag.sx;
         const dy = e.clientY - drag.sy;
         if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
