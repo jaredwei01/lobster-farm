@@ -218,7 +218,9 @@ def query_realtime():
     ).fetchone()[0]
 
     active_sessions = conn.execute(
-        'SELECT COUNT(*) FROM sessions WHERE end_ts IS NULL AND start_ts >= ?', (one_hour_ago,)
+        '''SELECT COUNT(*) FROM sessions s WHERE s.end_ts IS NULL
+           AND EXISTS (SELECT 1 FROM events e WHERE e.uid = s.uid AND e.ts >= ?)''',
+        (five_min_ago,)
     ).fetchone()[0]
 
     events_last_hour = conn.execute(
@@ -257,9 +259,10 @@ def query_realtime():
         '''SELECT s.uid, s.start_ts, s.interactions, s.ticks,
            (SELECT e.event FROM events e WHERE e.uid = s.uid ORDER BY e.ts DESC LIMIT 1) as last_event,
            (SELECT e.ts FROM events e WHERE e.uid = s.uid ORDER BY e.ts DESC LIMIT 1) as last_ts
-           FROM sessions s WHERE s.end_ts IS NULL AND s.start_ts >= ?
-           ORDER BY s.start_ts DESC LIMIT 20''',
-        (one_hour_ago,)
+           FROM sessions s WHERE s.end_ts IS NULL
+           AND EXISTS (SELECT 1 FROM events e WHERE e.uid = s.uid AND e.ts >= ?)
+           ORDER BY last_ts DESC LIMIT 20''',
+        (five_min_ago,)
     ).fetchall()
 
     conn.close()
