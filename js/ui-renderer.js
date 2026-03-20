@@ -148,6 +148,8 @@ export const UIRenderer = {
       this._startNightPlankton();
       this._startFarCreatures();
       this._positionMoonPath();
+      this._startSurfaceGlints();
+      this._startUnderwaterCurrents();
     }
   },
 
@@ -641,15 +643,37 @@ export const UIRenderer = {
       const rect = waterEl.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      if (waterEl.querySelectorAll('.sea-click-ripple').length >= 4) return;
-      const ripple = document.createElement('div');
-      ripple.className = 'sea-click-ripple';
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-      ripple.style.marginLeft = '-40px';
-      ripple.style.marginTop = '-40px';
-      waterEl.appendChild(ripple);
-      ripple.addEventListener('animationend', () => ripple.remove());
+      if (waterEl.querySelectorAll('.sea-ripple-group').length >= 3) return;
+
+      const group = document.createElement('div');
+      group.className = 'sea-ripple-group';
+      group.style.left = `${x}px`;
+      group.style.top = `${y}px`;
+
+      for (let i = 0; i < 3; i++) {
+        const ring = document.createElement('div');
+        ring.className = 'sea-ripple-ring';
+        group.appendChild(ring);
+      }
+
+      const distort = document.createElement('div');
+      distort.className = 'sea-ripple-distort';
+      group.appendChild(distort);
+
+      const splashCount = 3 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < splashCount; i++) {
+        const splash = document.createElement('div');
+        splash.className = 'sea-ripple-splash';
+        const angle = (Math.PI * 2 * i) / splashCount + (Math.random() - 0.5) * 0.5;
+        const dist = 8 + Math.random() * 14;
+        splash.style.setProperty('--sx', `${Math.cos(angle) * dist}px`);
+        splash.style.setProperty('--sy', `${Math.sin(angle) * dist}px`);
+        splash.style.setProperty('--sdelay', `${Math.random() * 0.15}s`);
+        group.appendChild(splash);
+      }
+
+      waterEl.appendChild(group);
+      setTimeout(() => group.remove(), 2000);
     });
   },
 
@@ -716,6 +740,42 @@ export const UIRenderer = {
     };
     updatePos();
     setInterval(updatePos, 5000);
+  },
+
+  _startSurfaceGlints() {
+    const container = document.getElementById('sea-surface-glints');
+    if (!container) return;
+    for (let i = 0; i < 12; i++) {
+      const g = document.createElement('div');
+      g.className = 'sea-glint';
+      g.style.left = `${2 + Math.random() * 96}%`;
+      g.style.top = `${Math.random() * 10}px`;
+      g.style.setProperty('--gdur', `${1.5 + Math.random() * 2.5}s`);
+      g.style.setProperty('--gdelay', `${-Math.random() * 4}s`);
+      if (Math.random() > 0.6) {
+        g.style.width = '3px';
+        g.style.height = '1px';
+        g.style.borderRadius = '1px';
+      }
+      container.appendChild(g);
+    }
+  },
+
+  _startUnderwaterCurrents() {
+    const waterEl = document.querySelector('.sea-water');
+    if (!waterEl) return;
+    const container = document.createElement('div');
+    container.className = 'sea-currents';
+    container.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;';
+    for (let i = 0; i < 4; i++) {
+      const line = document.createElement('div');
+      line.className = 'sea-current-line';
+      line.style.top = `${20 + i * 18 + Math.random() * 8}%`;
+      line.style.setProperty('--cdur', `${18 + Math.random() * 12}s`);
+      line.style.setProperty('--cdelay', `${-Math.random() * 15}s`);
+      container.appendChild(line);
+    }
+    waterEl.insertBefore(container, waterEl.firstChild);
   },
 
   _onCreatureClick(eventType, el) {

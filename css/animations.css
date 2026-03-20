@@ -1069,10 +1069,58 @@ body[data-time="night"] .sea-lobster::after {
   50% { transform: scaleX(1.02) scaleY(0.98); }
 }
 
-@keyframes clickRipple {
+@keyframes rippleExpand {
   0% { width: 0; height: 0; opacity: 0.8; }
-  40% { opacity: 0.5; }
-  100% { width: 80px; height: 80px; opacity: 0; }
+  20% { opacity: 0.6; }
+  50% { opacity: 0.35; }
+  100% { width: 90px; height: 90px; opacity: 0; }
+}
+
+@keyframes rippleSplash {
+  0% { opacity: 0.8; transform: translate(-50%, -50%) translate(var(--sx, 0px), var(--sy, 0px)) scale(1); }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--sx, 0px), var(--sy, 0px)) translateY(-12px) scale(0.3); }
+}
+
+@keyframes rippleDistort {
+  0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.3); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+@keyframes glintSparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  15% { opacity: 0.9; transform: scale(1.2); }
+  30% { opacity: 0.3; transform: scale(0.8); }
+  45% { opacity: 0.8; transform: scale(1); }
+  60% { opacity: 0; transform: scale(0.6); }
+}
+
+@keyframes fishSchoolBob {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-2px); }
+  70% { transform: translateY(1.5px); }
+}
+
+@keyframes antennaLeft {
+  0%, 100% { transform: rotate(-15deg); }
+  30% { transform: rotate(-25deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(-20deg); }
+}
+
+@keyframes antennaRight {
+  0%, 100% { transform: rotate(15deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(22deg); }
+  75% { transform: rotate(12deg); }
+}
+
+@keyframes currentDrift {
+  0% { transform: translateX(-30%) translateY(0); }
+  25% { transform: translateX(-10%) translateY(2px); }
+  50% { transform: translateX(10%) translateY(-1px); }
+  75% { transform: translateX(25%) translateY(1px); }
+  100% { transform: translateX(-30%) translateY(0); }
 }
 
 @keyframes planktonFloat {
